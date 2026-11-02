@@ -50,6 +50,11 @@ lake build
 
 LCAnalysis is a dependency (see `lakefile.toml`).
 
+## Author
+
+Gabriel Larotonda, Departamento de Matemática, Facultad de Ciencias Exactas y Naturales,
+Universidad de Buenos Aires, and CONICET, Argentina.
+
 ## License
 
 Apache 2.0; see [LICENSE](LICENSE).
