@@ -18,11 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: leanprover/lean-action@v1
-      - name: Add swap space for the documentation build
+      - name: Prepare memory for the documentation build
         run: |
           sudo fallocate -l 16G /mnt/docswap
           sudo chmod 600 /mnt/docswap
           sudo mkswap /mnt/docswap
           sudo swapon /mnt/docswap
+          # Lake spawns `git` from a process with a large address space; without overcommit
+          # the kernel refuses the fork (ENOMEM) even when memory is free.
+          sudo sysctl -w vm.overcommit_memory=1
           free -h
       - uses: leanprover-community/docgen-action@v1
