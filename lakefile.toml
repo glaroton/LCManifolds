@@ -11,7 +11,8 @@ maxSynthPendingDepth = 3
 
 [[require]]
 name = "LCAnalysis"
-path = "../LCAnalysis"
+git = "https://github.com/glaroton/LCAnalysis"
+rev = "main"
 
 [[lean_lib]]
 name = "LCManifolds"
