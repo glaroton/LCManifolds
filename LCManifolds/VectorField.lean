@@ -300,4 +300,76 @@ theorem lieBracket_jacobi {X Y Z : M → TangentBundle E M} (hXv : IsVectorField
 
 end VectorFields
 
+section Related
+
+variable {E F : Type u}
+  [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
+  [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
+  [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace F N] [MBManifold F N]
+
+/-- `X` and `X'` are `f`-related: `Tf ∘ X = X' ∘ f`. -/
+def IsRelated (f : M → N) (X : M → TangentBundle E M) (X' : N → TangentBundle F N) : Prop :=
+  ∀ x, tangentMap E F f (X x) = X' (f x)
+
+/-- For `f`-related fields, the local representatives in charts `i` of `M` and `j` of `N` satisfy
+`X̃'ⱼ ∘ h = dh · X̃ᵢ`, where `h = j ∘ f ∘ i⁻¹`. -/
+theorem localRep_related {f : M → N} (hf : ContMDiffMB E F 1 f) {X : M → TangentBundle E M}
+    {X' : N → TangentBundle F N} (hXv : IsVectorField X) (hXX' : IsRelated f X X')
+    (i : atlas E M) (j : atlas F N) {y : E} (hy : y ∈ i.1.target)
+    (hfy : f (i.1.symm y) ∈ j.1.source) :
+    localRep j X' ((j.1 ∘ f ∘ i.1.symm) y) = dMB (j.1 ∘ f ∘ i.1.symm) (y, localRep i X y) := by
+  set q := i.1.symm y
+  have hq : q ∈ i.1.source := i.1.map_target hy
+  have hsrc : X q ∈ (tangentChart i i.1).source := by
+    rw [mem_tangentChart_source, hXv]; exact ⟨hq, hq⟩
+  have hXq : tangentChart i i.1 (X q) = (y, localRep i X y) := by
+    refine Prod.ext ?_ rfl
+    rw [tangentChart_apply]
+    change i.1 (X q).proj = y
+    rw [hXv, i.1.right_inv hy]
+  have hrep := tangentMap_chart hf i j hy hfy (localRep i X y)
+  rw [← hXq, (tangentChart i i.1).left_inv hsrc, hXX' q] at hrep
+  have e1 : j.1.symm ((j.1 ∘ f ∘ i.1.symm) y) = f q := by
+    simp only [Function.comp_apply, q, j.1.left_inv hfy]
+  unfold localRep
+  rw [e1, hrep, hXq]
+
+/-- **Brackets of related fields are related** (Lang, Prop. V.1.4): if `X, Y` are `f`-related
+to `X', Y'`, then `[X, Y]` is `f`-related to `[X', Y']`. -/
+theorem lieBracket_related {f : M → N} (hf : ContMDiffMB E F 2 f)
+    {X Y : M → TangentBundle E M} {X' Y' : N → TangentBundle F N} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hX'v : IsVectorField X') (hY'v : IsVectorField Y')
+    (hX : ContMDiffMB E (E × E) 1 X) (hY : ContMDiffMB E (E × E) 1 Y)
+    (hX' : ContMDiffMB F (F × F) 1 X') (hY' : ContMDiffMB F (F × F) 1 Y')
+    (hXX' : IsRelated f X X') (hYY' : IsRelated f Y Y') :
+    IsRelated f (lieBracket X Y) (lieBracket X' Y') := by
+  intro x
+  have hf1 := hf.of_le' (by norm_num : 1 ≤ 2)
+  set i : atlas E M := ⟨chartAt E x, chart_mem_atlas E x⟩
+  set j : atlas F N := ⟨chartAt F (f x), chart_mem_atlas F (f x)⟩
+  set U := chartDomain f univ i.1 j.1
+  have hU : IsOpen U := isOpen_chartDomain isOpen_univ hf.1 i.1 j.1
+  have hh : ContDiffMBOn 2 (j.1 ∘ f ∘ i.1.symm) U := hf.2 x (mem_univ x)
+  have hmaps : MapsTo (j.1 ∘ f ∘ i.1.symm) U j.1.target := fun z hz ↦ j.1.map_source hz.2.2
+  have hUi : U ⊆ i.1.target := inter_subset_left
+  have hxU : i.1 x ∈ U := ⟨i.1.map_source (mem_chart_source E x), mem_univ _, by
+    simp [i, j, i.1.left_inv (mem_chart_source E x), mem_chart_source]⟩
+  have htrans := localBracket_transition hU hU j.1.open_target subset_rfl hh hmaps
+    ((contDiffMBOn_localRep hXv hX i).mono hUi) ((contDiffMBOn_localRep hYv hY i).mono hUi)
+    (contDiffMBOn_localRep hX'v hX' j) (contDiffMBOn_localRep hY'v hY' j)
+    (fun z hz ↦ localRep_related hf1 hXv hXX' i j hz.1 hz.2.2)
+    (fun z hz ↦ localRep_related hf1 hYv hYY' i j hz.1 hz.2.2) hxU
+  have hfx : (j.1 ∘ f ∘ i.1.symm) (i.1 x) = j.1 (f x) := by
+    simp [i, i.1.left_inv (mem_chart_source E x)]
+  rw [hfx] at htrans
+  change (⟨f x, (dMB (j.1 ∘ f ∘ i.1.symm)
+      (i.1 x, localBracket (localRep i X) (localRep i Y) (i.1 x)) : F)⟩ : TangentBundle F N) =
+    ⟨f x, (localBracket (localRep j X') (localRep j Y') (j.1 (f x)) : F)⟩
+  rw [htrans]
+
+end Related
+
 end LCManifolds
