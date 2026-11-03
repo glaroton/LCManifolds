@@ -83,6 +83,154 @@ theorem localCovDeriv_transition {τ : E → F} {Γᵢ : E → E → E → E} {�
     dMB_comp_transition hT hU hV hUT hτ hUV hYᵢ hYⱼ hY hy, hΓ y hy, ← hL, ← hL, ← hL, map_sub]
   abel
 
+omit [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- The local covariant derivative at `y` only depends on the germ of the second field. -/
+theorem localCovDeriv_congr_right {Γ : E → E → E → E} {A W W' : E → E} {y : E}
+    (h : W =ᶠ[𝓝 y] W') : localCovDeriv Γ A W y = localCovDeriv Γ A W' y := by
+  rw [localCovDeriv, localCovDeriv, dMB_congr_of_eventuallyEq h, h.eq_of_nhds]
+
+/-- The derivative of `x ↦ Γ(x)` in the direction `v`, as a bilinear map: `dΓₓ(v)(a, b)`. -/
+def dSymb (Γ : E → E → E → E) (x v a b : E) : E :=
+  dMB (fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) ((x, (a, b)), (v, (0, 0)))
+
+/-- The local curvature, with Lang's sign:
+`R(u, v) w = dΓ(v)(u, w) − dΓ(u)(v, w) + Γ(u, Γ(v, w)) − Γ(v, Γ(u, w))`. -/
+def localCurv (Γ : E → E → E → E) (x u v w : E) : E :=
+  dSymb Γ x v u w - dSymb Γ x u v w + Γ x u (Γ x v w) - Γ x v (Γ x u w)
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- Derivatives of a bilinear family in the bilinear slots: `Γ(x)(a', b)`. -/
+theorem hasDirDerivAt_symb_left {Γ : E → E → E → E}
+    (hadd : ∀ x a a' b, Γ x (a + a') b = Γ x a b + Γ x a' b)
+    (hsmul : ∀ x (c : ℝ) a b, Γ x (c • a) b = c • Γ x a b) (x a b a' : E) :
+    HasDirDerivAt (fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) (x, (a, b)) (0, (a', 0))
+      (Γ x a' b) := by
+  refine tendsto_nhds_of_eventually_eq ?_
+  filter_upwards [self_mem_nhdsWithin] with t (ht : t ≠ 0)
+  simp only [Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, hadd, hsmul, add_sub_cancel_left,
+    smul_smul, inv_mul_cancel₀ ht, one_smul]
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E] in
+theorem hasDirDerivAt_symb_right {Γ : E → E → E → E}
+    (hadd : ∀ x a b b', Γ x a (b + b') = Γ x a b + Γ x a b')
+    (hsmul : ∀ x (c : ℝ) a b, Γ x a (c • b) = c • Γ x a b) (x a b b' : E) :
+    HasDirDerivAt (fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) (x, (a, b)) (0, (0, b'))
+      (Γ x a b') := by
+  refine tendsto_nhds_of_eventually_eq ?_
+  filter_upwards [self_mem_nhdsWithin] with t (ht : t ≠ 0)
+  simp only [Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, hadd, hsmul, add_sub_cancel_left,
+    smul_smul, inv_mul_cancel₀ ht, one_smul]
+
+/-- The derivative of `y ↦ Γ(y)(A y, B y)`:
+`dΓ(y)(v)(A y, B y) + Γ(y)(dA(y) v, B y) + Γ(y)(A y, dB(y) v)`. -/
+theorem dMB_symb_comp {Γ : E → E → E → E} {A B : E → E} {U : Set E} (hU : IsOpen U)
+    (hΓ : ContDiffMBOn 1 (fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) (U ×ˢ univ))
+    (haddl : ∀ x a a' b, Γ x (a + a') b = Γ x a b + Γ x a' b)
+    (hsmull : ∀ x (c : ℝ) a b, Γ x (c • a) b = c • Γ x a b)
+    (haddr : ∀ x a b b', Γ x a (b + b') = Γ x a b + Γ x a b')
+    (hsmulr : ∀ x (c : ℝ) a b, Γ x a (c • b) = c • Γ x a b)
+    (hA : ContDiffMBOn 1 A U) (hB : ContDiffMBOn 1 B U) {y : E} (hy : y ∈ U) (v : E) :
+    dMB (fun y' ↦ Γ y' (A y') (B y')) (y, v) =
+      dSymb Γ y v (A y) (B y) + Γ y (dMB A (y, v)) (B y) + Γ y (A y) (dMB B (y, v)) := by
+  have hUU : IsOpen (U ×ˢ (univ : Set (E × E))) := hU.prod isOpen_univ
+  have htrip : ContDiffMBOn 1 (fun y' ↦ (y', (A y', B y'))) U :=
+    ((ContinuousLinearMap.id ℝ E).contDiffMBOn 1 U).prodMk hU (hA.prodMk hU hB)
+  have hcomp := ContDiffMBOn.dMB_comp (g := fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2)
+    (f := fun y' ↦ (y', (A y', B y'))) hUU hΓ htrip (fun y' hy' ↦ ⟨hy', mem_univ _⟩) hy v
+  have hdtrip : dMB (fun y' ↦ (y', (A y', B y'))) (y, v) = (v, (dMB A (y, v), dMB B (y, v))) :=
+    (((ContinuousLinearMap.id ℝ E).hasDirDerivAt y v).prodMk
+      ((hA.hasDirDerivAt hy v).prodMk (hB.hasDirDerivAt hy v))).dMB_eq
+  have hsplit : (v, (dMB A (y, v), dMB B (y, v))) =
+      ((v, ((0 : E), (0 : E))) + ((0 : E), (dMB A (y, v), (0 : E)))) +
+        ((0 : E), ((0 : E), dMB B (y, v))) := by simp
+  have hp : (y, (A y, B y)) ∈ U ×ˢ (univ : Set (E × E)) := ⟨hy, mem_univ _⟩
+  change dMB ((fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) ∘ fun y' ↦ (y', (A y', B y'))) (y, v) = _
+  rw [hcomp, hdtrip, hsplit, hΓ.dMB_add hUU hp, hΓ.dMB_add hUU hp,
+    (hasDirDerivAt_symb_left haddl hsmull y (A y) (B y) _).dMB_eq,
+    (hasDirDerivAt_symb_right haddr hsmulr y (A y) (B y) _).dMB_eq]
+  rfl
+
+/-- **The local curvature formula** (Lang, Prop. IX.1.2): for `C^2` fields on an open set,
+`∇_X ∇_Y Z − ∇_Y ∇_X Z − ∇_[X,Y] Z = R(X, Y) Z` pointwise, where `R` is the trilinear expression
+`localCurv`; all the terms containing derivatives of the fields cancel. -/
+theorem localCovDeriv_curv {Γ : E → E → E → E} {X Y Z : E → E} {U : Set E} (hU : IsOpen U)
+    (hΓ : ContDiffMBOn 1 (fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2) (U ×ˢ univ))
+    (haddl : ∀ x a a' b, Γ x (a + a') b = Γ x a b + Γ x a' b)
+    (hsmull : ∀ x (c : ℝ) a b, Γ x (c • a) b = c • Γ x a b)
+    (haddr : ∀ x a b b', Γ x a (b + b') = Γ x a b + Γ x a b')
+    (hsmulr : ∀ x (c : ℝ) a b, Γ x a (c • b) = c • Γ x a b)
+    (hX : ContDiffMBOn 2 X U) (hY : ContDiffMBOn 2 Y U) (hZ : ContDiffMBOn 2 Z U) {y : E}
+    (hy : y ∈ U) :
+    localCovDeriv Γ X (localCovDeriv Γ Y Z) y - localCovDeriv Γ Y (localCovDeriv Γ X Z) y -
+        localCovDeriv Γ (localBracket X Y) Z y =
+      localCurv Γ y (X y) (Y y) (Z y) := by
+  have hUU : IsOpen (U ×ˢ (univ : Set E)) := hU.prod isOpen_univ
+  have hsubl : ∀ x a a' b, Γ x (a - a') b = Γ x a b - Γ x a' b := fun x a a' b ↦ by
+    rw [sub_eq_add_neg, haddl, ← neg_one_smul ℝ a', hsmull, neg_one_smul, ← sub_eq_add_neg]
+  have hsubr : ∀ x a b b', Γ x a (b - b') = Γ x a b - Γ x a b' := fun x a b b' ↦ by
+    rw [sub_eq_add_neg, haddr, ← neg_one_smul ℝ b', hsmulr, neg_one_smul, ← sub_eq_add_neg]
+  -- the derivative of `∇_A B`
+  have hW : ∀ {A B : E → E}, ContDiffMBOn 2 A U → ContDiffMBOn 2 B U → ∀ v,
+      dMB (localCovDeriv Γ A B) (y, v) =
+        (dMB (dMB B) ((y, A y), (v, 0)) + dMB B (y, dMB A (y, v))) -
+          (dSymb Γ y v (A y) (B y) + Γ y (dMB A (y, v)) (B y) + Γ y (A y) (dMB B (y, v))) := by
+    intro A B hA hB v
+    have hA1 : ContDiffMBOn 1 A U := hA.of_le (by norm_num)
+    have hB1 : ContDiffMBOn 1 B U := hB.of_le (by norm_num)
+    have hpair : ContDiffMBOn 1 (fun y' ↦ (y', A y')) U :=
+      ((ContinuousLinearMap.id ℝ E).contDiffMBOn 1 U).prodMk hU hA1
+    have hdB : ContDiffMBOn 1 (dMB B) (U ×ˢ univ) := hB.2.2
+    have hc1 : ContDiffMBOn 1 (fun y' ↦ dMB B (y', A y')) U :=
+      ContDiffMBOn.comp (g := dMB B) (f := fun y' ↦ (y', A y')) hU hUU hdB hpair
+        fun y' hy' ↦ ⟨hy', mem_univ _⟩
+    have htrip : ContDiffMBOn 1 (fun y' ↦ (y', (A y', B y'))) U :=
+      ((ContinuousLinearMap.id ℝ E).contDiffMBOn 1 U).prodMk hU (hA1.prodMk hU hB1)
+    have hc2 : ContDiffMBOn 1 (fun y' ↦ Γ y' (A y') (B y')) U :=
+      ContDiffMBOn.comp (g := fun p : E × (E × E) ↦ Γ p.1 p.2.1 p.2.2)
+        (f := fun y' ↦ (y', (A y', B y'))) hU (hU.prod isOpen_univ) hΓ htrip
+        fun y' hy' ↦ ⟨hy', mem_univ _⟩
+    have h1 := hc1.hasDirDerivAt (k := 0) hy v
+    have h2 := hc2.hasDirDerivAt (k := 0) hy v
+    change dMB (fun y' ↦ dMB B (y', A y') - Γ y' (A y') (B y')) (y, v) = _
+    rw [(h1.sub h2).dMB_eq, dMB_dMB_comp_apply hU hU subset_rfl hB hA1 hy,
+      dMB_symb_comp hU hΓ haddl hsmull haddr hsmulr hA1 hB1 hy]
+  obtain ⟨LZ, hLZ⟩ := (hZ.of_le (by norm_num) : ContDiffMBOn 1 Z U).exists_clm hU hy
+  have e1 : localCovDeriv Γ X (localCovDeriv Γ Y Z) y =
+      dMB (localCovDeriv Γ Y Z) (y, X y) - Γ y (X y) (localCovDeriv Γ Y Z y) := rfl
+  have e2 : localCovDeriv Γ Y (localCovDeriv Γ X Z) y =
+      dMB (localCovDeriv Γ X Z) (y, Y y) - Γ y (Y y) (localCovDeriv Γ X Z y) := rfl
+  have e3 : localCovDeriv Γ (localBracket X Y) Z y =
+      dMB Z (y, localBracket X Y y) - Γ y (localBracket X Y y) (Z y) := rfl
+  rw [e1, e2, e3, hW hY hZ, hW hX hZ, hZ.dMB_dMB_symm hU hy (Y y) (X y)]
+  simp only [localCovDeriv, localBracket, localCurv, hsubl, hsubr, ← hLZ, map_sub]
+  abel
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- Skew-symmetry of the local curvature. -/
+theorem localCurv_swap (Γ : E → E → E → E) (x u v w : E) :
+    localCurv Γ x v u w = -localCurv Γ x u v w := by
+  simp only [localCurv]
+  abel
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- For a symmetric family, the derivative of the symbols is symmetric too. -/
+theorem dSymb_symm {Γ : E → E → E → E} (hsym : ∀ x a b, Γ x a b = Γ x b a) (x v a b : E) :
+    dSymb Γ x v a b = dSymb Γ x v b a := by
+  simp only [dSymb, dMB, Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero]
+  congr 1
+  funext t
+  rw [hsym, hsym x]
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- **Bianchi's identity** for the local curvature of a symmetric connection. -/
+theorem localCurv_bianchi {Γ : E → E → E → E} (hsym : ∀ x a b, Γ x a b = Γ x b a)
+    (x u v w : E) :
+    localCurv Γ x u v w + localCurv Γ x v w u + localCurv Γ x w u v = 0 := by
+  simp only [localCurv]
+  rw [dSymb_symm hsym x v w u, dSymb_symm hsym x u w v, dSymb_symm hsym x w v u,
+    hsym x v w, hsym x u w, hsym x u v]
+  abel
+
 end Calculus
 
 section Manifold
@@ -225,6 +373,105 @@ theorem covDeriv_smulField_right {X Y : M → TangentBundle E M} (hYv : IsVector
   rw [C.smul_right, smul_sub,
     show vfDeriv X φ x = dMB (φ ∘ i.1.symm) (i.1 x, localRep i X (i.1 x)) from rfl]
   abel
+
+/-- **Smoothness of the covariant derivative**: if `X` is `C^k` and `Y` is `C^(k+1)`, then
+`∇_X Y` is `C^k`. -/
+theorem contMDiffMB_covDeriv {k : ℕ} {X Y : M → TangentBundle E M} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hX : ContMDiffMB E (E × E) k X)
+    (hY : ContMDiffMB E (E × E) (k + 1) Y) :
+    ContMDiffMB E (E × E) k (C.covDeriv X Y) := by
+  refine contMDiffMB_of_localRep (C.isVectorField_covDeriv X Y) fun x ↦ ?_
+  set i : atlas E M := ⟨chartAt E x, chart_mem_atlas E x⟩
+  have hU := i.1.open_target
+  have hUU : IsOpen (i.1.target ×ˢ (univ : Set (E × E))) := hU.prod isOpen_univ
+  have hXi := contDiffMBOn_localRep hXv hX i
+  have hYi := contDiffMBOn_localRep hYv hY i
+  have hY1 := hY.of_le' (by omega : 1 ≤ k + 1)
+  -- `y ↦ dỸ(y) X̃(y)` is `C^k`
+  have h1 : ContDiffMBOn k (fun y ↦ dMB (localRep i Y) (y, localRep i X y)) i.1.target := by
+    have hpair : ContDiffMBOn k (fun y ↦ (y, localRep i X y)) i.1.target :=
+      ((ContinuousLinearMap.id ℝ E).contDiffMBOn k _).prodMk hU hXi
+    have hd : ContDiffMBOn k (dMB (localRep i Y)) (i.1.target ×ˢ univ) := hYi.2.2
+    exact ContDiffMBOn.comp (g := dMB (localRep i Y)) (f := fun y ↦ (y, localRep i X y))
+      hU (hU.prod isOpen_univ) hd hpair fun y hy ↦ ⟨hy, mem_univ _⟩
+  -- `y ↦ Γ(y)(X̃ y, Ỹ y)` is `C^k`
+  have h2 : ContDiffMBOn k (fun y ↦ C.Γ i y (localRep i X y) (localRep i Y y)) i.1.target := by
+    have htrip : ContDiffMBOn k (fun y ↦ (y, (localRep i X y, localRep i Y y))) i.1.target :=
+      ((ContinuousLinearMap.id ℝ E).contDiffMBOn k _).prodMk hU
+        (hXi.prodMk hU (hYi.of_le (by omega)))
+    exact ContDiffMBOn.comp (g := fun p : E × (E × E) ↦ C.Γ i p.1 p.2.1 p.2.2)
+      (f := fun y ↦ (y, (localRep i X y, localRep i Y y))) hU hUU (C.smooth i k) htrip
+      fun y hy ↦ ⟨hy, mem_univ _⟩
+  have hsub := ContDiffMBOn.comp (F₁ := E × E) hU isOpen_univ
+    ((ContinuousLinearMap.fst ℝ E E - ContinuousLinearMap.snd ℝ E E).contDiffMBOn k univ)
+    (h1.prodMk hU h2) (mapsTo_univ _ _)
+  exact ContDiffMBOn.congr_of_isOpen hU
+    (fun y hy ↦ (C.localRep_covDeriv hXv hYv hY1 i hy).symm) hsub
+
+/-- The curvature `R(X, Y) Z = ∇_X ∇_Y Z − ∇_Y ∇_X Z − ∇_[X,Y] Z` at `x` (Lang's sign), as a
+vector in the fiber at `x`. -/
+def curvature (X Y Z : M → TangentBundle E M) (x : M) : E :=
+  (show E from (C.covDeriv X (C.covDeriv Y Z) x).2) -
+    (show E from (C.covDeriv Y (C.covDeriv X Z) x).2) -
+    (show E from (C.covDeriv (lieBracket X Y) Z x).2)
+
+/-- **The curvature is tensorial** (Lang, Prop. IX.1.1–1.2): for `C^2` fields, `R(X, Y) Z` at
+`x` is the trilinear expression `localCurv` in the preferred chart, evaluated at the values of
+`X`, `Y`, `Z` at `x`. -/
+theorem curvature_eq {X Y Z : M → TangentBundle E M} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hZv : IsVectorField Z) (hX : ContMDiffMB E (E × E) 2 X)
+    (hY : ContMDiffMB E (E × E) 2 Y) (hZ : ContMDiffMB E (E × E) 2 Z) (x : M) :
+    C.curvature X Y Z x =
+      localCurv (C.Γ ⟨chartAt E x, chart_mem_atlas E x⟩) (chartAt E x x)
+        (localRep ⟨chartAt E x, chart_mem_atlas E x⟩ X (chartAt E x x))
+        (localRep ⟨chartAt E x, chart_mem_atlas E x⟩ Y (chartAt E x x))
+        (localRep ⟨chartAt E x, chart_mem_atlas E x⟩ Z (chartAt E x x)) := by
+  set i : atlas E M := ⟨chartAt E x, chart_mem_atlas E x⟩
+  have hx : i.1 x ∈ i.1.target := i.1.map_source (mem_chart_source E x)
+  have hX1 := hX.of_le' (by norm_num : 1 ≤ 2)
+  have hY1 := hY.of_le' (by norm_num : 1 ≤ 2)
+  have hZ1 := hZ.of_le' (by norm_num : 1 ≤ 2)
+  have hev : ∀ {A B : M → TangentBundle E M}, IsVectorField A → IsVectorField B →
+      ContMDiffMB E (E × E) 1 B →
+      localRep i (C.covDeriv A B) =ᶠ[𝓝 (i.1 x)]
+        localCovDeriv (C.Γ i) (localRep i A) (localRep i B) :=
+    fun hAv hBv hB ↦ Filter.eventuallyEq_of_mem (i.1.open_target.mem_nhds hx)
+      fun _ hy ↦ C.localRep_covDeriv hAv hBv hB i hy
+  have hbr : localRep i (lieBracket X Y) (i.1 x) =
+      localBracket (localRep i X) (localRep i Y) (i.1 x) :=
+    localRep_lieBracket hXv hYv hX1 hY1 i hx
+  unfold curvature
+  rw [covDeriv_snd, covDeriv_snd, covDeriv_snd]
+  change localCovDeriv (C.Γ i) (localRep i X) (localRep i (C.covDeriv Y Z)) (i.1 x) -
+      localCovDeriv (C.Γ i) (localRep i Y) (localRep i (C.covDeriv X Z)) (i.1 x) -
+      localCovDeriv (C.Γ i) (localRep i (lieBracket X Y)) (localRep i Z) (i.1 x) = _
+  rw [localCovDeriv_congr_right (hev hYv hZv hZ1), localCovDeriv_congr_right (hev hXv hZv hZ1)]
+  have e3 : localCovDeriv (C.Γ i) (localRep i (lieBracket X Y)) (localRep i Z) (i.1 x) =
+      localCovDeriv (C.Γ i) (localBracket (localRep i X) (localRep i Y)) (localRep i Z)
+        (i.1 x) := by
+    simp only [localCovDeriv, hbr]
+  rw [e3]
+  exact localCovDeriv_curv i.1.open_target (C.smooth i 1) (C.add_left i) (C.smul_left i)
+    (C.add_right i) (C.smul_right i) (contDiffMBOn_localRep hXv hX i)
+    (contDiffMBOn_localRep hYv hY i) (contDiffMBOn_localRep hZv hZ i) hx
+
+/-- Skew-symmetry of the curvature: `R(Y, X) Z = −R(X, Y) Z`. -/
+theorem curvature_swap {X Y Z : M → TangentBundle E M} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hZv : IsVectorField Z) (hX : ContMDiffMB E (E × E) 2 X)
+    (hY : ContMDiffMB E (E × E) 2 Y) (hZ : ContMDiffMB E (E × E) 2 Z) (x : M) :
+    C.curvature Y X Z x = -C.curvature X Y Z x := by
+  rw [C.curvature_eq hYv hXv hZv hY hX hZ, C.curvature_eq hXv hYv hZv hX hY hZ, localCurv_swap]
+
+/-- **Bianchi's identity** for a symmetric connection:
+`R(X, Y) Z + R(Y, Z) X + R(Z, X) Y = 0`. -/
+theorem curvature_bianchi (hC : C.IsSymmetric) {X Y Z : M → TangentBundle E M}
+    (hXv : IsVectorField X) (hYv : IsVectorField Y) (hZv : IsVectorField Z)
+    (hX : ContMDiffMB E (E × E) 2 X) (hY : ContMDiffMB E (E × E) 2 Y)
+    (hZ : ContMDiffMB E (E × E) 2 Z) (x : M) :
+    C.curvature X Y Z x + C.curvature Y Z X x + C.curvature Z X Y x = 0 := by
+  rw [C.curvature_eq hXv hYv hZv hX hY hZ, C.curvature_eq hYv hZv hXv hY hZ hX,
+    C.curvature_eq hZv hXv hYv hZ hX hY]
+  exact localCurv_bianchi (hC _) _ _ _ _
 
 end Connection
 
