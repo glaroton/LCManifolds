@@ -14,3 +14,4 @@ import LCManifolds.Submanifold
 import LCManifolds.Connection
 import LCManifolds.Spray
 import LCManifolds.DoubleTangent
+import LCManifolds.CovariantCurve
