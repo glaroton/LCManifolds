@@ -30,5 +30,16 @@ jobs:
           free -h
       - uses: leanprover-community/docgen-action@v1
         with:
-          # `docs/index.html` is a static home page; no Jekyll site.
-          build-page: false
+          # The API documentation goes to `site/docs`; the action does not deploy it, because
+          # the home page `home/index.html` is added below.
+          homepage: site
+          deploy: false
+      - name: Add the home page
+        if: github.event_name == 'push'
+        run: cp home/index.html site/index.html
+      - uses: actions/upload-pages-artifact@v5
+        if: github.event_name == 'push'
+        with:
+          path: site/
+      - uses: actions/deploy-pages@v4
+        if: github.event_name == 'push'
