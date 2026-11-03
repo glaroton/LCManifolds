@@ -10,3 +10,4 @@ import LCManifolds.TangentMap
 import LCManifolds.VectorField
 import LCManifolds.Derivation
 import LCManifolds.Product
+import LCManifolds.Submanifold
