@@ -29,3 +29,6 @@ jobs:
           sudo sysctl -w vm.overcommit_memory=1
           free -h
       - uses: leanprover-community/docgen-action@v1
+        with:
+          # `docs/index.html` is a static home page; no Jekyll site.
+          build-page: false

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCManifolds</title>
+<meta name="description" content="Manifolds modeled on locally convex spaces, formalized in Lean 4 and Mathlib.">
+<style>
+:root {
+  --bg: #fdfcf9; --fg: #1d1c1a; --muted: #5d5a54; --rule: #e4e0d8;
+  --accent: #8a3b12; --code-bg: #f2efe8; --head-bg: #f6f3ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161514; --fg: #e9e6df; --muted: #a8a399; --rule: #34312c;
+    --accent: #e39a6c; --code-bg: #24221f; --head-bg: #1d1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161514; --fg: #e9e6df; --muted: #a8a399; --rule: #34312c;
+  --accent: #e39a6c; --code-bg: #24221f; --head-bg: #1d1c1a;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 17px/1.6 Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif; }
+main, header > div { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+header { background: var(--head-bg); border-bottom: 1px solid var(--rule); padding: 48px 0 32px; }
+h1 { font-size: 2.4rem; margin: 0 0 8px; letter-spacing: -0.01em; }
+.tagline { font-size: 1.2rem; color: var(--muted); margin: 0 0 24px; }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.buttons a { font: 600 15px/1 system-ui, sans-serif; text-decoration: none; padding: 11px 16px;
+  border-radius: 6px; border: 1px solid var(--accent); color: var(--accent); }
+.buttons a.primary { background: var(--accent); color: var(--bg); }
+h2 { font-size: 1.6rem; margin: 2.2em 0 0.6em; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+h3 { font-size: 1.2rem; margin: 1.8em 0 0.5em; }
+a { color: var(--accent); }
+code { font: 0.86em/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background: var(--code-bg); padding: 1px 4px; border-radius: 3px; }
+a.decl { text-decoration: none; }
+a.decl code { border-bottom: 1px dotted var(--accent); }
+pre { background: var(--code-bg); padding: 14px 16px; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 4px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92em; display: block; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+th { font-family: system-ui, sans-serif; font-size: 0.85em; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--muted); }
+footer { max-width: 860px; margin: 48px auto 0; padding: 24px 16px 48px; color: var(--muted);
+  border-top: 1px solid var(--rule); font-size: 0.9em; }
+@media (max-width: 600px) { body { font-size: 16px; } h1 { font-size: 1.9rem; } }
+</style>
+</head>
+<body>
+<header><div>
+<h1>LCManifolds</h1>
+<p class="tagline">Manifolds modeled on locally convex spaces, formalized in Lean 4 and Mathlib.</p>
+<div class="buttons">
+<a class="primary" href="docs/">API documentation</a>
+<a href="https://github.com/glaroton/LCManifolds">Source on GitHub</a>
+</div>
+</div></header>
+<main>
+<blockquote>
+<p><strong>Status: early stage.</strong> At present the library contains the basic definition only. It is the
+geometric companion of <a href="https://github.com/glaroton/LCAnalysis">LCAnalysis</a>, which provides the
+calculus.</p>
+</blockquote>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="https://github.com/glaroton/LCManifolds/blob/main/LCManifolds/Basic.lean"><code>LCManifolds/Basic.lean</code></a>:</li>
+<li><code>mbGroupoid E</code>, the structure groupoid of Michal–Bastiani smooth diffeomorphisms between open
+    subsets of a locally convex space <code>E</code>;</li>
+<li><a class="decl" href="docs/LCManifolds/Basic.html#LCManifolds.MBManifold"><code>MBManifold</code></a>, smooth manifolds modeled on <code>E</code> [Nee06, Def. I.3.1; GN26, Ch. 3].</li>
+</ul>
+<p>There is no <code>sorry</code>.</p>
+<h2 id="design">Design</h2>
+<p>Mathlib's <a class="decl" href="docs/Mathlib/Geometry/Manifold/ChartedSpace.html#ChartedSpace"><code>ChartedSpace</code></a> and <a class="decl" href="docs/Mathlib/Geometry/Manifold/StructureGroupoid.html#StructureGroupoid"><code>StructureGroupoid</code></a> accept an arbitrary topological model space, so
+Mathlib's chart machinery is reused directly. A manifold modeled on <code>E</code> is a <code>ChartedSpace E M</code>
+with <code>HasGroupoid M (mbGroupoid E)</code>. Only the notion of smoothness changes: Mathlib's
+<a class="decl" href="docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html#contDiffGroupoid"><code>contDiffGroupoid</code></a> needs a normed model with corners, and this library replaces it with the
+Michal–Bastiani calculus of LCAnalysis.</p>
+<h2 id="planned">Planned</h2>
+<ol>
+<li>Smooth maps between manifolds.</li>
+<li>Tangent spaces, the tangent bundle and the tangent map.</li>
+<li>Lie groups modeled on locally convex spaces and their Lie algebras [Nee06, GN26].</li>
+</ol>
+<h2 id="references">References</h2>
+<ul>
+<li><strong>[GN26]</strong> H. Glöckner, K.-H. Neeb, <em>Infinite-Dimensional Lie Groups</em>, book manuscript,
+  arXiv:2602.12362 (2026).</li>
+<li><strong>[Nee06]</strong> K.-H. Neeb, <em>Towards a Lie theory of locally convex groups</em>, Jpn. J. Math. 1 (2006),
+  291–468; arXiv:1501.06269.</li>
+<li>The mathlib Community, <em>The Lean mathematical library</em>, CPP 2020, 367–381. This library uses
+  Mathlib's <a class="decl" href="docs/Mathlib/Geometry/Manifold/ChartedSpace.html#ChartedSpace"><code>ChartedSpace</code></a>, <a class="decl" href="docs/Mathlib/Geometry/Manifold/StructureGroupoid.html#StructureGroupoid"><code>StructureGroupoid</code></a> and <a class="decl" href="docs/Mathlib/Topology/OpenPartialHomeomorph/Defs.html#OpenPartialHomeomorph"><code>OpenPartialHomeomorph</code></a>.</li>
+</ul>
+<p>The section "How this library was written" of LCAnalysis applies here too. Gabriel Larotonda
+directed the work, and the Lean proofs were written by the AI assistant Claude (Anthropic).</p>
+<h2 id="build">Build</h2>
+<pre><code class="language-bash">lake exe cache get
+lake build
+</code></pre>
+<p>LCAnalysis is a dependency (see <code>lakefile.toml</code>).</p>
+<h2 id="author">Author</h2>
+<p>Gabriel Larotonda, Departamento de Matemática, Facultad de Ciencias Exactas y Naturales,
+Universidad de Buenos Aires, and CONICET, Argentina.</p>
+<h2 id="license">License</h2>
+<p>Apache 2.0; see <a href="https://github.com/glaroton/LCManifolds/blob/main/LICENSE">LICENSE</a>.</p>
+</main>
+<footer>Names in <code>code</code> font link to their entry in the API documentation, generated by
+<a href="https://github.com/leanprover/doc-gen4">doc-gen4</a>.</footer>
+</body>
+</html>
