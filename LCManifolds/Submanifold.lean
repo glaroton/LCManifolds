@@ -91,10 +91,11 @@ variable {E : Type u} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTo
   {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
   (N : Set M) (S : Submodule ℝ E)
 
-/-- `φ` is a slice chart for `N` with model `S`: a chart of the atlas with
-`φ(U ∩ N) = φ(U) ∩ S`. -/
+/-- `φ` is a slice chart for `N` with model `S`: a chart of the maximal atlas (a chart
+compatible with the atlas of `M`) with `φ(U ∩ N) = φ(U) ∩ S`. The maximal atlas is needed: for
+instance, when `M = E` the atlas only contains the identity. -/
 def IsSliceChart (φ : OpenPartialHomeomorph M E) : Prop :=
-  φ ∈ atlas E M ∧ ∀ q ∈ φ.source, (q ∈ N ↔ φ q ∈ S)
+  φ ∈ (mbGroupoid E).maximalAtlas M ∧ ∀ q ∈ φ.source, (q ∈ N ↔ φ q ∈ S)
 
 /-- `N` is an embedded submanifold of `M` modeled on the closed subspace `S` of `E`: every point
 of `N` lies in a slice chart. -/
@@ -146,17 +147,15 @@ def sliceChart {φ : OpenPartialHomeomorph M E} (hφ : IsSliceChart N S φ) (p�
     have hN : φ.symm y ∈ N := (hφ.2 _ (φ.map_target hy)).mpr (by rw [φ.right_inv hy]; exact y.2)
     simp only [Function.comp_apply, dite_eq_left hN]
 
-omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
-  [MBManifold E M] in
 open scoped Classical in
+omit [MBManifold E M] in
 theorem sliceChart_apply_coe {φ : OpenPartialHomeomorph M E} (hφ : IsSliceChart N S φ) (p₀ : N)
     {q : N} (hq : (q : M) ∈ φ.source) : ((sliceChart hφ p₀ q : S) : E) = φ q := by
   change ((if h : φ q ∈ S then (⟨φ q, h⟩ : S) else 0 : S) : E) = φ q
   rw [dite_eq_left ((hφ.2 q hq).mp q.2)]
 
-omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
-  [MBManifold E M] in
 open scoped Classical in
+omit [MBManifold E M] in
 theorem sliceChart_symm_apply_coe {φ : OpenPartialHomeomorph M E} (hφ : IsSliceChart N S φ)
     (p₀ : N) {y : S} (hy : (y : E) ∈ φ.target) :
     (((sliceChart hφ p₀).symm y : N) : M) = φ.symm y := by
@@ -184,7 +183,8 @@ theorem smoothMBOn_sliceChart_transition (hS : IsClosed (S : Set E))
     rwa [hc] at this
   intro k
   have hh : ContDiffMBOn k ((ψ ∘ φ.symm) ∘ S.subtypeL) (e.symm ≫ₕ e').source :=
-    (smoothMBOn_transition hφ.1 hψ.1 k).comp hV (φ.isOpen_inter_preimage_symm ψ.open_source)
+    (smoothMBOn_transition_of_mem_maximalAtlas hφ.1 hψ.1 k).comp hV
+      (φ.isOpen_inter_preimage_symm ψ.open_source)
       (S.subtypeL.contDiffMBOn k _) fun y hy ↦ (hsub y hy).1
   refine ContDiffMBOn.codRestrict hS hV hh fun y hy ↦ ?_
   rw [OpenPartialHomeomorph.coe_trans, Function.comp_apply,
@@ -243,7 +243,8 @@ theorem IsEmbeddedSubmanifold.smoothMBM_val (h : IsEmbeddedSubmanifold N S) :
     rwa [hc] at this
   have hh : ContDiffMBOn k ((c ∘ φ.symm) ∘ S.subtypeL)
       (chartDomain Subtype.val univ (sliceChart hφ p) c) :=
-    (smoothMBOn_transition hφ.1 (chart_mem_atlas E (p : M)) k).comp hD
+    (smoothMBOn_transition_of_mem_maximalAtlas hφ.1
+      ((mbGroupoid E).chart_mem_maximalAtlas (p : M)) k).comp hD
       (φ.isOpen_inter_preimage_symm c.open_source) (S.subtypeL.contDiffMBOn k _)
       fun y hy ↦ (hsub y hy).1
   refine ContDiffMBOn.congr_of_isOpen hD (fun y hy ↦ ?_) hh

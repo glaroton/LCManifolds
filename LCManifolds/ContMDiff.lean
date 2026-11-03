@@ -98,6 +98,19 @@ theorem smoothMBOn_transition [MBManifold E M] {e e' : OpenPartialHomeomorph M E
     OpenPartialHomeomorph.coe_trans] at h
   exact h
 
+omit [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [ChartedSpace F N]
+  [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F] in
+/-- Transition maps between charts of the maximal atlas (charts compatible with the atlas) are
+smooth. -/
+theorem smoothMBOn_transition_of_mem_maximalAtlas [MBManifold E M]
+    {e e' : OpenPartialHomeomorph M E} (he : e ∈ (mbGroupoid E).maximalAtlas M)
+    (he' : e' ∈ (mbGroupoid E).maximalAtlas M) :
+    SmoothMBOn (e' ∘ e.symm) (e.target ∩ e.symm ⁻¹' e'.source) := by
+  have h := ((mbGroupoid E).compatible_of_mem_maximalAtlas he he').1
+  rw [OpenPartialHomeomorph.trans_source, OpenPartialHomeomorph.symm_source,
+    OpenPartialHomeomorph.coe_trans] at h
+  exact h
+
 variable [MBManifold E M] [MBManifold F N] [MBManifold G P]
 
 /-- The local representatives of a `C^k` map in arbitrary charts of the atlases are `C^k`. -/
