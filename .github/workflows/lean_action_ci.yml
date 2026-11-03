@@ -31,12 +31,16 @@ jobs:
       - uses: leanprover-community/docgen-action@v1
         with:
           # The API documentation goes to `site/docs`; the action does not deploy it, because
-          # the home page `home/index.html` is added below.
+          # the home page is added below.
           homepage: site
           deploy: false
-      - name: Add the home page
+      - name: Build the home page from the README
         if: github.event_name == 'push'
-        run: cp home/index.html site/index.html
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet markdown
+          "$RUNNER_TEMP/venv/bin/python" scripts/homepage.py . ${{ github.event.repository.name }} \
+            site/docs/declarations/declaration-data.bmp site/index.html
       - uses: actions/upload-pages-artifact@v5
         if: github.event_name == 'push'
         with:
