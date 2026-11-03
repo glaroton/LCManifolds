@@ -8,19 +8,32 @@ import LCManifolds.ContMDiff
 /-!
 # Embedded submanifolds
 
-Reference: G. Larotonda, *Estructuras geométricas para las variedades de Banach*, Cap. 2
-(subvariedad embebida); H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*, Ch. 3.
+References: H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*, Definition 3.1.10 and
+Lemma 1.3.19; G. Larotonda, *Estructuras geométricas para las variedades de Banach*, Cap. 2
+(subvariedad embebida).
 
-A subset `N` of a manifold `M` modeled on `E` is an embedded submanifold modeled on a closed
-subspace `S ⊆ E` if every point of `N` lies in a chart `φ` of the atlas with
-`φ(U ∩ N) = φ(U) ∩ S`. No complement of `S` is required, so this notion is meaningful for
-locally convex (and Banach) models where closed subspaces need not be complemented. The usual
-criteria (regular values, split immersions) need inverse or implicit function theorems, and are
-not available for general locally convex models.
+A subset `N` of a manifold `M` modeled on `E` is a submanifold modeled on a closed subspace
+`S ⊆ E` (Glöckner–Neeb, Def. 3.1.10) if every point of `N` lies in a chart `φ` of the maximal
+atlas with `φ(U ∩ N) = φ(U) ∩ S`. Then `N` is a manifold modeled on `S`
+(`IsEmbeddedSubmanifold.mbManifold`) and the inclusion is smooth. The calculus fact behind the
+construction is `ContDiffMBOn.codRestrict`: a `C^k` map with values in a closed subspace `T` is
+`C^k` as a map into `T` (Glöckner–Neeb, Lemma 1.3.19).
 
-The calculus fact behind the construction is `ContDiffMBOn.codRestrict`: a `C^k` map with values
-in a closed subspace `T` is `C^k` as a map into `T`, since difference quotients, and hence
-derivatives, stay in `T`.
+**Subtleties (infinite dimensions).**
+
+* No complement of `S` is required. When `S` is complemented, Glöckner–Neeb call `N` a *split*
+  submanifold; in the Banach literature (e.g. Bourbaki) "submanifold" usually means split, and
+  non-split ones are called quasi-submanifolds. For locally convex models the splitting
+  condition is much less useful (Glöckner–Neeb, Rem. 3.1.11).
+* The slice charts must be taken in the *maximal* atlas (charts compatible with the atlas): for
+  `M = E` the atlas only contains the identity.
+* The usual criteria (regular values, split immersions) need inverse or implicit function
+  theorems, which are not available for general locally convex models.
+* Weaker notions are genuinely different in infinite dimensions and are not covered here:
+  initial submanifolds (Glöckner–Neeb, Def. 3.3.22: a universal property for smooth maps into
+  `N`, the topology of `N` may be finer than the induced one), immersions (Glöckner–Neeb,
+  Def. 3.3.25(b): locally a continuous linear map with a continuous linear left inverse), and
+  weak immersions (injective differential whose range need not be closed).
 -/
 
 open Set Filter
