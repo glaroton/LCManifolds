@@ -15,3 +15,4 @@ import LCManifolds.Connection
 import LCManifolds.Spray
 import LCManifolds.DoubleTangent
 import LCManifolds.CovariantCurve
+import LCManifolds.SubmanifoldNotions
