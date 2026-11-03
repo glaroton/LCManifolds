@@ -41,5 +41,9 @@ jobs:
         if: github.event_name == 'push'
         with:
           path: site/
+          # The doc-gen action already uploads an artifact named `github-pages`.
+          name: site-with-home-page
       - uses: actions/deploy-pages@v4
         if: github.event_name == 'push'
+        with:
+          artifact_name: site-with-home-page
