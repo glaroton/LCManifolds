@@ -5,3 +5,4 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Basic
 import LCManifolds.ContMDiff
+import LCManifolds.TangentBundle
