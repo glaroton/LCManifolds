@@ -199,8 +199,8 @@ theorem covDeriv_smulField_left {X Y : M → TangentBundle E M} (hXv : IsVectorF
     (contDiffMBOn_localRep hYv hY i).dMB_smul hx, C.smul_left, smul_sub]
 
 /-- **Leibniz rule** `∇_X (φ Y) = X(φ) Y + φ ∇_X Y`. -/
-theorem covDeriv_smulField_right {X Y : M → TangentBundle E M} (hYv : IsVectorField Y) (hY : ContMDiffMB E (E × E) 1 Y) {φ : M → ℝ}
-    (hφ : IsCkFunction E 1 φ) (x : M) :
+theorem covDeriv_smulField_right {X Y : M → TangentBundle E M} (hYv : IsVectorField Y)
+    (hY : ContMDiffMB E (E × E) 1 Y) {φ : M → ℝ} (hφ : IsCkFunction E 1 φ) (x : M) :
     (show E from (C.covDeriv X (smulField φ Y) x).2) =
       vfDeriv X φ x • (show E from (Y x).2) + φ x • (show E from (C.covDeriv X Y x).2) := by
   set i : atlas E M := ⟨chartAt E x, chart_mem_atlas E x⟩
