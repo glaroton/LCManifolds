@@ -67,6 +67,21 @@ differential `T_x f` (read in charts):
     is smooth; but `y` is `C¹` and not `C²` in `ℓ²`. So `j` is topologically embedded, weakly
     immersed and not initial. In finite dimensions a weak immersion whose lifts are continuous
     is initial, so this phenomenon has no finite-dimensional analogue.
+* *Unitary orbits.* Let `A = i Σₙ λₙ pₙ` be a skew-adjoint operator on a Hilbert space `H`,
+  with distinct real `λₙ` and pairwise orthogonal projections `pₙ` (of any rank) summing to `1`.
+  Its stabilizer in `U(H)` is the block-diagonal group `K = ⊕ₙ U(pₙ H)`. `K` is a split Lie
+  subgroup, via the conditional expectation `X ↦ Σₙ pₙ X pₙ`. The orbit `U(H)/K → B(H)`,
+  `uK ↦ u A u*`, is a weak immersion with differential `X ↦ [X, A]`. It is initial if and only
+  if there are finitely many `pₙ`.
+  - If there are finitely many `pₙ`, the spectrum is finite and the orbit is a closed embedded
+    split submanifold (Beltiță–Larotonda, *Unitary group orbits versus groupoid orbits of normal
+    operators*). With two projections of infinite rank it is a Grassmannian.
+  - If there are infinitely many `pₙ`, the spectrum is infinite, so `[·, A]` does not have
+    closed range (same reference). Then the orbit is not initial. Indeed, for orbits of
+    Banach–Lie group actions with split stabilizer, initiality forces closed range: along
+    `s ↦ exp(s ξ) · A`, every derivative is bounded by a constant times `‖[ξ, A]‖`. Bump
+    curves along directions with `‖[ξ, A]‖` tiny are smooth in `B(H)`, and their lifts to
+    `U(H)/K` are continuous but not `C¹`.
 * *Initial Lie subgroups.* Glöckner–Neeb (Def. 9.1.5) call an initial Lie subgroup *strictly
   initial* when `L(ι)` is injective, a condition that Neeb (2006) includes in the definition.
   Not every subgroup carries an initial Lie subgroup structure: `ℓ^∞ ⊆ ℝ^ℕ` does not
