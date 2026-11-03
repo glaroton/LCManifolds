@@ -7,3 +7,4 @@ import LCManifolds.Basic
 import LCManifolds.ContMDiff
 import LCManifolds.TangentBundle
 import LCManifolds.TangentMap
+import LCManifolds.VectorField

@@ -108,6 +108,12 @@ def tangentBundleCore : FiberBundleCore (atlas E M) M E where
   continuousOn_coordChange := continuousOn_tangentCoordChange
   coordChange_comp i j k _ hx v := tangentCoordChange_comp i j k hx v
 
+instance (x : M) : AddCommGroup ((tangentBundleCore E M).Fiber x) :=
+  inferInstanceAs (AddCommGroup E)
+
+instance (x : M) : Module ℝ ((tangentBundleCore E M).Fiber x) :=
+  inferInstanceAs (Module ℝ E)
+
 variable (E M) in
 /-- The tangent bundle of `M`, with fibers `E`. -/
 abbrev TangentBundle : Type _ := (tangentBundleCore E M).TotalSpace
