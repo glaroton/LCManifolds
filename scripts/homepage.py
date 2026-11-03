@@ -5,7 +5,7 @@ usage: python3 homepage.py REPO_DIR REPO_NAME DECL_JSON OUT_HTML
 DECL_JSON is `docs/declarations/declaration-data.bmp` from the API documentation. The CI runs
 this after doc-gen, so the home page follows the README on every push.
 """
-import html, json, re, sys
+import html, json, os, re, sys
 import markdown
 
 repo_dir, name, decl_path, out_path = sys.argv[1:5]
@@ -47,6 +47,13 @@ out = "".join(
 # Relative links to files in the repository go to GitHub.
 out = re.sub(r'href="((?:[A-Za-z]+/)*[A-Za-z]+\.lean|LICENSE|lakefile\.toml)"',
              lambda m: f'href="{gh}/blob/main/{m.group(1)}"', out)
+out = out.replace('href="blueprint/src"', f'href="{gh}/tree/main/blueprint/src"')
+
+# The blueprint, when the repository has one, is published next to the API documentation.
+blueprint_links = ""
+if os.path.isdir(f"{repo_dir}/blueprint"):
+    blueprint_links = ('<a class="primary" href="blueprint/">Blueprint</a>\n'
+                       '<a href="blueprint.pdf">Blueprint (PDF)</a>\n')
 
 page = f"""<!doctype html>
 <html lang="en">
@@ -106,7 +113,7 @@ footer {{ max-width: 860px; margin: 48px auto 0; padding: 24px 16px 48px; color:
 <p class="tagline">{html.escape(tagline)}</p>
 <div class="buttons">
 <a class="primary" href="docs/">API documentation</a>
-<a href="{gh}">Source on GitHub</a>
+{blueprint_links}<a href="{gh}">Source on GitHub</a>
 </div>
 </div></header>
 <main>
