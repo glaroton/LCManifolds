@@ -160,6 +160,26 @@ theorem localBracket_congr_right {A W W' : E → E} {y : E} (h : W =ᶠ[𝓝 y] 
     localBracket A W y = localBracket A W' y := by
   rw [localBracket, localBracket, dMB_congr_of_eventuallyEq h, h.eq_of_nhds]
 
+omit [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
+  [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F] in
+/-- Local brackets of `C^(k+1)` fields are `C^k`. -/
+theorem contDiffMBOn_localBracket {k : ℕ} {X Y : E → E} {U : Set E} (hU : IsOpen U)
+    (hX : ContDiffMBOn (k + 1) X U) (hY : ContDiffMBOn (k + 1) Y U) :
+    ContDiffMBOn k (localBracket X Y) U := by
+  have hUU : IsOpen (U ×ˢ (univ : Set E)) := hU.prod isOpen_univ
+  have hc : ∀ {A B : E → E}, ContDiffMBOn (k + 1) A U → ContDiffMBOn (k + 1) B U →
+      ContDiffMBOn k (fun y ↦ dMB A (y, B y)) U := by
+    intro A B hA hB
+    have hpair : ContDiffMBOn k (fun y ↦ (y, B y)) U :=
+      ((ContinuousLinearMap.id ℝ E).contDiffMBOn k U).prodMk hU (hB.of_le (by omega))
+    have hdA : ContDiffMBOn k (dMB A) (U ×ˢ univ) := hA.2.2
+    exact ContDiffMBOn.comp (g := dMB A) (f := fun y ↦ (y, B y)) hU hUU hdA hpair
+      fun y hy ↦ ⟨hy, mem_univ _⟩
+  have hsub := ContDiffMBOn.comp (F₁ := E × E) hU isOpen_univ
+    ((ContinuousLinearMap.fst ℝ E E - ContinuousLinearMap.snd ℝ E E).contDiffMBOn k univ)
+    ((hc hY hX).prodMk hU (hc hX hY)) (mapsTo_univ _ _)
+  exact hsub
+
 end Calculus
 
 section VectorFields
@@ -297,6 +317,70 @@ theorem lieBracket_jacobi {X Y Z : M → TangentBundle E M} (hXv : IsVectorField
     localBracket_congr_right (localRep_lieBracket_eventuallyEq hXv hYv hX1 hY1 i hx)]
   exact localBracket_jacobi i.1.open_target (contDiffMBOn_localRep hXv hX i)
     (contDiffMBOn_localRep hYv hY i) (contDiffMBOn_localRep hZv hZ i) hx
+
+/-- A vector field whose local representatives in the preferred charts are `C^k` is `C^k` as a
+map `M → TM`. -/
+theorem contMDiffMB_of_localRep {k : ℕ} {Z : M → TangentBundle E M} (hZv : IsVectorField Z)
+    (hloc : ∀ x, ContDiffMBOn k (localRep ⟨chartAt E x, chart_mem_atlas E x⟩ Z)
+      (chartAt E x).target) :
+    ContMDiffMB E (E × E) k Z := by
+  -- in the preferred charts, `Z` reads `y ↦ (y, Z̃ y)`
+  have hform : ∀ x, ∀ y ∈ (chartAt E x).target,
+      tangentChart ⟨chartAt E x, chart_mem_atlas E x⟩ (chartAt E x)
+        (Z ((chartAt E x).symm y)) =
+        (y, localRep ⟨chartAt E x, chart_mem_atlas E x⟩ Z y) := by
+    intro x y hy
+    refine Prod.ext ?_ rfl
+    rw [tangentChart_apply]
+    change chartAt E x (Z ((chartAt E x).symm y)).proj = y
+    rw [hZv, (chartAt E x).right_inv hy]
+  have hpair : ∀ x, ContDiffMBOn k
+      (fun y ↦ (y, localRep ⟨chartAt E x, chart_mem_atlas E x⟩ Z y)) (chartAt E x).target :=
+    fun x ↦ ((ContinuousLinearMap.id ℝ E).contDiffMBOn k _).prodMk (chartAt E x).open_target
+      (hloc x)
+  -- continuity
+  have hcont : Continuous Z := by
+    refine continuous_iff_continuousAt.mpr fun x ↦ ?_
+    set c := chartAt E x
+    set ψ := tangentChart ⟨c, chart_mem_atlas E x⟩ c
+    have heq : EqOn Z (ψ.symm ∘ (fun y ↦ (y, localRep ⟨c, chart_mem_atlas E x⟩ Z y)) ∘ c)
+        c.source := by
+      intro x' hx'
+      have hsrc : Z x' ∈ ψ.source := by
+        rw [mem_tangentChart_source, hZv]; exact ⟨hx', hx'⟩
+      have := hform x (c x') (c.map_source hx')
+      rw [c.left_inv hx'] at this
+      simp only [Function.comp_apply]
+      rw [← this, ψ.left_inv hsrc]
+    have hmaps : MapsTo (fun y ↦ (y, localRep ⟨c, chart_mem_atlas E x⟩ Z y)) c.target
+        ψ.target := fun y hy ↦ (mem_tangentChart_target _ _ _).mpr ⟨hy, c.map_target hy⟩
+    have hcomp : ContinuousOn (ψ.symm ∘ (fun y ↦ (y, localRep ⟨c, chart_mem_atlas E x⟩ Z y)) ∘ c)
+        c.source :=
+      ψ.continuousOn_symm.comp (((hpair x).continuousOn).comp c.continuousOn
+        fun x' hx' ↦ c.map_source hx') fun x' hx' ↦ hmaps (c.map_source hx')
+    exact (hcomp.congr heq).continuousAt (c.open_source.mem_nhds (mem_chart_source E x))
+  refine ⟨hcont.continuousOn, fun x _ ↦ ?_⟩
+  have hsub : chartDomain Z univ (chartAt E x) (chartAt (E × E) (Z x)) ⊆ (chartAt E x).target :=
+    fun y hy ↦ hy.1
+  change ContDiffMBOn k (tangentChart ⟨chartAt E (Z x).proj, chart_mem_atlas E _⟩
+    (chartAt E (Z x).proj) ∘ Z ∘ (chartAt E x).symm) _
+  rw [hZv]
+  exact ContDiffMBOn.congr_of_isOpen (isOpen_chartDomain isOpen_univ hcont.continuousOn _ _)
+    (fun y hy ↦ (hform x y (hsub hy)).symm) ((hpair x).mono hsub)
+
+/-- **Smoothness of the bracket**: if `X` and `Y` are `C^(k+1)`, then `[X, Y]` is `C^k`. -/
+theorem contMDiffMB_lieBracket {k : ℕ} {X Y : M → TangentBundle E M} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hX : ContMDiffMB E (E × E) (k + 1) X)
+    (hY : ContMDiffMB E (E × E) (k + 1) Y) :
+    ContMDiffMB E (E × E) k (lieBracket X Y) := by
+  refine contMDiffMB_of_localRep (isVectorField_lieBracket X Y) fun x ↦ ?_
+  set i : atlas E M := ⟨chartAt E x, chart_mem_atlas E x⟩
+  have hX1 := hX.of_le' (by omega : 1 ≤ k + 1)
+  have hY1 := hY.of_le' (by omega : 1 ≤ k + 1)
+  exact ContDiffMBOn.congr_of_isOpen i.1.open_target
+    (fun y hy ↦ (localRep_lieBracket hXv hYv hX1 hY1 i hy).symm)
+    (contDiffMBOn_localBracket i.1.open_target (contDiffMBOn_localRep hXv hX i)
+      (contDiffMBOn_localRep hYv hY i))
 
 end VectorFields
 
