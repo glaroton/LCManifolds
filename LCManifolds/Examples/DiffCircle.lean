@@ -57,7 +57,8 @@ Main results:
 
 * `DiffCircle.isOpen_domain`, `DiffCircle.convex_domain`: `Ω` is open and convex in the
   Fréchet space `C^∞_per`. Hence `Ω` is a manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an
-  `Opens`, with its induced charted space and `MBManifold` structure). It is a **Fréchet manifold**: the model is complete
+  `Opens`, with its induced charted space and `MBManifold` structure). It is a **Fréchet
+  manifold**: the model is complete
   (`CInfPer.instCompleteSpace`), but not normable, so it is not a Banach manifold.
 * For `u ∈ Ω`, the lift `φ = id + u` is an increasing homeomorphism of `ℝ`, smooth with smooth
   inverse, commuting with the translation by `1` (`DiffCircle.liftHomeomorph`,
