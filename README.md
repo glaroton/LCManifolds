@@ -110,6 +110,11 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   Math. 2019, Lemma 3.19). Every Finsler metric is a Finsler length structure, because velocities
   of `C¹` curves are continuous in `TM` (`continuous_velocity`). Length of curves and the Finsler
   (quasi-)distance are defined for Finsler length structures.
+* [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two
+  notions differ already on `ℝ²`. With `β(x, y) = max(0, x² - |y|) / (x² + |y|)`, the Finsler
+  norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the
+  origin with `γ̇₂ ≠ 0` leaves the cusp `|y| < x²`) but not on the tangent bundle
+  (`CuspFinsler.lengthStructure`, `CuspFinsler.not_continuous`).
 * [`LCManifolds/Examples/Subspace.lean`](LCManifolds/Examples/Subspace.lean): example. A closed
   subspace is an embedded submanifold (split if complemented), with tangent space itself; a
   continuous projection onto it is a constant field of projectors, whose connection is flat and
