@@ -16,3 +16,4 @@ import LCManifolds.Spray
 import LCManifolds.DoubleTangent
 import LCManifolds.CovariantCurve
 import LCManifolds.SubmanifoldNotions
+import LCManifolds.Projector
