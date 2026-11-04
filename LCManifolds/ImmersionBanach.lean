@@ -7,11 +7,12 @@ import LCManifolds.SubmanifoldNotions
 import LCAnalysis.BoundedBelow
 
 /-!
-# Immersions between Banach manifolds
+# Immersions with a Banach domain
 
-For manifolds modeled on Banach spaces, an immersion (the differential is a topological
-isomorphism onto a closed subspace, with no complement assumed) reflects smoothness of
-continuous maps: if `g : P → M` is continuous and `f ∘ g` is smooth, then `g` is smooth
+Let `M` be a Banach manifold, i.e. modeled on a **complete** normed space `E` (`CompleteSpace E`),
+and `N` a manifold modeled on a normed space `F`, complete or not. An immersion `f : M → N` (the
+differential is a topological isomorphism onto a closed subspace, with no complement assumed)
+reflects smoothness of continuous maps: if `g : P → M` is continuous and `f ∘ g` is smooth, then `g` is smooth
 (`IsImmersion.smoothMBM_of_comp`). The test manifold `P` may be modeled on any locally convex
 space. Consequently, an injective immersion which is a homeomorphism onto its image is an initial
 submanifold (`IsImmersedSubmanifold.isInitialSubmanifold`).
@@ -25,6 +26,9 @@ Michal–Bastiani `C^{k+1}` maps are Fréchet `C^k`.
 * No inverse function theorem is used, and no complement of the range of the differential is
   needed. The image of a non-split immersion need not have slice charts: whether such an
   immersion, when a homeomorphism onto its image, is an embedded submanifold is open.
+* Completeness of `E` is used: the derivative of a lift is obtained as the limit of Cauchy
+  difference quotients. Completeness of `F` is not needed. Recall that a manifold modeled on an
+  incomplete normed space is not a Banach manifold.
 * For Fréchet or more general locally convex model spaces the statement is open: the lower bound
   of the differential need not persist near a point.
 * Continuity of `g` cannot be dropped: the figure eight is an injective immersion that is not

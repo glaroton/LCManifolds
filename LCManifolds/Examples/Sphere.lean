@@ -7,10 +7,17 @@ import LCManifolds.Projector
 import LCAnalysis.MBFrechet
 
 /-!
-# Example: the unit sphere of a Hilbert space
+# Example: the unit sphere of an inner product space
 
-Let `H` be a real inner product space (completeness is not needed) and `e ∈ H` a unit
-vector. The unit sphere is an embedded
+Let `H` be a real inner product space and `e ∈ H` a unit vector.
+
+**Completeness.** If `H` is complete (a Hilbert space), `H` is a Hilbert manifold and the sphere is
+a Hilbert submanifold of it. If `H` is not complete, `H` is still a manifold in the sense of this
+library, whose model spaces need not be complete (see `LCManifolds.Basic`), but it is **not** a
+Hilbert or Banach manifold, and neither is the sphere. The construction below does not use
+completeness, so it covers both cases; the statements about Hilbert manifolds are the case
+`[CompleteSpace H]`.
+ The unit sphere is an embedded
 submanifold of `H` modeled on `e^⊥`. The slice charts are explicit, with no inverse function
 theorem: on the hemisphere `⟪q, e⟫ > 0`,
 

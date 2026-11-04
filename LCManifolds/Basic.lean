@@ -15,6 +15,26 @@ Reference: K.-H. Neeb, *Towards a Lie theory of locally convex groups*, Jpn. J. 
 Mathlib's `ChartedSpace` and `StructureGroupoid` accept an arbitrary topological model space, so
 a manifold modeled on `E` is a `ChartedSpace E M` with `HasGroupoid M (mbGroupoid E)`, where
 `mbGroupoid E` consists of the Michal–Bastiani smooth diffeomorphisms between open subsets of `E`.
+
+**Convention: the model space need not be complete.** The model space `E` is a Hausdorff locally
+convex space, and *no completeness is assumed*. This is the convention of Glöckner–Neeb
+(§5.7: "as for manifolds, we do not assume that the model space of a Lie group is complete",
+following Glöckner 2002); Milnor (1984) assumed sequentially complete model spaces instead.
+
+* The formal theory (charts, smooth maps, tangent bundle, vector fields, connections,
+  submanifolds) does not use completeness: the calculus of `LCAnalysis` replaces integrals in the
+  model space by Hahn–Banach arguments.
+* Every result that needs completeness says so in its hypotheses, and names the kind it needs
+  (complete, sequentially complete, Mackey complete). Typically: integrals with values in the
+  model space, ordinary differential equations and exponential maps, regularity of Lie groups,
+  inverse function theorems.
+* In particular, a manifold modeled on a normed space is **not** a Banach manifold unless the
+  normed space is complete, and a manifold modeled on an inner product space is **not** a Hilbert
+  manifold unless the space is complete. Statements about Banach or Hilbert manifolds in this
+  library always carry the completeness hypothesis (`CompleteSpace`).
+* Without completeness things do go wrong: Glöckner–Neeb, Example 5.6.8, give a Lie group
+  modeled on an incomplete normed algebra (rational functions on `[0, 1]` with the sup norm)
+  that has no exponential function.
 -/
 
 open Set
