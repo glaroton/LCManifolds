@@ -40,7 +40,14 @@ as in *Estructuras*, since the proof integrates the derivative of `φ ∘ γ` in
   points at small `d_b`-distance from `x₀` lie in `U`;
 * `eq_of_dist_eq_zero`: if `μ` is bounded below, `d_b(x, y) = 0` forces `x = y`;
 * `continuous_ofFinsler` (**Lema 9.1.8**): if moreover `μ` is reversible, every open set of `M`
-  is open for `d_b`.
+  is open for `d_b`;
+* `dist_le_norm_chart`, `continuous_toFinsler_of_isBoundedAbove` (*Estructuras*, (9.3)): if `μ` is
+  bounded above, `d_b(x, y) ≤ ‖φ y − φ x‖ / m` near each point, so the topology of `d_b` is
+  coarser than that of `M` (a weak Finsler manifold);
+* `homeomorphFinsler` (**Corolario 9.1.9**): for a strong Finsler manifold (bounded above and
+  below) the identity is a homeomorphism `M ≃ₜ (M, d_b)`;
+* `FinslerMetric.isBounded_of_finiteDimensional` (**Teorema 9.1.5**): in finite dimension every
+  Finsler metric whose seminorms are norms is strong.
 -/
 
 open Set Filter MeasureTheory
@@ -60,39 +67,42 @@ namespace FinslerSeminormField
 
 variable (μ : FinslerSeminormField E M)
 
-/-- `μ` is **bounded below** on the chart `i` with constant `C` (*acotada inferiormente*,
-Definición 9.1.3): `‖φ_{*x} v‖ ≤ C μ_x(v)` for every `x` in the domain of `φ`. -/
-def IsBoundedBelowOn (i : atlas E M) (C : ℝ) : Prop :=
-  ∀ x ∈ i.1.source, ∀ v : E, ‖tangentCoordChange (prefAtlas E x) i x v‖ ≤ C * μ ⟨x, v⟩
+/-- `μ` is **bounded below** on the set `U` (contained in the domain of the chart `i`) with
+constant `C` (*acotada inferiormente*, Definición 9.1.3): `‖φ_{*x} v‖ ≤ C μ_x(v)` for `x ∈ U`. -/
+def IsBoundedBelowOn (i : atlas E M) (U : Set M) (C : ℝ) : Prop :=
+  ∀ x ∈ U, ∀ v : E, ‖tangentCoordChange (prefAtlas E x) i x v‖ ≤ C * μ ⟨x, v⟩
 
-/-- `μ` is **bounded above** on the chart `i` with constant `m` (*acotada superiormente*,
-Definición 9.1.3): `m μ_x(v) ≤ ‖φ_{*x} v‖` for every `x` in the domain of `φ`. -/
-def IsBoundedAboveOn (i : atlas E M) (m : ℝ) : Prop :=
-  ∀ x ∈ i.1.source, ∀ v : E, m * μ ⟨x, v⟩ ≤ ‖tangentCoordChange (prefAtlas E x) i x v‖
+/-- `μ` is **bounded above** on the set `U` (contained in the domain of the chart `i`) with
+constant `m` (*acotada superiormente*, Definición 9.1.3): `m μ_x(v) ≤ ‖φ_{*x} v‖` for `x ∈ U`. -/
+def IsBoundedAboveOn (i : atlas E M) (U : Set M) (m : ℝ) : Prop :=
+  ∀ x ∈ U, ∀ v : E, m * μ ⟨x, v⟩ ≤ ‖tangentCoordChange (prefAtlas E x) i x v‖
 
-/-- `μ` is **bounded below**: every point has a chart where it is bounded below. -/
+/-- `μ` is **bounded below**: every point `p` has an open neighborhood `U`, contained in the
+domain of a chart `i`, where `μ` is bounded below. -/
 def IsBoundedBelow : Prop :=
-  ∀ p : M, ∃ i : atlas E M, p ∈ i.1.source ∧ ∃ C > 0, μ.IsBoundedBelowOn i C
+  ∀ p : M, ∃ (i : atlas E M) (U : Set M), IsOpen U ∧ p ∈ U ∧ U ⊆ i.1.source ∧
+    ∃ C > 0, μ.IsBoundedBelowOn i U C
 
 /-- `μ` is **bounded above** (a *weak Finsler manifold*, Observación 9.1.4). -/
 def IsBoundedAbove : Prop :=
-  ∀ p : M, ∃ i : atlas E M, p ∈ i.1.source ∧ ∃ m > 0, μ.IsBoundedAboveOn i m
+  ∀ p : M, ∃ (i : atlas E M) (U : Set M), IsOpen U ∧ p ∈ U ∧ U ⊆ i.1.source ∧
+    ∃ m > 0, μ.IsBoundedAboveOn i U m
 
-/-- `μ` is **bounded** (a *strong Finsler manifold*, Observación 9.1.4): every point has a chart
-where it is bounded above and below. -/
+/-- `μ` is **bounded** (a *strong Finsler manifold*, Observación 9.1.4): every point has an open
+neighborhood in the domain of a chart where `μ` is bounded above and below. -/
 def IsBounded : Prop :=
-  ∀ p : M, ∃ i : atlas E M, p ∈ i.1.source ∧
-    (∃ C > 0, μ.IsBoundedBelowOn i C) ∧ ∃ m > 0, μ.IsBoundedAboveOn i m
+  ∀ p : M, ∃ (i : atlas E M) (U : Set M), IsOpen U ∧ p ∈ U ∧ U ⊆ i.1.source ∧
+    (∃ C > 0, μ.IsBoundedBelowOn i U C) ∧ ∃ m > 0, μ.IsBoundedAboveOn i U m
 
 theorem IsBounded.isBoundedBelow {μ : FinslerSeminormField E M} (h : μ.IsBounded) :
     μ.IsBoundedBelow := fun p ↦ by
-  obtain ⟨i, hp, hC, -⟩ := h p
-  exact ⟨i, hp, hC⟩
+  obtain ⟨i, U, hUo, hp, hUs, hC, -⟩ := h p
+  exact ⟨i, U, hUo, hp, hUs, hC⟩
 
 theorem IsBounded.isBoundedAbove {μ : FinslerSeminormField E M} (h : μ.IsBounded) :
     μ.IsBoundedAbove := fun p ↦ by
-  obtain ⟨i, hp, -, hm⟩ := h p
-  exact ⟨i, hp, hm⟩
+  obtain ⟨i, U, hUo, hp, hUs, -, hm⟩ := h p
+  exact ⟨i, U, hUo, hp, hUs, hm⟩
 
 end FinslerSeminormField
 
@@ -103,9 +113,10 @@ variable (μ : FinslerLengthStructure E M)
 /-- **The integrated bound** (*Estructuras*, (9.2)): if `μ` is bounded below on the chart `i`
 with constant `C`, a `C¹` curve which stays in the domain of `i` on `[s, t]` satisfies
 `‖φ(γ t) − φ(γ s)‖ ≤ C L_b(γ|[s, t])`. -/
-theorem norm_chart_sub_le [CompleteSpace E] {i : atlas E M} {C : ℝ}
-    (hC : μ.toFinslerSeminormField.IsBoundedBelowOn i C) {γ : ℝ → M} (hγ : IsCkCurve E 1 γ)
-    {s t : ℝ} (hst : s ≤ t) (hin : ∀ τ ∈ Icc s t, γ τ ∈ i.1.source) :
+theorem norm_chart_sub_le [CompleteSpace E] {i : atlas E M} {U : Set M} {C : ℝ}
+    (hC : μ.toFinslerSeminormField.IsBoundedBelowOn i U C) (hU : U ⊆ i.1.source)
+    {γ : ℝ → M} (hγ : IsCkCurve E 1 γ)
+    {s t : ℝ} (hst : s ≤ t) (hin : ∀ τ ∈ Icc s t, γ τ ∈ U) :
     ‖i.1 (γ t) - i.1 (γ s)‖ ≤ C * μ.length γ s t := by
   set c : ℝ → E := i.1 ∘ γ
   have hO : IsOpen (γ ⁻¹' i.1.source) := i.1.open_source.preimage hγ.1
@@ -121,7 +132,7 @@ theorem norm_chart_sub_le [CompleteSpace E] {i : atlas E M} {C : ℝ}
     have h0 : ContinuousOn (liftCoord i (velocity E γ)) (γ ⁻¹' i.1.source) :=
       ((isCkLift_velocity (k := 0) hγ).2 i).continuousOn
     exact h0.congr hlift
-  have hIcc : Icc s t ⊆ γ ⁻¹' i.1.source := fun τ hτ ↦ hin τ hτ
+  have hIcc : Icc s t ⊆ γ ⁻¹' i.1.source := fun τ hτ ↦ hU (hin τ hτ)
   have hint : IntervalIntegrable (fun τ ↦ dMB c (τ, 1)) volume s t :=
     (hcont.mono (by rwa [uIcc_of_le hst])).intervalIntegrable
   have hftc : ∫ τ in s..t, dMB c (τ, 1) = c t - c s :=
@@ -143,27 +154,29 @@ theorem norm_chart_sub_le [CompleteSpace E] {i : atlas E M} {C : ℝ}
 
 section Exit
 
-variable [CompleteSpace E] [T2Space M] {i : atlas E M} {C : ℝ}
-  (hC : μ.toFinslerSeminormField.IsBoundedBelowOn i C) (hCpos : 0 < C) {x₀ : M} {r : ℝ}
-  (hball : Metric.closedBall (i.1 x₀) r ⊆ i.1.target)
-include hC hCpos hball
+variable [CompleteSpace E] [T2Space M] {i : atlas E M} {U : Set M} {C : ℝ}
+  (hUo : IsOpen U) (hU : U ⊆ i.1.source) (hC : μ.toFinslerSeminormField.IsBoundedBelowOn i U C)
+  (hCpos : 0 < C) {x₀ : M} {r : ℝ}
+  (hball : ∀ z ∈ Metric.closedBall (i.1 x₀) r, z ∈ i.1.target ∧ i.1.symm z ∈ U)
+include hUo hU hC hCpos hball
 
-/-- **A `C¹` arc cannot leave the ball cheaply.** If `γ a` lies in the chart, at distance
-`ρ < r` from `φ x₀`, then either `r ≤ ρ + C L_b(γ|[a, b])`, or `γ b` is in the chart with
+/-- **A `C¹` arc cannot leave the ball cheaply.** Let `μ` be bounded below on `U` and let the
+closed ball `B̄(φ x₀, r)` be the image of a part of `U`. If `γ a ∈ U` is at distance `ρ < r` from
+`φ x₀`, then either `r ≤ ρ + C L_b(γ|[a, b])`, or `γ b ∈ U` with
 `‖φ(γ b) − φ x₀‖ ≤ ρ + C L_b(γ|[a, b])`. -/
 theorem arc_exit {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b)
-    (ha : γ a ∈ i.1.source) (hρ : ‖i.1 (γ a) - i.1 x₀‖ < r) :
+    (ha : γ a ∈ U) (hρ : ‖i.1 (γ a) - i.1 x₀‖ < r) :
     r ≤ ‖i.1 (γ a) - i.1 x₀‖ + C * μ.length γ a b ∨
-      (γ b ∈ i.1.source ∧
+      (γ b ∈ U ∧
         ‖i.1 (γ b) - i.1 x₀‖ ≤ ‖i.1 (γ a) - i.1 x₀‖ + C * μ.length γ a b) := by
   set ρ := ‖i.1 (γ a) - i.1 x₀‖
-  set W := i.1.source ∩ i.1 ⁻¹' Metric.ball (i.1 x₀) r
-  have hW : IsOpen W := i.1.isOpen_inter_preimage Metric.isOpen_ball
+  set W := U ∩ (i.1.source ∩ i.1 ⁻¹' Metric.ball (i.1 x₀) r)
+  have hW : IsOpen W := hUo.inter (i.1.isOpen_inter_preimage Metric.isOpen_ball)
   have hlen_nonneg : ∀ {s t : ℝ}, s ≤ t → 0 ≤ μ.length γ s t := fun h ↦ μ.length_nonneg γ h
-  have hnorm : ∀ τ, a ≤ τ → (∀ σ ∈ Icc a τ, γ σ ∈ i.1.source) →
+  have hnorm : ∀ τ, a ≤ τ → (∀ σ ∈ Icc a τ, γ σ ∈ U) →
       ‖i.1 (γ τ) - i.1 x₀‖ ≤ ρ + C * μ.length γ a τ := by
     intro τ haτ hin
-    have h1 := μ.norm_chart_sub_le hC hγ haτ hin
+    have h1 := μ.norm_chart_sub_le hC hU hγ haτ hin
     calc ‖i.1 (γ τ) - i.1 x₀‖ ≤ ‖i.1 (γ τ) - i.1 (γ a)‖ + ρ := by
           simpa [ρ] using norm_sub_le_norm_sub_add_norm_sub (i.1 (γ τ)) (i.1 (γ a)) (i.1 x₀)
       _ ≤ ρ + C * μ.length γ a τ := by linarith
@@ -178,7 +191,7 @@ theorem arc_exit {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a 
   have hSbdd : BddBelow S := ⟨a, fun τ h ↦ h.1.1⟩
   set t₀ := sInf S
   have ht₀S : t₀ ∈ S := hSc.csInf_mem hSne hSbdd
-  have haW : γ a ∈ W := ⟨ha, by simpa [Metric.mem_ball, dist_eq_norm] using hρ⟩
+  have haW : γ a ∈ W := ⟨ha, hU ha, by simpa [Metric.mem_ball, dist_eq_norm] using hρ⟩
   have hat₀ : a < t₀ := by
     refine lt_of_le_of_ne ht₀S.1.1 fun h ↦ ?_
     have := ht₀S.2
@@ -236,9 +249,9 @@ theorem arc_exit {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a 
     obtain ⟨N, hN⟩ := hLc (ε / C) (div_pos hε hCpos)
     refine ⟨N, fun n hn ↦ ?_⟩
     have hle : τ N ≤ τ n := hτmono hn
-    have hin : ∀ σ ∈ Icc (τ N) (τ n), γ σ ∈ i.1.source := fun σ hσ ↦
+    have hin : ∀ σ ∈ Icc (τ N) (τ n), γ σ ∈ U := fun σ hσ ↦
       (hbefore σ ((hτa N).trans hσ.1) (hσ.2.trans_lt (hτt₀ n))).1
-    have h1 := μ.norm_chart_sub_le hC hγ hle hin
+    have h1 := μ.norm_chart_sub_le hC hU hγ hle hin
     have h2 := μ.length_add hγ a (τ N) (τ n)
     have h3 := hN n hn
     rw [Real.dist_eq] at h3
@@ -254,29 +267,30 @@ theorem arc_exit {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a 
     Metric.isClosed_closedBall.mem_of_tendsto hz (Eventually.of_forall fun n ↦ by
       rw [Metric.mem_closedBall, dist_eq_norm]
       exact hin_ball (τ n) (hτa n) (hτt₀ n))
-  have hzT : z ∈ i.1.target := hball (Metric.closedBall_subset_closedBall hlen.le hzR)
+  have hzB := hball z (Metric.closedBall_subset_closedBall hlen.le hzR)
+  have hzT : z ∈ i.1.target := hzB.1
   have hγz : Tendsto (fun n ↦ γ (τ n)) atTop (𝓝 (i.1.symm z)) := by
     have := ((i.1.continuousAt_symm hzT).tendsto).comp hz
     refine this.congr fun n ↦ ?_
-    simp [u, i.1.left_inv (hbefore (τ n) (hτa n) (hτt₀ n)).1]
+    simp [u, i.1.left_inv (hU (hbefore (τ n) (hτa n) (hτt₀ n)).1)]
   have hγt₀ : Tendsto (fun n ↦ γ (τ n)) atTop (𝓝 (γ t₀)) := (hγ.1.tendsto t₀).comp hτlim
   have heq : γ t₀ = i.1.symm z := tendsto_nhds_unique hγt₀ hγz
   apply ht₀S.2
-  refine ⟨by rw [heq]; exact i.1.map_target hzT, ?_⟩
+  refine ⟨by rw [heq]; exact hzB.2, by rw [heq]; exact i.1.map_target hzT, ?_⟩
   rw [mem_preimage, heq, i.1.right_inv hzT, Metric.mem_ball]
   exact lt_of_le_of_lt (Metric.mem_closedBall.mp hzR) hlen
 
 /-- **A chain of `C¹` arcs cannot leave the ball cheaply.** -/
-theorem reach_exit {x y : M} {L : ℝ} (h : μ.Reach x y L) (hx : x ∈ i.1.source)
+theorem reach_exit {x y : M} {L : ℝ} (h : μ.Reach x y L) (hx : x ∈ U)
     (hρ : ‖i.1 x - i.1 x₀‖ < r) :
     r ≤ ‖i.1 x - i.1 x₀‖ + C * L ∨
-      (y ∈ i.1.source ∧ ‖i.1 y - i.1 x₀‖ ≤ ‖i.1 x - i.1 x₀‖ + C * L) := by
+      (y ∈ U ∧ ‖i.1 y - i.1 x₀‖ ≤ ‖i.1 x - i.1 x₀‖ + C * L) := by
   induction h with
   | refl x => exact Or.inr ⟨hx, by simp⟩
   | @cons γ a b y L hγ hab hrest ih =>
     have hL := hrest.nonneg
     have hlab := μ.length_nonneg γ hab
-    rcases μ.arc_exit hC hCpos hball hγ hab hx hρ with h1 | ⟨hb, h1⟩
+    rcases μ.arc_exit hUo hU hC hCpos hball hγ hab hx hρ with h1 | ⟨hb, h1⟩
     · left; nlinarith
     · by_cases hb' : ‖i.1 (γ b) - i.1 x₀‖ < r
       · rcases ih hb hb' with h2 | ⟨hy, h2⟩
@@ -297,12 +311,17 @@ theorem exists_chart_norm_le_dist (hb : μ.toFinslerSeminormField.IsBoundedBelow
     ∃ i : atlas E M, x₀ ∈ i.1.source ∧ ∃ C > 0, ∃ r > 0, ∀ y : M,
       μ.dist x₀ y < ENNReal.ofReal (r / C) →
         y ∈ i.1.source ∧ ‖i.1 y - i.1 x₀‖ ≤ C * (μ.dist x₀ y).toReal := by
-  obtain ⟨i, hx₀, C, hCpos, hC⟩ := hb x₀
-  obtain ⟨r', hr', hr'T⟩ := Metric.isOpen_iff.mp i.1.open_target (i.1 x₀) (i.1.map_source hx₀)
+  obtain ⟨i, U, hUo, hx₀U, hUs, C, hCpos, hC⟩ := hb x₀
+  have hx₀ : x₀ ∈ i.1.source := hUs hx₀U
+  have hN : i.1.target ∩ i.1.symm ⁻¹' U ∈ 𝓝 (i.1 x₀) := by
+    refine Filter.inter_mem (i.1.open_target.mem_nhds (i.1.map_source hx₀)) ?_
+    exact (i.1.continuousAt_symm (i.1.map_source hx₀)).preimage_mem_nhds
+      (by rw [i.1.left_inv hx₀]; exact hUo.mem_nhds hx₀U)
+  obtain ⟨r', hr', hr'N⟩ := Metric.mem_nhds_iff.mp hN
   set r := r' / 2
   have hr : 0 < r := half_pos hr'
-  have hball : Metric.closedBall (i.1 x₀) r ⊆ i.1.target :=
-    (Metric.closedBall_subset_ball (half_lt_self hr')).trans hr'T
+  have hball : ∀ z ∈ Metric.closedBall (i.1 x₀) r, z ∈ i.1.target ∧ i.1.symm z ∈ U :=
+    fun z hz ↦ hr'N (Metric.closedBall_subset_ball (half_lt_self hr') hz)
   refine ⟨i, hx₀, C, hCpos, r, hr, fun y hy ↦ ?_⟩
   set D := μ.dist x₀ y
   have hDtop : D ≠ ⊤ := ne_top_of_lt hy
@@ -311,9 +330,9 @@ theorem exists_chart_norm_le_dist (hb : μ.toFinslerSeminormField.IsBoundedBelow
       y ∈ i.1.source ∧ ‖i.1 y - i.1 x₀‖ ≤ C * L := by
     intro L hL hLr
     have hCL : C * L < r := by rwa [lt_div_iff₀' hCpos] at hLr
-    rcases μ.reach_exit hC hCpos hball hL hx₀ (by simpa using hr) with h | h
+    rcases μ.reach_exit hUo hUs hC hCpos hball hL hx₀U (by simpa using hr) with h | h
     · simp at h; linarith
-    · simpa using h
+    · exact ⟨hUs h.1, by simpa using h.2⟩
   -- chains of length close to `D`
   have hex : ∀ ε > 0, ∃ L, μ.Reach x₀ y L ∧ L < r / C ∧ L < D.toReal + ε := by
     intro ε hε
@@ -394,16 +413,18 @@ omit [CompleteSpace E] [T2Space M] in
 above on the chart `i` with constant `m > 0`, and the segment from `φ x` to `φ y` lies in
 `φ(U)`, then `d_b(x, y) ≤ ‖φ y − φ x‖ / m`. The segment is reparametrized by
 `Real.smoothTransition`, so that it is a `C¹` curve defined on all of `ℝ`. -/
-theorem dist_le_norm_chart (hm : μ.toFinslerSeminormField.IsBoundedAboveOn i m) (hmpos : 0 < m)
+theorem dist_le_norm_chart {U : Set M} (hm : μ.toFinslerSeminormField.IsBoundedAboveOn i U m)
+    (hmpos : 0 < m)
     {x y : M} (hx : x ∈ i.1.source) (hy : y ∈ i.1.source)
-    (hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 x + s • (i.1 y - i.1 x) ∈ i.1.target) :
+    (hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 x + s • (i.1 y - i.1 x) ∈ i.1.target ∧
+      i.1.symm (i.1 x + s • (i.1 y - i.1 x)) ∈ U) :
     μ.dist x y ≤ ENNReal.ofReal (‖i.1 y - i.1 x‖ / m) := by
   set w := i.1 y - i.1 x
   set σ := Real.smoothTransition
   set c : ℝ → E := fun t ↦ i.1 x + σ t • w
   have hσ01 : ∀ t, σ t ∈ Icc (0 : ℝ) 1 := fun t ↦
     ⟨Real.smoothTransition.nonneg t, Real.smoothTransition.le_one t⟩
-  have hcT : ∀ t, c t ∈ i.1.target := fun t ↦ hseg _ (hσ01 t)
+  have hcT : ∀ t, c t ∈ i.1.target := fun t ↦ (hseg _ (hσ01 t)).1
   have hσd : ContDiff ℝ 1 σ := Real.smoothTransition.contDiff (n := 1)
   have hcd : ContDiff ℝ 1 c :=
     contDiff_const.add (ContDiff.smul (f := σ) (g := fun _ ↦ w) hσd contDiff_const)
@@ -444,7 +465,7 @@ theorem dist_le_norm_chart (hm : μ.toFinslerSeminormField.IsBoundedAboveOn i m)
       μ.toFun (velocity E γ t) ≤ deriv σ t * ‖w‖ / m := by
     intro t _
     have hγt : γ t ∈ i.1.source := i.1.map_target (hcT t)
-    have h1 := hm (γ t) hγt (velocity E γ t).2
+    have h1 := hm (γ t) (hseg _ (hσ01 t)).2 (velocity E γ t).2
     have h2 : tangentCoordChange (prefAtlas E (γ t)) i (γ t) (velocity E γ t).2 =
         dMB (i.1 ∘ γ) (t, 1) := liftCoord_velocity hγ i hγt
     rw [h2, hdMB, norm_smul, Real.norm_of_nonneg (hσ'nonneg t)] at h1
@@ -471,8 +492,13 @@ theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.I
     [hrev : Fact μ.IsReversible] : Continuous μ.toFinsler := by
   rw [continuous_iff_continuousAt]
   intro x₀
-  obtain ⟨i, hx₀, m, hmpos, hm⟩ := ha x₀
-  obtain ⟨r, hr, hrT⟩ := Metric.isOpen_iff.mp i.1.open_target (i.1 x₀) (i.1.map_source hx₀)
+  obtain ⟨i, U, hUo, hx₀U, hUs, m, hmpos, hm⟩ := ha x₀
+  have hx₀ : x₀ ∈ i.1.source := hUs hx₀U
+  have hN : i.1.target ∩ i.1.symm ⁻¹' U ∈ 𝓝 (i.1 x₀) := by
+    refine Filter.inter_mem (i.1.open_target.mem_nhds (i.1.map_source hx₀)) ?_
+    exact (i.1.continuousAt_symm (i.1.map_source hx₀)).preimage_mem_nhds
+      (by rw [i.1.left_inv hx₀]; exact hUo.mem_nhds hx₀U)
+  obtain ⟨r, hr, hrT⟩ := Metric.mem_nhds_iff.mp hN
   rw [ContinuousAt, EMetric.tendsto_nhds]
   intro ε hε
   obtain ⟨ρ, hρ0, hρpos, hρε⟩ := ENNReal.lt_iff_exists_real_btwn.mp hε
@@ -484,7 +510,8 @@ theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.I
     filter_upwards [h1, h2] with y hy hy2
     exact ⟨hy, by simpa [dist_eq_norm] using hy2⟩
   filter_upwards [hev] with y ⟨hy, hyn⟩
-  have hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 y + s • (i.1 x₀ - i.1 y) ∈ i.1.target := by
+  have hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 y + s • (i.1 x₀ - i.1 y) ∈ i.1.target ∧
+      i.1.symm (i.1 y + s • (i.1 x₀ - i.1 y)) ∈ U := by
     intro s hs
     apply hrT
     rw [Metric.mem_ball, dist_eq_norm]
@@ -514,5 +541,137 @@ def homeomorphFinsler (hb : μ.toFinslerSeminormField.IsBounded) [Fact μ.IsReve
   continuous_invFun := μ.continuous_ofFinsler hb.isBoundedBelow
 
 end FinslerLengthStructure
+
+/-! ### Finite dimension: every Finsler metric is strong (Teorema 9.1.5) -/
+
+omit [MBManifold E M] in
+/-- The coordinate change of tangent vectors is homogeneous. -/
+theorem tangentCoordChange_smul [MBManifold E M] (i j : atlas E M) {x : M}
+    (hi : x ∈ i.1.source) (hj : x ∈ j.1.source) (c : ℝ) (v : E) :
+    tangentCoordChange i j x (c • v) = c • tangentCoordChange i j x v := by
+  have hmem : i.1 x ∈ i.1.target ∩ i.1.symm ⁻¹' j.1.source :=
+    ⟨i.1.map_source hi, by simp [i.1.left_inv hi, hj]⟩
+  exact (smoothMBOn_transition' i j 1).dMB_smul hmem c v
+
+namespace FinslerMetric
+
+/-- **Teorema 9.1.5: in finite dimension every Finsler metric is strong.** If the model is
+finite-dimensional, a Finsler metric (continuous on `TM`) whose seminorms are norms is bounded
+above and below near every point: in a chart, `μ` attains a positive minimum and a maximum on the
+compact set `B̄ × S` (closed ball in the chart times unit sphere), and homogeneity does the
+rest. -/
+theorem isBounded_of_finiteDimensional [FiniteDimensional ℝ E] (μ : FinslerMetric E M)
+    (hnd : μ.toFinslerSeminormField.IsNondegenerate) : μ.toFinslerSeminormField.IsBounded := by
+  intro p
+  set i : atlas E M := prefAtlas E p
+  have hp : p ∈ i.1.source := mem_chart_source E p
+  set Ψ := tangentChart i i.1
+  set F : E × E → ℝ := fun q ↦ μ.toFun ⟨i.1.symm q.1,
+    (tangentCoordChange i (prefAtlas E (i.1.symm q.1)) (i.1.symm q.1) q.2 : E)⟩
+  have hΨT : i.1.target ×ˢ (univ : Set E) ⊆ Ψ.target := fun q hq ↦
+    (mem_tangentChart_target i i.1 q).mpr ⟨hq.1, i.1.map_target hq.1⟩
+  have hFΨ : F = fun q ↦ μ.toFun (Ψ.symm q) := rfl
+  have hF : ContinuousOn F (i.1.target ×ˢ univ) := by
+    rw [hFΨ]
+    exact μ.continuous'.comp_continuousOn (Ψ.continuousOn_symm.mono hΨT)
+  -- the value of `F` at a chart point
+  have hFx : ∀ x ∈ i.1.source, ∀ w : E,
+      F (i.1 x, tangentCoordChange (prefAtlas E x) i x w) = μ.toFun ⟨x, w⟩ := by
+    intro x hx w
+    have hsrc : (⟨x, w⟩ : TangentBundle E M) ∈ Ψ.source :=
+      (mem_tangentChart_source i i.1 _).mpr ⟨hx, hx⟩
+    have : Ψ ⟨x, w⟩ = (i.1 x, tangentCoordChange (prefAtlas E x) i x w) := rfl
+    rw [hFΨ]
+    simp only [← this, Ψ.left_inv hsrc]
+  -- homogeneity of `F` in the vector
+  have hFsmul : ∀ y ∈ i.1.target, ∀ c : ℝ, 0 ≤ c → ∀ u : E, F (y, c • u) = c * F (y, u) := by
+    intro y hy c hc u
+    simp only [F]
+    rw [tangentCoordChange_smul i _ (i.1.map_target hy) (mem_chart_source E _) c u]
+    exact μ.smul_eq' _ c hc _
+  have hF0 : ∀ y ∈ i.1.target, F (y, 0) = 0 := fun y hy ↦ by
+    have := hFsmul y hy 0 le_rfl 0
+    rwa [zero_smul, zero_mul] at this
+  have hFpos : ∀ y ∈ i.1.target, ∀ u : E, u ≠ 0 → 0 < F (y, u) := by
+    intro y hy u hu
+    refine lt_of_le_of_ne (μ.nonneg' _) fun h ↦ hu ?_
+    have hz := hnd (i.1.symm y) _ h.symm
+    have hx : i.1.symm y ∈ i.1.source := i.1.map_target hy
+    have hback := (tangentCoordChange_comp i (prefAtlas E (i.1.symm y)) i
+      ⟨⟨hx, mem_chart_source E _⟩, hx⟩ u).trans (tangentCoordChange_self i hx u)
+    have hz' : tangentCoordChange i (prefAtlas E (i.1.symm y)) (i.1.symm y) u = 0 := hz
+    rw [hz'] at hback
+    rw [← hback]
+    have := tangentCoordChange_smul (prefAtlas E (i.1.symm y)) i (mem_chart_source E _) hx 0 0
+    simpa using this
+  -- a compact neighbourhood in the chart
+  obtain ⟨r', hr', hr'T⟩ := Metric.isOpen_iff.mp i.1.open_target (i.1 p) (i.1.map_source hp)
+  set r := r' / 2
+  have hr : 0 < r := half_pos hr'
+  have hballT : Metric.closedBall (i.1 p) r ⊆ i.1.target :=
+    (Metric.closedBall_subset_ball (half_lt_self hr')).trans hr'T
+  set U := i.1.source ∩ i.1 ⁻¹' Metric.ball (i.1 p) r
+  have hUo : IsOpen U := i.1.isOpen_inter_preimage Metric.isOpen_ball
+  have hpU : p ∈ U := ⟨hp, Metric.mem_ball_self hr⟩
+  have hUs : U ⊆ i.1.source := inter_subset_left
+  set K := Metric.closedBall (i.1 p) r ×ˢ Metric.sphere (0 : E) 1
+  have hKc : IsCompact K := (isCompact_closedBall _ _).prod (isCompact_sphere _ _)
+  have hKT : K ⊆ i.1.target ×ˢ univ := fun q hq ↦ ⟨hballT hq.1, mem_univ _⟩
+  rcases K.eq_empty_or_nonempty with hKe | hKne
+  · -- `E` is trivial: every vector vanishes
+    have hall : ∀ v : E, v = 0 := by
+      intro v
+      by_contra hv
+      have hmem : (i.1 p, ‖v‖⁻¹ • v) ∈ K :=
+        ⟨Metric.mem_closedBall_self hr.le,
+          by simp [norm_smul, inv_mul_cancel₀ (norm_ne_zero_iff.mpr hv)]⟩
+      rw [hKe] at hmem
+      exact hmem
+    refine ⟨i, U, hUo, hpU, hUs, ⟨1, one_pos, fun x _ v ↦ ?_⟩, ⟨1, one_pos, fun x _ v ↦ ?_⟩⟩
+    · rw [hall (tangentCoordChange _ _ _ _), norm_zero]
+      exact mul_nonneg zero_le_one (μ.nonneg' _)
+    · rw [hall v]
+      simp
+  obtain ⟨q₀, hq₀K, hmin⟩ := hKc.exists_isMinOn hKne (hF.mono hKT)
+  obtain ⟨q₁, hq₁K, hmax⟩ := hKc.exists_isMaxOn hKne (hF.mono hKT)
+  set m₀ := F q₀
+  set M₀ := F q₁
+  have hq₀ne : q₀.2 ≠ 0 := by
+    have := hq₀K.2
+    rw [mem_sphere_zero_iff_norm] at this
+    exact fun h ↦ by simp [h] at this
+  have hm₀ : 0 < m₀ := hFpos q₀.1 (hballT hq₀K.1) q₀.2 hq₀ne
+  have hm₀M₀ : m₀ ≤ M₀ := hmin hq₁K
+  have hM₀ : 0 < M₀ := hm₀.trans_le hm₀M₀
+  -- the two-sided estimate in chart coordinates
+  have hest : ∀ x ∈ U, ∀ w : E,
+      m₀ * ‖tangentCoordChange (prefAtlas E x) i x w‖ ≤ μ.toFun ⟨x, w⟩ ∧
+        μ.toFun ⟨x, w⟩ ≤ M₀ * ‖tangentCoordChange (prefAtlas E x) i x w‖ := by
+    intro x hx w
+    have hxT : i.1 x ∈ i.1.target := i.1.map_source hx.1
+    rw [← hFx x hx.1 w]
+    set v := tangentCoordChange (prefAtlas E x) i x w
+    by_cases hv : v = 0
+    · rw [hv, hF0 _ hxT, norm_zero, mul_zero, mul_zero]; exact ⟨le_rfl, le_rfl⟩
+    have hvpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
+    have hu : (i.1 x, ‖v‖⁻¹ • v) ∈ K :=
+      ⟨Metric.ball_subset_closedBall hx.2, by
+        simp [norm_smul, inv_mul_cancel₀ hvpos.ne']⟩
+    have hsplit : F (i.1 x, v) = ‖v‖ * F (i.1 x, ‖v‖⁻¹ • v) := by
+      rw [← hFsmul _ hxT _ hvpos.le, smul_smul, mul_inv_cancel₀ hvpos.ne', one_smul]
+    rw [hsplit]
+    have h1 : m₀ ≤ F (i.1 x, ‖v‖⁻¹ • v) := hmin hu
+    have h2 : F (i.1 x, ‖v‖⁻¹ • v) ≤ M₀ := hmax hu
+    constructor <;> nlinarith
+  refine ⟨i, U, hUo, hpU, hUs, ⟨m₀⁻¹, inv_pos.mpr hm₀, fun x hx w ↦ ?_⟩,
+    ⟨M₀⁻¹, inv_pos.mpr hM₀, fun x hx w ↦ ?_⟩⟩
+  · have := (hest x hx w).1
+    rw [inv_mul_eq_div, le_div_iff₀ hm₀]
+    linarith
+  · have := (hest x hx w).2
+    rw [inv_mul_eq_div, div_le_iff₀ hM₀]
+    linarith
+
+end FinslerMetric
 
 end LCManifolds
