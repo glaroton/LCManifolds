@@ -5,6 +5,7 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Projector
 import LCAnalysis.MBFrechet
+import Mathlib.Analysis.SpecialFunctions.Exponential
 
 /-!
 # Example: the unitary group of a Banach `*`-algebra
@@ -31,6 +32,11 @@ Main results:
 
 * `isSplitSubmanifold_unitary`: `U(A)` is a split submanifold of `A` modeled on `𝔲(A)`;
 * `tangentSpace_unitary`: `T_p U(A) = {w | p* w ∈ 𝔲(A)} = p · 𝔲(A)`;
+* `projectorField_unitary`: the projectors `E_p w = (w - p w* p) / 2` onto `T_p U(A)` form a
+  field of projectors;
+* `isGeodesic_unitary_iff`: for the connection they define, a curve is a geodesic iff
+  `α̈ = α α̈* α`;
+* `isGeodesic_expCurve`: the one-parameter subgroups `t ↦ p exp(t X)`, `X* = -X`, are geodesics;
 * `isSplitSubmanifold_unitary_clm`: the case `A = B(H)`, `H` a complex Hilbert space.
 -/
 
@@ -350,6 +356,166 @@ theorem tangentSpace_unitary (p : unitary A) :
   rw [isSplitSubmanifold_unitary.mem_tangentSpace_iff p (isSliceChart p) (mem_chartAt'_source p),
     dMB_chartAt'_at]
   exact Submodule.smul_mem_iff _ (by norm_num)
+
+/-! ### The field of projectors and its geodesics -/
+
+/-- The projector onto `T_p U(A) = p · 𝔲(A)`: `E_p w = (w - p w* p) / 2`, that is,
+`E_p w = p · (X - X*) / 2` with `X = p* w`. -/
+def unitaryProj (p w : A) : A := (2⁻¹ : ℝ) • (w - p * star w * p)
+
+omit [CompleteSpace A] [ContinuousStar A] in
+theorem mul_star_unitaryProj_mul {p : A} (hp : p ∈ unitary A) (w : A) :
+    p * star (unitaryProj p w) * p = (2⁻¹ : ℝ) • (p * star w * p - w) := by
+  have h1 := Unitary.star_mul_self_of_mem hp
+  have h2 := Unitary.mul_star_self_of_mem hp
+  simp only [unitaryProj, star_smul, star_trivial, star_sub, star_mul, star_star, mul_smul_comm,
+    smul_mul_assoc, mul_sub, sub_mul]
+  congr 2
+  simp only [← mul_assoc, h2, one_mul]
+  rw [mul_assoc, h1, mul_one]
+
+omit [CompleteSpace A] [ContinuousStar A] in
+theorem unitaryProj_idem {p : A} (hp : p ∈ unitary A) (w : A) :
+    unitaryProj p (unitaryProj p w) = unitaryProj p w := by
+  conv_lhs => rw [unitaryProj, mul_star_unitaryProj_mul hp]
+  simp only [unitaryProj]
+  module
+
+omit [CompleteSpace A] [ContinuousStar A] in
+omit [StarModule ℝ A] in
+theorem star_mul_unitaryProj {p : A} (hp : p ∈ unitary A) (w : A) :
+    star p * unitaryProj p w = (2⁻¹ : ℝ) • (star p * w - star w * p) := by
+  have h1 := Unitary.star_mul_self_of_mem hp
+  simp only [unitaryProj, mul_smul_comm, mul_sub]
+  simp only [← mul_assoc, h1, one_mul]
+
+/-- **The projectors `E_p w = (w - p w* p) / 2` form a field of projectors** onto the tangent
+spaces of `U(A)`. -/
+def projectorField_unitary : ProjectorField (isSplitSubmanifold_unitary (A := A)).1 where
+  E p w := unitaryProj p w
+  map_add p w w' := by
+    simp only [unitaryProj, star_add, mul_add, add_mul, smul_sub, smul_add]; abel
+  map_smul p c w := by
+    simp only [unitaryProj, star_smul, star_trivial, mul_smul_comm, smul_mul_assoc, smul_sub,
+      smul_comm c]
+  idem p w := unitaryProj_idem p.2 w
+  range_eq p := by
+    have h2 := Unitary.mul_star_self_of_mem p.2
+    rw [show (isSplitSubmanifold_unitary (A := A)).1 =
+      isSplitSubmanifold_unitary.toIsEmbeddedSubmanifold from rfl, tangentSpace_unitary p]
+    ext w
+    constructor
+    · rintro ⟨v, rfl⟩
+      change star (star (p : A) * unitaryProj (p : A) v) =
+        -(star (p : A) * unitaryProj (p : A) v)
+      rw [star_mul_unitaryProj p.2, star_smul, star_trivial, star_sub, star_mul, star_mul,
+        star_star, star_star, ← smul_neg, neg_sub]
+    · intro hw
+      have hw' : star (star (p : A) * w) = -(star (p : A) * w) := hw
+      rw [star_mul, star_star] at hw'
+      refine ⟨w, ?_⟩
+      change (2⁻¹ : ℝ) • (w - (p : A) * star w * p) = w
+      rw [mul_assoc, hw', mul_neg, ← mul_assoc, h2, one_mul, sub_neg_eq_add, ← two_smul ℝ w,
+        smul_smul]
+      norm_num
+  smooth {φ} hφ p₀ := by
+    set D : Set (skewAdjoint.submodule ℝ A) := Subtype.val ⁻¹' φ.target
+    have hD : IsOpen D := ProjectorField.isOpen_dom φ
+    have hDD : IsOpen (D ×ˢ (univ : Set A)) := hD.prod isOpen_univ
+    have hψ : ContDiffOn ℝ ∞ (ProjectorField.param φ) D :=
+      (smoothMBOn_iff_contDiffOn hD).mp (ProjectorField.smoothMBOn_param hφ)
+    have hψ1 : ContDiffOn ℝ ∞ (fun q : skewAdjoint.submodule ℝ A × A ↦
+        ProjectorField.param φ q.1) (D ×ˢ univ) := hψ.comp contDiffOn_fst fun q hq ↦ hq.1
+    have hstar : ContDiffOn ℝ ∞ (fun q : skewAdjoint.submodule ℝ A × A ↦ star q.2)
+        (D ×ˢ univ) :=
+      ((starL' ℝ : A ≃L[ℝ] A).contDiff.comp contDiff_snd).contDiffOn
+    have hG : ContDiffOn ℝ ∞ (fun q : skewAdjoint.submodule ℝ A × A ↦
+        unitaryProj (ProjectorField.param φ q.1) q.2) (D ×ˢ univ) :=
+      (contDiffOn_snd.sub ((hψ1.mul hstar).mul hψ1)).const_smul _
+    refine (smoothMBOn_iff_contDiffOn hDD).mpr (hG.congr fun q hq ↦ ?_)
+    have hx : (((sliceChart hφ p₀).symm q.1 : unitary A) : A) = φ.symm q.1 :=
+      sliceChart_symm_apply_coe hφ p₀ hq.1
+    change unitaryProj (((sliceChart hφ p₀).symm q.1 : unitary A) : A) q.2 = _
+    rw [hx]
+    rfl
+
+/-- **Geodesics of `U(A)`**: a curve with smooth ambient curve is a geodesic of the connection
+of the projector field iff `α̈ = α α̈* α`. -/
+theorem isGeodesic_unitary_iff {α : ℝ → unitary A} (hα : SmoothMBOn (Subtype.val ∘ α) univ) :
+    letI := (isSplitSubmanifold_unitary (A := A)).1.chartedSpace
+    haveI := (isSplitSubmanifold_unitary (A := A)).1.mbManifold
+    (projectorField_unitary (A := A)).connection.IsGeodesic α ↔
+      ∀ t, dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1) =
+        (α t : A) * star (dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1)) * α t := by
+  let := (isSplitSubmanifold_unitary (A := A)).1.chartedSpace
+  have := (isSplitSubmanifold_unitary (A := A)).1.mbManifold
+  rw [ProjectorField.connection_isGeodesic_iff _
+    ((isSplitSubmanifold_unitary (A := A)).1.isCkCurve_of_smooth hα 2)]
+  refine forall_congr' fun t ↦ ?_
+  change unitaryProj _ _ = 0 ↔ _
+  rw [unitaryProj, smul_eq_zero, sub_eq_zero, or_iff_right (by norm_num)]
+  exact Iff.rfl
+
+omit [CompleteSpace A] [StarRing A] [StarModule ℝ A] [ContinuousStar A] in
+/-- The derivative of a Fréchet differentiable curve. -/
+theorem dMB_eq_of_hasDerivAt' {f : ℝ → A} {f' : A} {t : ℝ} (hf : HasDerivAt f f' t) :
+    dMB f (t, 1) = f' := by
+  rw [(hf.hasFDerivAt.hasDirDerivAt 1).dMB_eq]
+  simp
+
+/-- The one-parameter subgroup through `p` in the direction `p X`, `X ∈ 𝔲(A)`:
+`t ↦ p exp(t X)`. -/
+def expCurve (p : unitary A) {X : A} (hX : X ∈ skewAdjoint A) : ℝ → unitary A :=
+  let +nondep : NormedAlgebra ℚ A := NormedAlgebra.restrictScalars ℚ ℝ A
+  fun t ↦ ⟨(p : A) * NormedSpace.exp (t • X), mul_mem p.2
+    (NormedSpace.exp_mem_unitary_of_mem_skewAdjoint (skewAdjoint.smul_mem t hX))⟩
+
+/-- **One-parameter subgroups `t ↦ p exp(t X)`, `X* = -X`, are geodesics of `U(A)`.** -/
+theorem isGeodesic_expCurve (p : unitary A) {X : A} (hX : X ∈ skewAdjoint A) :
+    letI := (isSplitSubmanifold_unitary (A := A)).1.chartedSpace
+    haveI := (isSplitSubmanifold_unitary (A := A)).1.mbManifold
+    (projectorField_unitary (A := A)).connection.IsGeodesic (expCurve p hX) := by
+  let +nondep : NormedAlgebra ℚ A := NormedAlgebra.restrictScalars ℚ ℝ A
+  have hval : Subtype.val ∘ expCurve p hX = fun t : ℝ ↦ (p : A) * NormedSpace.exp (t • X) := rfl
+  have hd : ∀ t : ℝ, HasDerivAt (fun t : ℝ ↦ (p : A) * NormedSpace.exp (t • X))
+      ((p : A) * (NormedSpace.exp (t • X) * X)) t := fun t ↦
+    (hasDerivAt_exp_smul_const X t).const_mul _
+  have hsmooth : SmoothMBOn (Subtype.val ∘ expCurve p hX) univ := by
+    rw [hval, smoothMBOn_iff_contDiffOn isOpen_univ]
+    have : ContDiff ℝ ∞ fun t : ℝ ↦ NormedSpace.exp (t • X) :=
+      (contDiff_iff_contDiffAt.mpr fun x ↦
+        (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt).comp (contDiff_id.smul contDiff_const)
+    exact (contDiff_const.mul this).contDiffOn
+  rw [isGeodesic_unitary_iff hsmooth]
+  intro t
+  have h1 : (fun s ↦ dMB (Subtype.val ∘ expCurve p hX) (s, 1)) =
+      fun s : ℝ ↦ (p : A) * NormedSpace.exp (s • X) * X := by
+    funext s
+    rw [hval, dMB_eq_of_hasDerivAt' (hd s), mul_assoc]
+  have h2 : dMB (fun s : ℝ ↦ (p : A) * NormedSpace.exp (s • X) * X) (t, 1) =
+      (p : A) * NormedSpace.exp (t • X) * X * X := by
+    refine dMB_eq_of_hasDerivAt' ?_
+    have := (hd t).mul_const X
+    simpa only [mul_assoc] using this
+  rw [h1, h2]
+  change _ = (p : A) * NormedSpace.exp (t • X) * star _ * ((p : A) * NormedSpace.exp (t • X))
+  have hXs : star X = -X := hX
+  have hE : star (NormedSpace.exp (t • X)) * NormedSpace.exp (t • X) = 1 :=
+    Unitary.star_mul_self_of_mem
+      (NormedSpace.exp_mem_unitary_of_mem_skewAdjoint (skewAdjoint.smul_mem t hX))
+  have hc : Commute X (NormedSpace.exp (t • X)) :=
+    ((Commute.refl X).smul_right t).exp_right
+  have hp := Unitary.star_mul_self_of_mem p.2
+  -- `α α̈* α = p e X X e* p* p e = p e X X e* e = p e X X`
+  simp only [star_mul, hXs]
+  calc (p : A) * NormedSpace.exp (t • X) * X * X
+      = (p : A) * NormedSpace.exp (t • X) * (X * X) *
+          (star (NormedSpace.exp (t • X)) * NormedSpace.exp (t • X)) := by
+        rw [hE, mul_one, mul_assoc _ X X]
+    _ = (p : A) * NormedSpace.exp (t • X) * (X * X * star (NormedSpace.exp (t • X)) *
+          (star (p : A) * (p : A)) * NormedSpace.exp (t • X)) := by
+        rw [hp, mul_one]; noncomm_ring
+    _ = _ := by noncomm_ring
 
 /-- **The unitary group of a complex Hilbert space is a split submanifold of `B(H)`**, modeled
 on the skew-adjoint operators. -/

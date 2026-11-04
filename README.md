@@ -129,7 +129,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   complex Hilbert space) is a split submanifold modeled on the skew-adjoint elements
   (`isSplitSubmanifold_unitary`, `isSplitSubmanifold_unitary_clm`), with explicit Cayley slice
   charts `a ↦ (a - 1)(a + 1)⁻¹` and no inverse function theorem; `T_p U = p · 𝔲`
-  (`tangentSpace_unitary`).
+  (`tangentSpace_unitary`). The projectors `E_p w = (w - p w* p) / 2` form a field of projectors
+  (`projectorField_unitary`); its geodesics satisfy `α̈ = α α̈* α` (`isGeodesic_unitary_iff`), and
+  the curves `t ↦ p exp(t X)` are geodesics (`isGeodesic_expCurve`).
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:
