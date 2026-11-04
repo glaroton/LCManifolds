@@ -1,0 +1,215 @@
+\chapter{Finsler manifolds as metric spaces}
+\label{chap:metric-spaces}
+
+A Finsler structure turns a manifold into a metric space, and the question is how much of the
+manifold can be recovered from the distance. This chapter follows Part~II of \cite{Lar22}:
+Chapter~8 (interior metric spaces, after Gromov) and Chapter~9 (Finsler manifolds). The first
+section works in an arbitrary metric space; the second identifies $(M, d_b)$ as an interior
+metric space; the third compares the topology of $d_b$ with the manifold topology, which is where
+the model space enters.
+
+\section{The rectifiable distance}
+\label{sec:ms-rectifiable}
+
+Let $(X, d)$ be a pseudo-metric space, with distances in $[0, \infty]$. The length of a continuous
+curve $\gamma \colon [a, b] \to X$ is the supremum of the sums
+$\sum_i d(\gamma(t_i), \gamma(t_{i+1}))$ over the partitions of $[a, b]$; in Mathlib this is the
+variation \texttt{eVariationOn}. Its basic properties are in Mathlib: refining a partition
+increases the sums, the length vanishes only for constant curves, it is additive under
+concatenation, invariant under monotone reparametrizations \cite[Obs.~8.1.1]{Lar22}, lower
+semicontinuous under uniform convergence \cite[Prop.~8.1.3]{Lar22}, and the arc length
+$t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
+
+\begin{definition}[The rectifiable distance]
+  \label{def:ms-length-dist}
+  \lean{LCManifolds.RectPath, LCManifolds.RectPath.length, LCManifolds.RectPath.concat, LCManifolds.RectPath.reverse, LCManifolds.RectPath.length_concat, LCManifolds.RectPath.length_reverse, LCManifolds.lengthDist}
+  \leanok
+  The rectifiable distance $d_\ell(x, y)$ is the infimum of the lengths of the continuous curves
+  from $x$ to $y$, and $\infty$ if there is none.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:ms-length-dist}
+  \lean{LCManifolds.lengthDist_self, LCManifolds.lengthDist_comm, LCManifolds.lengthDist_triangle, LCManifolds.edist_le_lengthDist, LCManifolds.LengthMetric, LCManifolds.lipschitzWith_ofLength, LCManifolds.continuous_ofLength}
+  \leanok
+  \uses{def:ms-length-dist}
+  $d_\ell$ is a pseudo-distance, and $d \leq d_\ell$. In particular the topology of $d_\ell$ is
+  finer than that of $d$ \cite[Obs.~8.1.7]{Lar22}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Constant curves, reversed curves and concatenations give the three properties of a distance.
+  The trivial partition gives $d(x, y) \leq \ell(\gamma)$.
+\end{proof}
+
+\begin{lemma}[When the topologies agree]
+  \label{lem:ms-topologies}
+  \lean{LCManifolds.continuous_toLength_iff}
+  \leanok
+  \uses{prop:ms-length-dist}
+  The topologies of $d$ and $d_\ell$ coincide if and only if, for every $x$ and every
+  $\varepsilon > 0$, the points close enough to $x$ can be joined to $x$ by curves of length
+  $< \varepsilon$ \cite[Lema~8.1.8]{Lar22}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  This is the continuity of the identity $(X, d) \to (X, d_\ell)$, written with balls.
+\end{proof}
+
+\begin{definition}[Interior metric spaces]
+  \label{def:ms-interior}
+  \lean{LCManifolds.IsInterior, LCManifolds.IsInterior.exists_rectPath}
+  \leanok
+  \uses{def:ms-length-dist}
+  $(X, d)$ is an interior metric space (a length space) if $d = d_\ell$
+  \cite[\S8.1.1]{Lar22}.
+\end{definition}
+
+\begin{proposition}[Approximate midpoints]
+  \label{prop:ms-midpoints}
+  \lean{LCManifolds.IsInterior.exists_approx_midpoint}
+  \leanok
+  \uses{def:ms-interior}
+  In an interior metric space, for all $x, y$ and $\varepsilon > 0$ there is $z$ with
+  $\max\{d(x, z), d(z, y)\} \leq \frac12 d(x, y) + \varepsilon$ \cite[Problema~8.III]{Lar22}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Take a curve of length $< d(x, y) + 2\varepsilon$. By the continuity of the arc length and the
+  intermediate value theorem it has a point at half its length.
+\end{proof}
+
+\section{\texorpdfstring{$(M, d_b)$}{(M, d)} is an interior metric space}
+\label{sec:ms-finsler-interior}
+
+Let $\mu$ be a reversible Finsler length structure on $M$ (Definition~\ref{def:finsler-length-structure}).
+Its distance $d_b$ (Definition~\ref{def:mt-dist}) is then a pseudo-distance, and $(M, d_b)$ is a
+pseudo-metric space; without reversibility $d_b$ is only a quasi-distance and the symmetric
+theory of the previous section does not apply as such.
+
+\begin{theorem}[\texorpdfstring{\cite[Prop.~9.1.2]{Lar22}}{Prop. 9.1.2}]
+  \label{thm:ms-finsler-interior}
+  \lean{LCManifolds.FinslerLengthStructure.FinslerSpace, LCManifolds.FinslerLengthStructure.edist_le_abs_length, LCManifolds.FinslerLengthStructure.continuous_toFinsler, LCManifolds.FinslerLengthStructure.eVariationOn_le_length, LCManifolds.FinslerLengthStructure.arcPath, LCManifolds.FinslerLengthStructure.lengthDist_le_of_reach, LCManifolds.FinslerLengthStructure.isInterior}
+  \leanok
+  \uses{prop:ms-length-dist, def:ms-interior, thm:mt-triangle, prop:mt-dist-comm}
+  $\Ck{1}$ curves are continuous for $d_b$, the metric length of a $\Ck{1}$ arc is at most its
+  Finsler length, $\ell(\gamma) \leq L_b(\gamma)$, and $(M, d_b)$ is an interior metric space.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $d_b(\gamma(s), \gamma(t)) \leq |L_b(\gamma|_{[s, t]})|$ gives the continuity. For a partition,
+  $\sum d_b(\gamma(t_i), \gamma(t_{i+1})) \leq \sum L_b(\gamma|_{[t_i, t_{i+1}]}) \leq L_b(\gamma)$.
+  Hence $d_\ell$ is bounded by the length of every chain of $\Ck{1}$ arcs, so $d_\ell \leq d_b$;
+  the other inequality is Proposition~\ref{prop:ms-length-dist}.
+\end{proof}
+
+\section{Bounded Finsler structures and the topology}
+\label{sec:ms-bounded}
+
+In this section the model $E$ is a normed space; from Lemma~\ref{lem:ms-exit} on, it is complete
+and $M$ is Hausdorff.
+
+\begin{definition}[\texorpdfstring{\cite[Def.~9.1.3, Obs.~9.1.4]{Lar22}}{Def. 9.1.3}]
+  \label{def:ms-bounded}
+  \lean{LCManifolds.FinslerSeminormField.IsBoundedBelowOn, LCManifolds.FinslerSeminormField.IsBoundedAboveOn, LCManifolds.FinslerSeminormField.IsBoundedBelow, LCManifolds.FinslerSeminormField.IsBoundedAbove, LCManifolds.FinslerSeminormField.IsBounded, LCManifolds.FinslerSeminormField.IsBounded.isBoundedBelow, LCManifolds.FinslerSeminormField.IsBounded.isBoundedAbove}
+  \leanok
+  $\mu$ is \emph{bounded below} if every point has an open neighborhood $U$ in the domain of a
+  chart $\varphi$ and $C > 0$ with $\|\varphi_{*x} v\| \leq C \mu_x(v)$ for $x \in U$; it is
+  \emph{bounded above} if $m \mu_x(v) \leq \|\varphi_{*x} v\|$ for some $m > 0$. A Finsler
+  structure bounded above gives a \emph{weak Finsler manifold}; bounded above and below, a
+  \emph{strong} one.
+\end{definition}
+
+\begin{remark}[Locally convex models]
+  If the model is not normable, no Finsler norm $\mu_x$ can be bounded above and below by a norm
+  inducing the topology of the model, since that topology would then be a norm topology. Strong
+  Finsler manifolds are a phenomenon of normed models.
+\end{remark}
+
+\begin{lemma}[The integrated bound]
+  \label{lem:ms-integrated}
+  \lean{LCManifolds.FinslerLengthStructure.norm_chart_sub_le}
+  \leanok
+  \uses{def:ms-bounded}
+  If $\mu$ is bounded below on $U$ with constant $C$ and $E$ is complete, a $\Ck{1}$ curve that
+  stays in $U$ satisfies $\|\varphi(\gamma(t)) - \varphi(\gamma(s))\| \leq C L_b(\gamma|_{[s, t]})$
+  \cite[(9.2)]{Lar22}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Integrate the derivative of $\varphi \circ \gamma$ and bound its norm by $C \mu(\dot\gamma)$.
+\end{proof}
+
+\begin{lemma}[Leaving a chart costs length]
+  \label{lem:ms-exit}
+  \lean{LCManifolds.FinslerLengthStructure.arc_exit, LCManifolds.FinslerLengthStructure.reach_exit}
+  \leanok
+  \uses{lem:ms-integrated, def:mt-chain}
+  Let $\mu$ be bounded below on $U$ with constant $C$, and let $\bar B(\varphi(x_0), r)$ be the
+  image of a part of $U$. A chain of $\Ck{1}$ arcs of length $L$ starting at $x_0$ either has
+  $C L \geq r$, or ends at a point $y \in U$ with $\|\varphi(y) - \varphi(x_0)\| \leq C L$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  For a single arc, let $t_0$ be the first time at which the arc leaves
+  $U \cap \varphi^{-1}(B(\varphi(x_0), r))$. If $C L_b(\gamma|_{[a, t_0]}) < r$, the points
+  $\varphi(\gamma(t))$, $t < t_0$, form a Cauchy family in a closed ball inside $\varphi(U)$; by
+  completeness they converge, and since $M$ is Hausdorff the limit is $\varphi(\gamma(t_0))$, which
+  is then inside the ball: a contradiction. Chains follow by induction.
+\end{proof}
+
+\begin{theorem}[\texorpdfstring{\cite[Lema~9.1.8]{Lar22}}{Lema 9.1.8}]
+  \label{thm:ms-bounded-below}
+  \lean{LCManifolds.FinslerLengthStructure.exists_chart_norm_le_dist, LCManifolds.FinslerLengthStructure.eq_of_dist_eq_zero, LCManifolds.FinslerLengthStructure.continuous_ofFinsler}
+  \leanok
+  \uses{lem:ms-exit, thm:ms-finsler-interior}
+  If $\mu$ is bounded below, every point $x_0$ has a chart and $C, r > 0$ such that
+  $d_b(x_0, y) < r / C$ implies that $y$ is in the chart and
+  $\|\varphi(y) - \varphi(x_0)\| \leq C d_b(x_0, y)$. Consequently $d_b$ separates points, and, for
+  a reversible $\mu$, every open set of $M$ is open for $d_b$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply Lemma~\ref{lem:ms-exit} to chains whose length approaches $d_b(x_0, y)$.
+\end{proof}
+
+\begin{theorem}[Weak and strong Finsler manifolds]
+  \label{thm:ms-bounded-above}
+  \lean{LCManifolds.FinslerLengthStructure.dist_le_norm_chart, LCManifolds.FinslerLengthStructure.continuous_toFinsler_of_isBoundedAbove, LCManifolds.FinslerLengthStructure.homeomorphFinsler}
+  \leanok
+  \uses{def:ms-bounded, thm:ms-bounded-below}
+  If $\mu$ is bounded above with constant $m$, then $d_b(x, y) \leq \|\varphi(y) - \varphi(x)\| / m$
+  near each point \cite[(9.3)]{Lar22}, so the topology of $d_b$ is coarser than that of $M$. For a
+  strong Finsler manifold (reversible, complete model, $M$ Hausdorff) the identity is a
+  homeomorphism between $M$ and $(M, d_b)$ \cite[Cor.~9.1.9]{Lar22}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The segment from $\varphi(x)$ to $\varphi(y)$, reparametrized by a smooth transition function so
+  that it is a $\Ck{1}$ curve on all of $\R$, has Finsler length at most
+  $\|\varphi(y) - \varphi(x)\| / m$. The second statement combines this with
+  Theorem~\ref{thm:ms-bounded-below}.
+\end{proof}
+
+\begin{theorem}[\texorpdfstring{\cite[Teorema~9.1.5]{Lar22}}{Teorema 9.1.5}]
+  \label{thm:ms-finite-dim}
+  \lean{LCManifolds.tangentCoordChange_smul, LCManifolds.FinslerMetric.isBounded_of_finiteDimensional}
+  \leanok
+  \uses{def:ms-bounded, def:finsler-metric}
+  If the model is finite-dimensional, every Finsler metric whose seminorms are norms is strong.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In a chart, $(y, v) \mapsto \mu(y, v)$ is continuous on the tangent bundle, hence attains a
+  positive minimum and a maximum on the compact set $\bar B \times S$, closed ball times unit
+  sphere. Homogeneity gives the bounds for every vector.
+\end{proof}

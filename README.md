@@ -113,6 +113,21 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   (chains of `C¹` arcs, `Reach`). It satisfies the **triangle inequality** (`dist_triangle`), so
   it is an extended, possibly asymmetric, pseudo-distance, and it is symmetric when `μ` is
   reversible (`dist_comm`, by reversing curves).
+* [`LCManifolds/MetricGeometry/LengthMetric.lean`](LCManifolds/MetricGeometry/LengthMetric.lean):
+  metric spaces after Gromov (Larotonda, *Estructuras*, Cap. 8). Lengths of continuous curves
+  (`eVariationOn`), the rectifiable distance `d_ℓ ≥ d` and the criterion for equal topologies
+  (Lema 8.1.8), interior metric spaces and approximate midpoints.
+* [`LCManifolds/Metric/FinslerMetricSpace.lean`](LCManifolds/Metric/FinslerMetricSpace.lean): for a
+  reversible Finsler length structure, `(M, d_b)` is a pseudo-metric space in which `C¹` curves
+  are continuous, `ℓ(γ) ≤ L_b(γ)`, and which is an interior metric space (*Estructuras*,
+  Prop. 9.1.2).
+* [`LCManifolds/Metric/FinslerBounded.lean`](LCManifolds/Metric/FinslerBounded.lean): Finsler
+  structures bounded above and below on a normed model (*Estructuras*, Def. 9.1.3). Leaving a
+  chart costs length (complete model, Hausdorff manifold); `d_b` separates points and every open
+  set of `M` is `d_b`-open (Lema 9.1.8); `d_b ≤ ‖φ y − φ x‖ / m` for structures bounded above, so
+  strong Finsler manifolds are homeomorphic to `(M, d_b)` (Cor. 9.1.9); in finite dimension every
+  Finsler metric is strong (Teorema 9.1.5). On non-normable models strong Finsler structures do
+  not exist.
 * [`LCManifolds/Metric/FinslerQuotient.lean`](LCManifolds/Metric/FinslerQuotient.lean): where
   the two continuity conditions come from, for a field `μ` on `M` controlled through a `C¹` map
   `π : N → M` (typically a quotient metric). If curves lift locally and `μ ∘ Tπ` is continuous
