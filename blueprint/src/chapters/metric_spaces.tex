@@ -388,3 +388,23 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
   As Theorem~\ref{thm:ms-finsler-interior}, with forward sums; reversed chains give the bound on
   the asymmetry, and Lemma~\ref{thm:ms-bounded-below} makes $(M, d_b)$ Hausdorff.
 \end{proof}
+
+\begin{proposition}[Symmetrization]
+  \label{prop:ms-symm}
+  \lean{LCManifolds.FinslerLengthStructure.symm, LCManifolds.FinslerLengthStructure.symm_isReversible, LCManifolds.FinslerLengthStructure.length_le_mul_of_le, LCManifolds.FinslerLengthStructure.Reach.mono_mul, LCManifolds.FinslerLengthStructure.dist_le_mul_of_le, LCManifolds.FinslerLengthStructure.dist_le_dist_symm, LCManifolds.FinslerLengthStructure.dist_swap_le_dist_symm, LCManifolds.FinslerLengthStructure.dist_symm_le, LCManifolds.FinslerLengthStructure.homeomorphSymm}
+  \leanok
+  \uses{thm:ms-finsler-asymm}
+  $\mu_s(v) = \mu(v) + \mu(-v)$ is a reversible Finsler length structure, and
+  $\max\{d_b(x, y), d_b(y, x)\} \leq d_s(x, y)$. With a reversibility constant $\lambda$,
+  $d_s \leq (1 + \lambda) d_b$, and the identity is a homeomorphism between $(M, d_b)$ and
+  $(M, d_s)$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Pointwise comparisons of the integrands pass to lengths of chains and to distances.
+\end{proof}
+
+So for the topology, bounded asymmetry reduces to the reversible case; lengths and shortest curves
+of $d_b$ and $d_s$ are, however, different, and without a reversibility constant the topology of
+$d_s$ may be strictly finer.

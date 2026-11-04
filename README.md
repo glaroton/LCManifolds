@@ -131,6 +131,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   reversible Finsler length structure, `(M, d_b)` is a pseudo-metric space in which `C¹` curves
   are continuous, `ℓ(γ) ≤ L_b(γ)`, and which is an interior metric space (*Estructuras*,
   Prop. 9.1.2).
+* [`LCManifolds/Metric/FinslerSymmetrization.lean`](LCManifolds/Metric/FinslerSymmetrization.lean):
+  the symmetrization `μ(v) + μ(-v)`; with a reversibility constant it gives the same topology as
+  `d_b`, but not the same lengths or shortest curves.
 * [`LCManifolds/Metric/FinslerBounded.lean`](LCManifolds/Metric/FinslerBounded.lean): Finsler
   structures bounded above and below on a normed model (*Estructuras*, Def. 9.1.3). Leaving a
   chart costs length (complete model, Hausdorff manifold); `d_b` separates points and every open

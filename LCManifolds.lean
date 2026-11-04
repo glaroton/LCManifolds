@@ -39,6 +39,7 @@ import LCManifolds.MetricGeometry.AsymmDist
 import LCManifolds.MetricGeometry.ForwardLength
 import LCManifolds.MetricGeometry.ForwardHopfRinow
 import LCManifolds.Metric.FinslerMetricSpace
+import LCManifolds.Metric.FinslerSymmetrization
 import LCManifolds.Metric.FinslerBounded
 import LCManifolds.Metric.FinslerHopfRinow
 import LCManifolds.Examples.FinslerCusp
