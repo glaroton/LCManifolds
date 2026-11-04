@@ -175,6 +175,28 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
   locally compact does not imply completeness: the interval $(0, 1)$.
 \end{remark}
 
+\begin{example}[McAlpin: no shortest curves in infinite dimension]
+  \label{ex:ms-mcalpin}
+  \lean{LCManifolds.McAlpin.A, LCManifolds.McAlpin.norm_A_eq_iff_mem_span, LCManifolds.McAlpin.M, LCManifolds.McAlpin.Arc, LCManifolds.McAlpin.IsChain, LCManifolds.McAlpin.pathDist, LCManifolds.McAlpin.pathDist_le_pi, LCManifolds.McAlpin.pi_le_chainLength_sphere, LCManifolds.McAlpin.pi_lt_chainLength, LCManifolds.McAlpin.pathDist_eq_pi, LCManifolds.McAlpin.not_exists_shortest}
+  \leanok
+  Let $A$ be the diagonal operator on $\ell^2$ with $a_0 = 1$, $a_n = 1 + 2^{-n}$, and
+  $M = A(S)$, $S$ the unit sphere, with lengths measured by the norm of $\ell^2$. Then the distance
+  in $M$ between $e_0$ and $-e_0$ is $\pi$, but every piecewise $\Ck{1}$ curve in $M$ joining them
+  is strictly longer than $\pi$ \cite[Ejemplo~10.4.2]{Lar22}.
+\end{example}
+
+\begin{proof}
+  \leanok
+  The curves $A(\cos(\pi t) e_0 + \sin(\pi t) e_n)$ have length at most $\pi a_n \to \pi$. Every
+  curve on $S$ from $e_0$ to $-e_0$ has length at least $\pi$, by the triangle inequality for angles.
+  If $\beta = A\alpha$ is a curve in $M$, $\|\beta'\| = \|A\alpha'\| \geq \|\alpha'\|$, with equality
+  only when $\alpha' \in \R e_0$, which forces $\alpha$ to stay at $e_0$.
+\end{proof}
+
+In finite dimension this cannot happen: a complete Riemannian manifold has shortest curves
+\cite[Cor.~10.4.3]{Lar22}, and Corollary~\ref{cor:ms-finsler-hopf-rinow} gives the Finsler
+version.
+
 \section{\texorpdfstring{$(M, d_b)$}{(M, d)} is an interior metric space}
 \label{sec:ms-finsler-interior}
 

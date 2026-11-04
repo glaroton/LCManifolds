@@ -192,6 +192,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the
   origin with `γ̇₂ ≠ 0` leaves the cusp `|y| < x²`) but not on the tangent bundle
   (`CuspFinsler.lengthStructure`, `CuspFinsler.not_continuous`).
+* [`LCManifolds/Examples/McAlpin.lean`](LCManifolds/Examples/McAlpin.lean): McAlpin's example
+  (*Estructuras*, Ejemplo 10.4.2): a closed submanifold `M = A(S)` of `ℓ²` in which `e₀` and `-e₀`
+  are at distance `π` but no piecewise `C¹` curve joining them has length `π`. In infinite
+  dimension Hopf–Rinow fails.
 * [`LCManifolds/Examples/Subspace.lean`](LCManifolds/Examples/Subspace.lean): example. A closed
   subspace is an embedded submanifold (split if complemented), with tangent space itself; a
   continuous projection onto it is a constant field of projectors, whose connection is flat and

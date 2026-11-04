@@ -32,6 +32,7 @@ import LCManifolds.Metric.Bilinear
 import LCManifolds.Metric.FinslerQuotient
 import LCManifolds.Metric.LeviCivita
 import LCManifolds.Examples.NoLeviCivita
+import LCManifolds.Examples.McAlpin
 import LCManifolds.Metric.ProjectorMetric
 import LCManifolds.MetricGeometry.LengthMetric
 import LCManifolds.MetricGeometry.HopfRinow
