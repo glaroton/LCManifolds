@@ -5,6 +5,7 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Metric.FinslerBounded
 import LCManifolds.MetricGeometry.HopfRinow
+import LCManifolds.MetricGeometry.ForwardHopfRinow
 
 /-!
 # Hopf–Rinow for finite-dimensional Finsler manifolds
@@ -25,6 +26,12 @@ So if `(M, d_b)` is complete, the metric Hopf–Rinow theorem (Teorema 8.2.3) gi
 curves**: any two points are joined by a continuous curve whose length is their distance
 (`exists_rectPath_length_eq`, Corolario 9.1.10). These curves are continuous for `d_b`; whether
 they can be taken piecewise `C¹` is a separate question (*Estructuras*, Observación 9.1.11).
+
+**Non-reversible structures.** For a Finsler structure bounded below with a reversibility constant
+`λ` (`μ_x(-v) ≤ λ μ_x(v)`), `(M, d_b)` is a Hausdorff, forward-interior asymmetric metric space with
+bounded asymmetry, and compactness of the closed forward ball gives a curve of forward length
+`d_b(x, y)` (`FinslerLengthStructure.exists_fwdPath_length_eq`), by the asymmetric Hopf–Rinow
+theorem of `ForwardHopfRinow.lean`.
 -/
 
 open Set Filter
@@ -86,5 +93,39 @@ theorem exists_rectPath_length_eq
   exact μ.toFinslerLengthStructure.edist_toFinsler x y
 
 end FinslerMetric
+
+/-! ### Non-reversible Finsler structures -/
+
+namespace FinslerLengthStructure
+
+variable {E' : Type u} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [CompleteSpace E']
+  {M' : Type*} [TopologicalSpace M'] [ChartedSpace E' M'] [MBManifold E' M'] [T2Space M']
+  (μ : FinslerLengthStructure E' M')
+
+/-- If `μ` is bounded below (complete model, Hausdorff manifold), `(M, d_b)` is Hausdorff:
+`d_b` separates points (Lema 9.1.8). -/
+theorem t2Space_finslerSpace (hb : μ.toFinslerSeminormField.IsBoundedBelow) :
+    T2Space μ.FinslerSpace := by
+  haveI : T0Space μ.FinslerSpace := t0Space_iff_inseparable _ |>.mpr fun x y h ↦ by
+    have h0 : edist x y = 0 := EMetric.inseparable_iff.mp h
+    exact μ.eq_of_dist_eq_zero hb (le_antisymm ((bdist_le_edist x y).trans h0.le) bot_le)
+  infer_instance
+
+/-- **Hopf–Rinow for non-reversible Finsler structures: shortest forward curves.** Let `μ` be
+bounded below, with a reversibility constant `λ > 0` (`μ_x(-v) ≤ λ μ_x(v)`), on a Hausdorff
+manifold with complete normed model. If `d_b(x, y) < ∞` and the closed forward ball
+`{z | d_b(x, z) ≤ d_b(x, y) + 1}` is compact (for the symmetrized topology), there is a curve from
+`x` to `y`, continuous for that topology, whose forward length is `d_b(x, y)`. -/
+theorem exists_fwdPath_length_eq (hb : μ.toFinslerSeminormField.IsBoundedBelow) {lam : ℝ}
+    (hlam0 : 0 < lam) (hlam : ∀ x (v : E'), μ.toFun ⟨x, -v⟩ ≤ lam * μ.toFun ⟨x, v⟩) (x y : M')
+    (hxy : μ.dist x y ≠ ⊤)
+    (hK : IsCompact {z | bdist (μ.toFinsler x) z ≤ μ.dist x y + 1}) :
+    ∃ p : FwdPath (μ.toFinsler x) (μ.toFinsler y), p.length = μ.dist x y := by
+  haveI := μ.t2Space_finslerSpace hb
+  exact μ.isFwdInterior.exists_fwdPath_length_eq_of_isCompact _ _ hxy hK
+    ⟨ENNReal.ofReal lam, ENNReal.ofReal_ne_top, fun z _ w _ ↦
+      μ.dist_comm_le hlam0 hlam (μ.ofFinsler z) (μ.ofFinsler w)⟩
+
+end FinslerLengthStructure
 
 end LCManifolds

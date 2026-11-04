@@ -316,3 +316,75 @@ and $M$ is Hausdorff.
 
 Whether these shortest curves can be taken piecewise $\Ck{1}$ is a separate question
 \cite[Obs.~9.1.11]{Lar22}.
+
+\section{Asymmetric distances}
+\label{sec:ms-asymmetric}
+
+For a non-reversible Finsler structure $d_b$ is not symmetric. Following Mennucci \cite{Men13},
+an asymmetric distance $b$ satisfies $b(x, x) = 0$ and the triangle inequality, and the topology is
+that of the symmetrized distance $\max\{b(x, y), b(y, x)\}$; forward and backward balls alone may
+generate different topologies \cite[Example~4.1]{Men13}. Lengths are forward lengths: suprema of
+$\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
+\cite[Remark~3.5]{Men13}.
+
+\begin{definition}[Asymmetric distances and forward lengths]
+  \label{def:ms-asymm}
+  \lean{LCManifolds.AsymmPseudoEMetricSpace, LCManifolds.AsymmPseudoEMetricSpace.ofBDist, LCManifolds.fwdVar, LCManifolds.bwdVar, LCManifolds.FwdPath, LCManifolds.fwdLengthDist, LCManifolds.IsFwdInterior}
+  \leanok
+  An asymmetric metric space carries $b$ and the topology of its symmetrization. The forward
+  length of a curve is its forward variation; $b_\ell$ is the infimum of forward lengths of
+  continuous curves, and $X$ is forward interior if $b_\ell = b$ (g-intrinsic in
+  \cite[Def.~3.16]{Men13}).
+\end{definition}
+
+\begin{theorem}[Forward lengths]
+  \label{thm:ms-fwd-length}
+  \lean{LCManifolds.fwdVar.Icc_add_Icc, LCManifolds.fwdVar.comp_eq_of_monotoneOn, LCManifolds.fwdVar_comp_neg, LCManifolds.fwdVar.continuousOn_Icc, LCManifolds.fwdLengthDist_triangle, LCManifolds.bdist_le_fwdLengthDist, LCManifolds.IsFwdInterior.exists_bdist_le_add, LCManifolds.FwdPath.exists_lipschitz_reparam}
+  \leanok
+  \uses{def:ms-asymm}
+  Forward lengths are additive and invariant under increasing reparametrizations; the running
+  length of a continuous curve of finite forward length is continuous \cite[Prop.~3.9]{Men13};
+  $b \leq b_\ell$ and $b_\ell$ satisfies the triangle inequality. Forward interior spaces have
+  approximate intermediate points, and curves of finite forward length admit forward Lipschitz
+  reparametrizations on $[0, 1]$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The proofs of the symmetric case adapt, with care for the order of the arguments of $b$; the
+  continuity of the running length follows \cite[Appendix~B.2]{Men13}.
+\end{proof}
+
+\begin{theorem}[Shortest forward curves]
+  \label{thm:ms-fwd-hopf-rinow}
+  \lean{LCManifolds.bdist_le_bdist_add_edist, LCManifolds.continuous_bdist, LCManifolds.IsFwdInterior.exists_fwdPath_length_eq_of_isCompact}
+  \leanok
+  \uses{thm:ms-fwd-length}
+  Let $X$ be a Hausdorff forward interior space, $b(x, y) < \infty$, with compact closed forward
+  ball $\{z : b(x, z) \leq b(x, y) + 1\}$ on which $b(w, z) \leq C\, b(z, w)$. Then there is a
+  continuous curve from $x$ to $y$ of forward length $b(x, y)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  As in Theorem~\ref{thm:ms-hopf-rinow}, with forward Lipschitz reparametrizations. The bounded
+  asymmetry makes the limit curve Lipschitz for the symmetrized distance, hence continuous; without
+  it the limit need not be continuous \cite{Men13}.
+\end{proof}
+
+\begin{theorem}[Non-reversible Finsler structures]
+  \label{thm:ms-finsler-asymm}
+  \lean{LCManifolds.FinslerLengthStructure.bdist_le_lengths, LCManifolds.FinslerLengthStructure.fwdVar_le_length, LCManifolds.FinslerLengthStructure.fwdArcPath, LCManifolds.FinslerLengthStructure.fwdLengthDist_le_of_reach, LCManifolds.FinslerLengthStructure.isFwdInterior, LCManifolds.FinslerLengthStructure.length_reverse_le, LCManifolds.FinslerLengthStructure.Reach.reverse_le, LCManifolds.FinslerLengthStructure.dist_comm_le, LCManifolds.FinslerLengthStructure.t2Space_finslerSpace, LCManifolds.FinslerLengthStructure.exists_fwdPath_length_eq}
+  \leanok
+  \uses{thm:ms-fwd-hopf-rinow, thm:ms-finsler-interior, thm:ms-bounded-below}
+  For any Finsler length structure, $\ell^+(\gamma) \leq L_b(\gamma)$ and $(M, d_b)$ is forward
+  interior. A reversibility constant $\mu_x(-v) \leq \lambda \mu_x(v)$ gives
+  $d_b(y, x) \leq \lambda d_b(x, y)$; if moreover $\mu$ is bounded below and the closed forward
+  ball is compact, there are shortest forward curves.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  As Theorem~\ref{thm:ms-finsler-interior}, with forward sums; reversed chains give the bound on
+  the asymmetry, and Lemma~\ref{thm:ms-bounded-below} makes $(M, d_b)$ Hausdorff.
+\end{proof}

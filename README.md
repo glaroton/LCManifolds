@@ -121,6 +121,12 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   metric Hopf–Rinow theorem (*Estructuras*, Teorema 8.2.3): in a complete, locally compact interior
   space closed balls are compact and any two points are joined by a shortest curve; Lipschitz
   reparametrization by arc length (Obs. 8.1.5).
+* [`LCManifolds/MetricGeometry/AsymmDist.lean`](LCManifolds/MetricGeometry/AsymmDist.lean),
+  [`ForwardLength.lean`](LCManifolds/MetricGeometry/ForwardLength.lean),
+  [`ForwardHopfRinow.lean`](LCManifolds/MetricGeometry/ForwardHopfRinow.lean): asymmetric distances
+  after Mennucci (Anal. Geom. Metr. Spaces 2013), with the topology of the symmetrized distance:
+  forward lengths, continuity of the running length, forward-interior spaces, and shortest forward
+  curves under compactness and bounded asymmetry.
 * [`LCManifolds/Metric/FinslerMetricSpace.lean`](LCManifolds/Metric/FinslerMetricSpace.lean): for a
   reversible Finsler length structure, `(M, d_b)` is a pseudo-metric space in which `C¹` curves
   are continuous, `ℓ(γ) ≤ L_b(γ)`, and which is an interior metric space (*Estructuras*,
