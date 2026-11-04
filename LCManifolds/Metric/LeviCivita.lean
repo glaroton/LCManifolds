@@ -9,8 +9,9 @@ import LCManifolds.Metric.Bilinear
 /-!
 # The Levi-Civita connection: Koszul formula and uniqueness
 
-References: S. Lang, *Fundamentals of Differential Geometry*, Ch. VIII, §4 (metric derivative,
-strong Riemannian case); G. Larotonda, *Estructuras geométricas para las variedades de Banach*,
+References: S. Lang, *Fundamentals of Differential Geometry*, Ch. VIII, §4, Theorem 4.1
+(metric derivative) and Theorem 4.2, condition MS 1 (metric spray), for pseudo-Riemannian
+metrics in Lang's sense; G. Larotonda, *Estructuras geométricas para las variedades de Banach*,
 §10.1, Teorema 10.1.1 (metric spray, pseudo-Riemannian case); A. Schmeding, *An introduction to
 infinite-dimensional differential geometry*, arXiv:2112.08114v3, §4.3: Def. 4.3.6 (metric
 spray), Example 4.3.7 (a weak Riemannian metric on `ℓ²` without metric spray), 4.3.14 (metric
@@ -47,7 +48,7 @@ point, in the direction `u`. With the convention `∇_X Y = dỸ · X̃ − Γ(X
 ## Existence: a word of caution
 
 For a strong Riemannian metric on a Hilbert manifold, the Koszul functional is always
-represented (Riesz), and the Levi-Civita connection exists (Lang, Ch. VIII, §4). For **weak**
+represented (Riesz), and the Levi-Civita connection exists (Lang, Ch. VIII, Theorem 4.1). For **weak**
 metrics, in particular on Fréchet manifolds, where every metric is weak, the representation may
 fail: Schmeding's Example 4.3.7 is a weak Riemannian metric on `ℓ²` whose Koszul functional is
 not represented, so that there is no metric spray. Even when the functional is represented at
@@ -369,7 +370,7 @@ theorem koszul_represented (hC : C.IsSymmetric) (hm : C.IsMetric g) (i : atlas E
   ⟨C.Γ i y u a, koszul hC hm i hy u a⟩
 
 /-- **The metric spray** (Larotonda, *Estructuras*, Teorema 10.1.1, formula (10.3); Lang,
-Ch. VIII, §4). A symmetric connection is metric for `g` if and only if, in every chart, its spray
+Ch. VIII, Theorem 4.2, MS 1). A symmetric connection is metric for `g` if and only if, in every chart, its spray
 `v ↦ Γ(y)(v, v)` satisfies
 `G(y)(Γ(y)(v, v), z) = −∂G(y)(v)(v, z) + ½ ∂G(y)(z)(v, v)`.
 In the notation of *Estructuras*, `G(y)(a, b) = ⟨a, g(y) b⟩` and
