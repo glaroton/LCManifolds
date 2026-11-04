@@ -34,6 +34,8 @@ import LCManifolds.Metric.LeviCivita
 import LCManifolds.Examples.NoLeviCivita
 import LCManifolds.Metric.ProjectorMetric
 import LCManifolds.MetricGeometry.LengthMetric
+import LCManifolds.MetricGeometry.HopfRinow
 import LCManifolds.Metric.FinslerMetricSpace
 import LCManifolds.Metric.FinslerBounded
+import LCManifolds.Metric.FinslerHopfRinow
 import LCManifolds.Examples.FinslerCusp

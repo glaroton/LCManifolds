@@ -40,7 +40,8 @@ In this file:
   `1`-Lipschitz, so the topology of `d_ℓ` is finer (`continuous_ofLength`); the two topologies
   agree iff every point can be joined to all nearby points by curves of small length
   (`continuous_toLength_iff`, Lema 8.1.8);
-* `IsInterior`: `(X, d)` is an **interior metric space** (a length space) if `d = d_ℓ`.
+* `IsInterior`: `(X, d)` is an **interior metric space** (a length space) if `d = d_ℓ`, and it
+  has approximate midpoints (`IsInterior.exists_approx_midpoint`, Problema 8.III).
 -/
 
 open Set Filter
@@ -254,8 +255,8 @@ section Metric
 
 variable {X : Type*} [PseudoMetricSpace X]
 
-/-- **Interior metric spaces have approximate midpoints** (*Estructuras*, Lema 8.1.10 and
-Problema 8.III): for every `x, y` and `ε > 0` there is `z` with
+/-- **Interior metric spaces have approximate midpoints** (*Estructuras*, Problema 8.III, a
+consequence of Lema 8.1.10): for every `x, y` and `ε > 0` there is `z` with
 `max (d(x, z), d(z, y)) ≤ d(x, y) / 2 + ε`. Take a curve of length `< d(x, y) + 2ε` and its point
 at half the length, which exists by the continuity of the arc length (Lema 8.1.4). -/
 theorem IsInterior.exists_approx_midpoint (h : IsInterior X) (x y : X) {ε : ℝ} (hε : 0 < ε) :

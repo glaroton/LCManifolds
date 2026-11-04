@@ -82,6 +82,72 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
   intermediate value theorem it has a point at half its length.
 \end{proof}
 
+\section{The metric Hopf--Rinow theorem}
+\label{sec:ms-hopf-rinow}
+
+\begin{lemma}[Approximate intermediate points]
+  \label{lem:ms-intermediate}
+  \lean{LCManifolds.IsInterior.exists_dist_le_add, LCManifolds.IsInterior.exists_approx_intermediate, LCManifolds.IsInterior.exists_mem_closedBall_near}
+  \leanok
+  \uses{prop:ms-midpoints}
+  In an interior metric space, for $a, b \geq 0$ with $a + b = d(x, y)$ and $\varepsilon > 0$
+  there is $z$ with $d(x, z) \leq a + \varepsilon$ and $d(z, y) \leq b + \varepsilon$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  As in Proposition~\ref{prop:ms-midpoints}, with the point at arc length $a$.
+\end{proof}
+
+\begin{lemma}[Lipschitz reparametrization]
+  \label{lem:ms-reparam}
+  \lean{LCManifolds.RectPath.exists_lipschitz_reparam}
+  \leanok
+  \uses{def:ms-length-dist}
+  A curve of finite length $\ell$ can be reparametrized on $[0, 1]$ as an $\ell$-Lipschitz curve
+  \cite[Obs.~8.1.5, Cor.~8.1.6]{Lar22}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Compose with a right inverse of the normalized arc length; the curve is constant on the level
+  sets of the arc length.
+\end{proof}
+
+\begin{theorem}[\texorpdfstring{Hopf--Rinow \cite[Teorema~8.2.3]{Lar22}}{Hopf-Rinow}]
+  \label{thm:ms-hopf-rinow}
+  \lean{LCManifolds.IsInterior.isCompact_closedBall_of_lt, LCManifolds.IsInterior.exists_isCompact_closedBall_gt, LCManifolds.IsInterior.isCompact_closedBall, LCManifolds.IsInterior.properSpace, LCManifolds.IsInterior.exists_rectPath_length_eq_of_isCompact, LCManifolds.IsInterior.exists_rectPath_length_eq}
+  \leanok
+  \uses{lem:ms-intermediate, lem:ms-reparam}
+  Let $X$ be a complete interior metric space.
+  \begin{enumerate}
+    \item If $\bar B_r(x)$ is compact for all $0 < r < \rho$, then $\bar B_\rho(x)$ is compact.
+    \item If $X$ is locally compact, every closed ball is compact, and any two points are joined
+      by a shortest curve, of length equal to their distance.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  (1) By Lemma~\ref{lem:ms-intermediate} every point of $\bar B_\rho(x)$ is close to the compact
+  ball $\bar B_{\rho - \delta}(x)$, so $\bar B_\rho(x)$ is totally bounded, and it is complete.
+  (2) The supremum of the radii of compact balls cannot be finite: by (1) the ball of that radius
+  is compact, and a finite cover by balls with compact closure, together with a Lebesgue number,
+  gives a larger compact ball. For the shortest curves, reparametrize almost minimizing curves as
+  in Lemma~\ref{lem:ms-reparam}; they lie in a compact ball and are uniformly Lipschitz, and a
+  cluster point in the product topology (Tychonoff) is a Lipschitz curve of length at most the
+  distance. Here the formal proof departs from \cite{Lar22}, which uses Arzelà--Ascoli and the
+  lower semicontinuity of the length.
+\end{proof}
+
+\begin{remark}
+  \label{rem:ms-proper}
+  \lean{LCManifolds.completeSpace_of_isCompact_closedBall}
+  \leanok
+  A space whose closed balls are compact is complete \cite[Obs.~8.2.4]{Lar22}. Being geodesic and
+  locally compact does not imply completeness: the interval $(0, 1)$.
+\end{remark}
+
 \section{\texorpdfstring{$(M, d_b)$}{(M, d)} is an interior metric space}
 \label{sec:ms-finsler-interior}
 
@@ -213,3 +279,24 @@ and $M$ is Hausdorff.
   positive minimum and a maximum on the compact set $\bar B \times S$, closed ball times unit
   sphere. Homogeneity gives the bounds for every vector.
 \end{proof}
+
+\begin{corollary}[\texorpdfstring{Hopf--Rinow for Finsler manifolds \cite[Cor.~9.1.10]{Lar22}}{Hopf-Rinow for Finsler manifolds}]
+  \label{cor:ms-finsler-hopf-rinow}
+  \lean{LCManifolds.FinslerMetric.metricSpace, LCManifolds.FinslerMetric.locallyCompactSpace, LCManifolds.FinslerMetric.exists_rectPath_length_eq}
+  \leanok
+  \uses{thm:ms-finite-dim, thm:ms-bounded-above, thm:ms-finsler-interior, thm:ms-hopf-rinow}
+  Let $M$ be a Hausdorff manifold modeled on a finite-dimensional normed space, with a reversible
+  Finsler metric whose seminorms are norms and with finite distance $d_b$. If $(M, d_b)$ is
+  complete, any two points are joined by a continuous curve whose length is their distance.
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:ms-finite-dim} the metric is strong; by Theorems~\ref{thm:ms-bounded-below}
+  and~\ref{thm:ms-bounded-above}, $d_b$ is a distance and $(M, d_b)$ is homeomorphic to $M$, hence
+  locally compact. It is an interior space by Theorem~\ref{thm:ms-finsler-interior}, and
+  Theorem~\ref{thm:ms-hopf-rinow} applies.
+\end{proof}
+
+Whether these shortest curves can be taken piecewise $\Ck{1}$ is a separate question
+\cite[Obs.~9.1.11]{Lar22}.

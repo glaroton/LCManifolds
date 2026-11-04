@@ -117,6 +117,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   metric spaces after Gromov (Larotonda, *Estructuras*, Cap. 8). Lengths of continuous curves
   (`eVariationOn`), the rectifiable distance `d_ℓ ≥ d` and the criterion for equal topologies
   (Lema 8.1.8), interior metric spaces and approximate midpoints.
+* [`LCManifolds/MetricGeometry/HopfRinow.lean`](LCManifolds/MetricGeometry/HopfRinow.lean): the
+  metric Hopf–Rinow theorem (*Estructuras*, Teorema 8.2.3): in a complete, locally compact interior
+  space closed balls are compact and any two points are joined by a shortest curve; Lipschitz
+  reparametrization by arc length (Obs. 8.1.5).
 * [`LCManifolds/Metric/FinslerMetricSpace.lean`](LCManifolds/Metric/FinslerMetricSpace.lean): for a
   reversible Finsler length structure, `(M, d_b)` is a pseudo-metric space in which `C¹` curves
   are continuous, `ℓ(γ) ≤ L_b(γ)`, and which is an interior metric space (*Estructuras*,
@@ -128,6 +132,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   strong Finsler manifolds are homeomorphic to `(M, d_b)` (Cor. 9.1.9); in finite dimension every
   Finsler metric is strong (Teorema 9.1.5). On non-normable models strong Finsler structures do
   not exist.
+* [`LCManifolds/Metric/FinslerHopfRinow.lean`](LCManifolds/Metric/FinslerHopfRinow.lean):
+  Hopf–Rinow for finite-dimensional Finsler manifolds (*Estructuras*, Cor. 9.1.10): if `(M, d_b)`
+  is complete, any two points are joined by a continuous shortest curve.
 * [`LCManifolds/Metric/FinslerQuotient.lean`](LCManifolds/Metric/FinslerQuotient.lean): where
   the two continuity conditions come from, for a field `μ` on `M` controlled through a `C¹` map
   `π : N → M` (typically a quotient metric). If curves lift locally and `μ ∘ Tπ` is continuous
