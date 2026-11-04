@@ -36,6 +36,7 @@ import LCManifolds.Metric.ProjectorMetric
 import LCManifolds.MetricGeometry.LengthMetric
 import LCManifolds.MetricGeometry.HopfRinow
 import LCManifolds.MetricGeometry.AsymmDist
+import LCManifolds.MetricGeometry.ForwardLength
 import LCManifolds.Metric.FinslerMetricSpace
 import LCManifolds.Metric.FinslerBounded
 import LCManifolds.Metric.FinslerHopfRinow
