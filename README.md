@@ -27,7 +27,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
 * [`LCManifolds/Basic.lean`](LCManifolds/Basic.lean):
   * `mbGroupoid E`, the structure groupoid of Michal–Bastiani smooth diffeomorphisms between open
     subsets of a locally convex space `E`;
-  * `MBManifold`, smooth manifolds modeled on `E` [Nee06, Def. I.3.1; GN26, Ch. 3].
+  * `MBManifold`, smooth manifolds modeled on `E` [Nee06, Def. I.3.1; GN26, Ch. 3];
+  * `BanachManifold`, `HilbertManifold`: the case of a complete normed, resp. complete inner
+    product, model space (these name the completeness hypothesis explicitly).
 * [`LCManifolds/Product.lean`](LCManifolds/Product.lean): products. `M × N` is a manifold
   modeled on `E × F` (`Prod.mbManifold`); the projections are smooth and pairs of `C^k` maps
   are `C^k`.

@@ -47,7 +47,7 @@ universe u
 
 variable {E F : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
-  {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [BanachManifold E M]
   {N : Type*} [TopologicalSpace N] [ChartedSpace F N] [MBManifold F N]
 
 omit [MBManifold F N] in

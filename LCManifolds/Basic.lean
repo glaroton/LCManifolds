@@ -103,4 +103,23 @@ abbrev MBManifold (M : Type*) [TopologicalSpace M] [ChartedSpace E M] : Prop :=
 
 end Manifolds
 
+section BanachHilbert
+
+/-- A **Banach manifold**: a smooth manifold modeled on a Banach space `E`, i.e. a normed space
+(`NormedAddCommGroup E`, `NormedSpace ℝ E`) which is complete (`CompleteSpace E`). On normed
+spaces Michal–Bastiani smoothness agrees with Fréchet smoothness
+(`LCAnalysis.smoothMBOn_iff_contDiffOn`), so this is the classical notion (Lang). A manifold
+modeled on an incomplete normed space is an `MBManifold`, but not a Banach manifold. -/
+abbrev BanachManifold (E : Type u) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (M : Type*) [TopologicalSpace M] [ChartedSpace E M] : Prop :=
+  MBManifold E M
+
+/-- A **Hilbert manifold**: a smooth manifold modeled on a Hilbert space, i.e. a real inner
+product space which is complete. -/
+abbrev HilbertManifold (E : Type u) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [CompleteSpace E] (M : Type*) [TopologicalSpace M] [ChartedSpace E M] : Prop :=
+  MBManifold E M
+
+end BanachHilbert
+
 end LCManifolds
