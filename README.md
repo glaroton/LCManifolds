@@ -116,6 +116,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   the orthogonal projections form a field of projectors, whose geodesics are the curves with
   normal acceleration, among them the great circles. It is a Hilbert manifold exactly when the
   inner product space is complete.
+* [`LCManifolds/Examples/Counterexamples.lean`](LCManifolds/Examples/Counterexamples.lean):
+  counterexamples to the implications between submanifold notions. The inclusion `ℓ¹ → ℓ²`
+  (continuous by the closed graph theorem) is a weak immersion but not an immersion
+  (`isWeakImmersion_lpInclusion`, `not_isImmersion_lpInclusion`).
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:

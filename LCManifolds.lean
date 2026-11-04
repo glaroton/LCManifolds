@@ -21,3 +21,4 @@ import LCManifolds.ImmersionBanach
 import LCManifolds.Examples.Subspace
 import LCManifolds.Examples.OpenAndGraph
 import LCManifolds.Examples.Sphere
+import LCManifolds.Examples.Counterexamples
