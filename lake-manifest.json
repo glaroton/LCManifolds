@@ -5,7 +5,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "489d45dbaeb7bed9cbeb03a14288206e5c148dc8",
+   "rev": "4f30adfd18470f1ced4faf97edb7ff05d1cb5dd2",
    "name": "LCAnalysis",
    "manifestFile": "lake-manifest.json",
    "inputRev": "main",

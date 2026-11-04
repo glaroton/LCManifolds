@@ -42,15 +42,6 @@ variable {E F : Type u}
   [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
   [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
 
-omit [TopologicalSpace E] [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E]
-  [T2Space E] [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F]
-  [T2Space F] in
-/-- Derivatives in directions `(0, b)` are derivatives of the second slice. -/
-theorem dMB_slice₂ {E' : Type*} [AddCommGroup E'] [Module ℝ E'] [TopologicalSpace E']
-    (g : E × E' → F) (x : E) (a b : E') :
-    dMB g ((x, a), (0, b)) = dMB (fun w ↦ g (x, w)) (a, b) := by
-  simp only [dMB, Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero]
-
 /-- The derivative of `y ↦ dτ(y)(a y)`: `d²τ(y)(v, a y) + dτ(y)(da(y) v)`. -/
 theorem dMB_dMB_comp_apply {τ : E → F} {a : E → E} {T U : Set E} (hT : IsOpen T)
     (hU : IsOpen U) (hUT : U ⊆ T) (hτ : ContDiffMBOn 2 τ T) (ha : ContDiffMBOn 1 a U)
