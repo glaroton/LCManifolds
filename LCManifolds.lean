@@ -19,3 +19,4 @@ import LCManifolds.SubmanifoldNotions
 import LCManifolds.Projector
 import LCManifolds.ImmersionBanach
 import LCManifolds.Examples.Subspace
+import LCManifolds.Examples.OpenAndGraph
