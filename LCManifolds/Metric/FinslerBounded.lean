@@ -50,6 +50,8 @@ the mean value inequality with a boundary function, valid in any normed space.
   below) the identity is a homeomorphism `M ≃ₜ (M, d_b)`;
 * `FinslerMetric.isBounded_of_finiteDimensional` (**Teorema 9.1.5**): in finite dimension every
   Finsler metric whose seminorms are norms is strong.
+* `FinslerSeminormField.isBoundedAbove_of_lipschitz` (**Lema 9.1.6**): a Finsler structure which
+  is locally Lipschitz in charts is bounded above (a weak Finsler manifold).
 -/
 
 open Set Filter MeasureTheory
@@ -682,5 +684,97 @@ theorem isBounded_of_finiteDimensional [FiniteDimensional ℝ E] (μ : FinslerMe
     linarith
 
 end FinslerMetric
+
+/-! ### Locally Lipschitz Finsler structures are bounded above (Lema 9.1.6) -/
+
+namespace FinslerSeminormField
+
+variable (μ : FinslerSeminormField E M)
+
+/-- `μ` read in the chart `i`: `(y, v) ↦ μ_x(w)` with `x = φ⁻¹ y` and `w` the vector of
+`T_x M` with coordinates `v` in the chart `i`. -/
+def chartFun (i : atlas E M) (q : E × E) : ℝ :=
+  μ ⟨i.1.symm q.1, (tangentCoordChange i (prefAtlas E (i.1.symm q.1)) (i.1.symm q.1) q.2 : E)⟩
+
+theorem chartFun_tcc (i : atlas E M) {x : M} (hx : x ∈ i.1.source) (w : E) :
+    μ.chartFun i (i.1 x, tangentCoordChange (prefAtlas E x) i x w) = μ ⟨x, w⟩ := by
+  have hsrc : (⟨x, w⟩ : TangentBundle E M) ∈ (tangentChart i i.1).source :=
+    (mem_tangentChart_source i i.1 _).mpr ⟨hx, hx⟩
+  have e : (tangentChart i i.1) ⟨x, w⟩ = (i.1 x, tangentCoordChange (prefAtlas E x) i x w) := rfl
+  change μ.toFun ((tangentChart i i.1).symm (i.1 x, tangentCoordChange (prefAtlas E x) i x w)) = _
+  rw [← e, (tangentChart i i.1).left_inv hsrc]
+
+theorem chartFun_smul (i : atlas E M) {y : E} (hy : y ∈ i.1.target) {c : ℝ} (hc : 0 ≤ c)
+    (v : E) : μ.chartFun i (y, c • v) = c * μ.chartFun i (y, v) := by
+  simp only [chartFun]
+  rw [tangentCoordChange_smul i _ (i.1.map_target hy) (mem_chart_source E _) c v]
+  exact μ.smul_eq' _ c hc _
+
+theorem chartFun_zero (i : atlas E M) {y : E} (hy : y ∈ i.1.target) :
+    μ.chartFun i (y, 0) = 0 := by
+  have := μ.chartFun_smul i hy le_rfl 0
+  rwa [zero_smul, zero_mul] at this
+
+/-- **Lema 9.1.6: a locally Lipschitz Finsler structure is bounded above.** If, at every point
+`p`, `μ` read in a chart is Lipschitz near `(φ p, 0)`, then `μ` is bounded above: a weak Finsler
+manifold. The Lipschitz bound `μ_q(w) ≤ K (‖φ q − φ p‖ + ‖φ_* w‖)` near `(φ p, 0)` becomes,
+by homogeneity, `μ_q(w) ≤ 2K ‖φ_* w‖` for `q` close to `p`. -/
+theorem isBoundedAbove_of_lipschitz
+    (h : ∀ p : M, ∃ i : atlas E M, p ∈ i.1.source ∧ ∃ K : NNReal, ∃ N ∈ 𝓝 (i.1 p, (0 : E)),
+      LipschitzOnWith K (μ.chartFun i) N) : μ.IsBoundedAbove := by
+  intro p
+  obtain ⟨i, hp, K, N, hN, hK⟩ := h p
+  obtain ⟨ε, hε, hεN⟩ := Metric.mem_nhds_iff.mp hN
+  obtain ⟨r, hr, hrT⟩ := Metric.isOpen_iff.mp i.1.open_target (i.1 p) (i.1.map_source hp)
+  set ρ := min (ε / 2) r
+  have hρ : 0 < ρ := lt_min (half_pos hε) hr
+  set U := i.1.source ∩ i.1 ⁻¹' Metric.ball (i.1 p) ρ
+  have hUo : IsOpen U := i.1.isOpen_inter_preimage Metric.isOpen_ball
+  have hpU : p ∈ U := ⟨hp, Metric.mem_ball_self hρ⟩
+  set K' : ℝ := K + 1
+  have hK' : 0 < K' := by positivity
+  refine ⟨i, U, hUo, hpU, inter_subset_left, (2 * K')⁻¹, by positivity, fun x hx w ↦ ?_⟩
+  set v := tangentCoordChange (prefAtlas E x) i x w
+  have hxT : i.1 x ∈ i.1.target := i.1.map_source hx.1
+  have hdx : ‖i.1 x - i.1 p‖ < ρ := by
+    have := hx.2; rwa [mem_preimage, Metric.mem_ball, dist_eq_norm] at this
+  rw [← μ.chartFun_tcc i hx.1 w]
+  change (2 * K')⁻¹ * μ.chartFun i (i.1 x, v) ≤ ‖v‖
+  by_cases hv : v = 0
+  · rw [hv, μ.chartFun_zero i hxT, mul_zero, norm_zero]
+  have hvpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
+  set c := ε / (2 * ‖v‖)
+  have hc : 0 < c := by positivity
+  -- the Lipschitz bound at the scaled vector `c v`, of norm `ε / 2`
+  have hcv : ‖c • v‖ = ε / 2 := by
+    rw [norm_smul, Real.norm_of_nonneg hc.le]; simp only [c]; field_simp
+  have hmem : (i.1 x, c • v) ∈ N := by
+    apply hεN
+    rw [Metric.mem_ball, Prod.dist_eq, dist_eq_norm, dist_eq_norm, sub_zero, hcv]
+    exact max_lt (hdx.trans_le ((min_le_left _ _).trans (half_le_self hε.le))) (half_lt_self hε)
+  have hmem0 : (i.1 p, (0 : E)) ∈ N := hεN (Metric.mem_ball_self hε)
+  have hlip := hK.dist_le_mul _ hmem _ hmem0
+  rw [μ.chartFun_zero i (i.1.map_source hp), Real.dist_eq, sub_zero, Prod.dist_eq,
+    dist_eq_norm, dist_eq_norm, sub_zero, hcv] at hlip
+  have hmax : max ‖i.1 x - i.1 p‖ (ε / 2) = ε / 2 :=
+    max_eq_right (hdx.le.trans (min_le_left _ _))
+  rw [hmax, μ.chartFun_smul i hxT hc.le] at hlip
+  have h1 : c * μ.chartFun i (i.1 x, v) ≤ K' * (ε / 2) := by
+    have := (le_abs_self _).trans hlip
+    have hK : (K : ℝ) ≤ K' := by simp [K']
+    nlinarith [hε]
+  have h2 : μ.chartFun i (i.1 x, v) ≤ K' * ‖v‖ := by
+    have : μ.chartFun i (i.1 x, v) ≤ K' * (ε / 2) / c := by
+      rw [le_div_iff₀ hc]; linarith
+    calc μ.chartFun i (i.1 x, v) ≤ K' * (ε / 2) / c := this
+      _ = K' * ‖v‖ := by simp only [c]; field_simp
+  have h3 : (2 * K')⁻¹ * μ.chartFun i (i.1 x, v) ≤ (2 * K')⁻¹ * (K' * ‖v‖) :=
+    mul_le_mul_of_nonneg_left h2 (by positivity)
+  calc (2 * K')⁻¹ * μ.chartFun i (i.1 x, v) ≤ (2 * K')⁻¹ * (K' * ‖v‖) := h3
+    _ ≤ ‖v‖ := by
+        rw [← mul_assoc, show (2 * K')⁻¹ * K' = 1 / 2 by field_simp]
+        linarith
+
+end FinslerSeminormField
 
 end LCManifolds

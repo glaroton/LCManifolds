@@ -265,6 +265,22 @@ and $M$ is Hausdorff.
   Theorem~\ref{thm:ms-bounded-below}.
 \end{proof}
 
+\begin{lemma}[\texorpdfstring{\cite[Lema~9.1.6]{Lar22}}{Lema 9.1.6}]
+  \label{lem:ms-lipschitz}
+  \lean{LCManifolds.FinslerSeminormField.chartFun, LCManifolds.FinslerSeminormField.chartFun_tcc, LCManifolds.FinslerSeminormField.chartFun_smul, LCManifolds.FinslerSeminormField.chartFun_zero, LCManifolds.FinslerSeminormField.isBoundedAbove_of_lipschitz}
+  \leanok
+  \uses{def:ms-bounded}
+  If $\mu$, read in charts, is Lipschitz near the zero section, then $\mu$ is bounded above.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Near $(\varphi(p), 0)$ the Lipschitz condition gives
+  $\mu_q(w) \leq K(\|\varphi(q) - \varphi(p)\| + \|\varphi_{*q} w\|)$; applied to a multiple of $w$ of
+  fixed small norm and combined with homogeneity, it gives $\mu_q(w) \leq 2K \|\varphi_{*q} w\|$
+  for $q$ close to $p$.
+\end{proof}
+
 \begin{theorem}[\texorpdfstring{\cite[Teorema~9.1.5]{Lar22}}{Teorema 9.1.5}]
   \label{thm:ms-finite-dim}
   \lean{LCManifolds.tangentCoordChange_smul, LCManifolds.FinslerMetric.isBounded_of_finiteDimensional}
