@@ -12,7 +12,7 @@ References: G. Larotonda, *The metric geometry of infinite dimensional Lie group
 homogeneous spaces*, Forum Math. 31 (2019), Def. 2.2, 2.3, 2.6, 2.7 and Lemma 3.19;
 R. S. Palais, *Lusternik–Schnirelman theory on Banach manifolds*, Topology 5 (1966), §2,
 Def. 2.1 and 2.6; D. Burago, Y. Burago, S. Ivanov, *A Course in Metric Geometry*, AMS (2001)
-(length structures).
+(§2.1.1, definition of length structures).
 
 ## Terminology: two continuity conditions, two names
 
@@ -32,7 +32,7 @@ most general to the most specific:
   "continuous along paths"): a field of Finsler seminorms such that `t ↦ μ (γ̇ t)` is
   **continuous along every `C¹` curve `γ`**, and nothing more. It is exactly what is needed to
   measure lengths of curves, hence the name (compare the length structures of
-  Burago–Burago–Ivanov).
+  Burago–Burago–Ivanov, §2.1.1).
 
 Every Finsler metric is a Finsler length structure (`FinslerMetric.toFinslerLengthStructure`):
 the velocity of a `C¹` curve is a continuous curve in `TM` (`continuous_velocity`). The converse
