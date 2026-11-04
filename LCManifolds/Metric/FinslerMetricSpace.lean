@@ -65,6 +65,50 @@ instance : AsymmPseudoEMetricSpace (FinslerSpace μ) :=
 
 theorem bdist_toFinsler (x y : M) : bdist (μ.toFinsler x) (μ.toFinsler y) = μ.dist x y := rfl
 
+/-- **`b(γ s, γ t)` is controlled by the lengths of `γ` and of the reversed curve**, with no
+reversibility: for `s ≤ t` one goes along `γ`, for `t < s` along `τ ↦ γ (-τ)`. -/
+theorem bdist_le_lengths {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (s t : ℝ) :
+    bdist (μ.toFinsler (γ s)) (μ.toFinsler (γ t)) ≤
+      ENNReal.ofReal (|μ.length γ s t| + |μ.length (fun τ ↦ γ (-τ)) (-s) (-t)|) := by
+  rw [bdist_toFinsler]
+  rcases le_total s t with hst | hts
+  · refine (μ.dist_le hγ hst).trans (ENNReal.ofReal_le_ofReal ?_)
+    exact (le_abs_self _).trans (le_add_of_nonneg_right (abs_nonneg _))
+  · have hδ := isCkCurve_reverse hγ
+    have h := μ.dist_le hδ (neg_le_neg hts)
+    simp only [neg_neg] at h
+    refine h.trans (ENNReal.ofReal_le_ofReal ?_)
+    exact (le_abs_self _).trans (le_add_of_nonneg_left (abs_nonneg _))
+
+/-- **`C¹` curves are continuous for the topology of `d_b`** (the symmetrized topology), with no
+reversibility. -/
+theorem continuous_toFinsler {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) :
+    Continuous fun t ↦ μ.toFinsler (γ t) := by
+  rw [continuous_iff_continuousAt]
+  intro s
+  have hδ := isCkCurve_reverse hγ
+  have hprim : ∀ {c : ℝ → M}, IsCkCurve E 1 c → ∀ a : ℝ, Continuous fun t ↦ μ.length c a t :=
+    fun hc a ↦ intervalIntegral.continuous_primitive
+      (fun _ _ ↦ (μ.continuous_velocity hc).intervalIntegrable _ _) a
+  set G : ℝ → ℝ := fun t ↦ |μ.length γ s t| + |μ.length (fun τ ↦ γ (-τ)) (-s) (-t)|
+  have hG : Continuous G :=
+    ((hprim hγ s).abs).add (((hprim hδ (-s)).comp continuous_neg).abs)
+  have hG0 : G s = 0 := by simp [G, length]
+  have h0 : Tendsto (fun t ↦ ENNReal.ofReal (G t)) (𝓝 s) (𝓝 0) := by
+    have h := (ENNReal.continuous_ofReal.tendsto _).comp (hG.tendsto s)
+    rwa [hG0, ENNReal.ofReal_zero] at h
+  have hsymm : ∀ t, |μ.length γ t s| + |μ.length (fun τ ↦ γ (-τ)) (-t) (-s)| = G t := by
+    intro t
+    simp only [G, length]
+    rw [intervalIntegral.integral_symm (b := s), abs_neg,
+      intervalIntegral.integral_symm (a := -t), abs_neg]
+  rw [ContinuousAt, EMetric.tendsto_nhds]
+  intro ε hε
+  filter_upwards [(h0.eventually (gt_mem_nhds hε))] with t ht
+  rw [edist_eq_max_bdist]
+  refine max_lt ((μ.bdist_le_lengths hγ t s).trans_lt ?_) ((μ.bdist_le_lengths hγ s t).trans_lt ht)
+  rwa [hsymm]
+
 variable [hrev : Fact μ.IsReversible]
 
 /-- For a reversible `μ`, the symmetrized distance is `d_b` itself. -/
@@ -81,27 +125,6 @@ theorem edist_le_abs_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (s t : ℝ
     have h := μ.dist_le hγ hts
     have hsym : μ.length γ s t = -μ.length γ t s := intervalIntegral.integral_symm _ _
     rwa [hsym, abs_neg, abs_of_nonneg (μ.length_nonneg γ hts)]
-
-/-- **`C¹` curves are continuous for `d_b`.** -/
-theorem continuous_toFinsler {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) :
-    Continuous fun t ↦ μ.toFinsler (γ t) := by
-  rw [continuous_iff_continuousAt]
-  intro s
-  have hprim : Continuous fun t ↦ μ.length γ s t :=
-    intervalIntegral.continuous_primitive
-      (fun _ _ ↦ (μ.continuous_velocity hγ).intervalIntegrable _ _) s
-  have h0 : Tendsto (fun t ↦ ENNReal.ofReal |μ.length γ s t|) (𝓝 s) (𝓝 0) := by
-    have := ((hprim.abs).tendsto s)
-    have hz : |μ.length γ s s| = 0 := by simp [length]
-    rw [hz] at this
-    have h := (ENNReal.continuous_ofReal.tendsto 0).comp this
-    rw [ENNReal.ofReal_zero] at h
-    exact h
-  rw [ContinuousAt, EMetric.tendsto_nhds]
-  intro ε hε
-  filter_upwards [(h0.eventually (gt_mem_nhds hε))] with t ht
-  rw [edist_comm]
-  exact (μ.edist_le_abs_length hγ s t).trans_lt ht
 
 omit hrev in
 /-- Lengths along a monotone sequence of times telescope. -/

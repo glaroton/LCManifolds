@@ -42,8 +42,7 @@ the mean value inequality with a boundary function, valid in any normed space.
 * `norm_chart_sub_le_dist` (**Lema 9.1.8**): near `x₀`, `‖φ y − φ x₀‖ ≤ C d_b(x₀, y)`, and the
   points at small `d_b`-distance from `x₀` lie in `U`;
 * `eq_of_dist_eq_zero`: if `μ` is bounded below, `d_b(x, y) = 0` forces `x = y`;
-* `continuous_ofFinsler` (**Lema 9.1.8**): if moreover `μ` is reversible, every open set of `M`
-  is open for `d_b`;
+* `continuous_ofFinsler` (**Lema 9.1.8**): every open set of `M` is open for `d_b`;
 * `dist_le_norm_chart`, `continuous_toFinsler_of_isBoundedAbove` (*Estructuras*, (9.3)): if `μ` is
   bounded above, `d_b(x, y) ≤ ‖φ y − φ x‖ / m` near each point, so the topology of `d_b` is
   coarser than that of `M` (a weak Finsler manifold);
@@ -363,10 +362,10 @@ theorem eq_of_dist_eq_zero (hb : μ.toFinslerSeminormField.IsBoundedBelow) {x y 
   have : i.1 y = i.1 x := sub_eq_zero.mp (norm_le_zero_iff.mp hnorm)
   exact (i.1.injOn hx hy this.symm)
 
-/-- **Lema 9.1.8: every open set of `M` is open for `d_b`** (for a reversible `μ` bounded below):
+/-- **Lema 9.1.8: every open set of `M` is open for `d_b`** (for `μ` bounded below):
 the identity `(M, d_b) → M` is continuous. -/
-theorem continuous_ofFinsler (hb : μ.toFinslerSeminormField.IsBoundedBelow)
-    [hrev : Fact μ.IsReversible] : Continuous μ.ofFinsler := by
+theorem continuous_ofFinsler (hb : μ.toFinslerSeminormField.IsBoundedBelow) :
+    Continuous μ.ofFinsler := by
   rw [continuous_iff_continuousAt]
   intro p
   set x₀ : M := μ.ofFinsler p
@@ -382,9 +381,8 @@ theorem continuous_ofFinsler (hb : μ.toFinslerSeminormField.IsBoundedBelow)
     (lt_min (div_pos hr hC) (div_pos hε hC)), fun q hq ↦ ?_⟩
   set y : M := μ.ofFinsler q
   have hd : μ.dist x₀ y < ENNReal.ofReal (min (r / C) (ε / C)) := by
-    have : edist q p = μ.dist y x₀ := μ.edist_toFinsler y x₀
-    rw [Metric.mem_eball, this, μ.dist_comm hrev.out] at hq
-    exact hq
+    rw [Metric.mem_eball] at hq
+    exact (bdist_le_edist' q p).trans_lt hq
   have hdr : μ.dist x₀ y < ENNReal.ofReal (r / C) :=
     hd.trans_le (ENNReal.ofReal_le_ofReal (min_le_left _ _))
   obtain ⟨hy, hnorm⟩ := hball y hdr
@@ -483,10 +481,10 @@ theorem dist_le_norm_chart {U : Set M} (hm : μ.toFinslerSeminormField.IsBounded
 
 omit [CompleteSpace E] [T2Space M] in
 /-- **For a weak Finsler manifold the topology of `d_b` is coarser than that of `M`**
-(*Estructuras*, (9.3)): if `μ` is reversible and bounded above, the identity `M → (M, d_b)` is
+(*Estructuras*, (9.3)): if `μ` is bounded above, the identity `M → (M, d_b)` is
 continuous. -/
-theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.IsBoundedAbove)
-    [hrev : Fact μ.IsReversible] : Continuous μ.toFinsler := by
+theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.IsBoundedAbove) :
+    Continuous μ.toFinsler := by
   rw [continuous_iff_continuousAt]
   intro x₀
   obtain ⟨i, U, hUo, hx₀U, hUs, m, hmpos, hm⟩ := ha x₀
@@ -517,18 +515,32 @@ theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.I
     calc (1 - s) * ‖i.1 y - i.1 x₀‖ ≤ 1 * ‖i.1 y - i.1 x₀‖ := by
           gcongr; linarith [hs.1]
       _ < r := by rw [one_mul]; exact hyn.trans_le (min_le_left _ _)
+  have hseg' : ∀ s ∈ Icc (0 : ℝ) 1, i.1 x₀ + s • (i.1 y - i.1 x₀) ∈ i.1.target ∧
+      i.1.symm (i.1 x₀ + s • (i.1 y - i.1 x₀)) ∈ U := by
+    intro s hs
+    apply hrT
+    rw [Metric.mem_ball, dist_eq_norm]
+    have : i.1 x₀ + s • (i.1 y - i.1 x₀) - i.1 x₀ = s • (i.1 y - i.1 x₀) := by module
+    rw [this, norm_smul, Real.norm_of_nonneg hs.1]
+    calc s * ‖i.1 y - i.1 x₀‖ ≤ 1 * ‖i.1 y - i.1 x₀‖ := by gcongr; exact hs.2
+      _ < r := by rw [one_mul]; exact hyn.trans_le (min_le_left _ _)
   have hd := μ.dist_le_norm_chart hm hmpos hy hx₀ hseg
-  rw [μ.edist_toFinsler]
-  refine hd.trans_lt (lt_of_lt_of_le ?_ hρε.le)
-  rw [ENNReal.ofReal_lt_ofReal_iff hρ, div_lt_iff₀ hmpos, norm_sub_rev]
-  linarith [hyn.trans_le (min_le_right _ _)]
+  have hd' := μ.dist_le_norm_chart hm hmpos hx₀ hy hseg'
+  have hlt : ENNReal.ofReal (‖i.1 y - i.1 x₀‖ / m) < ε := by
+    refine lt_of_lt_of_le ?_ hρε.le
+    rw [ENNReal.ofReal_lt_ofReal_iff hρ, div_lt_iff₀ hmpos]
+    linarith [hyn.trans_le (min_le_right _ _)]
+  rw [edist_eq_max_bdist]
+  refine max_lt (hd.trans_lt ?_) (hd'.trans_lt hlt)
+  rwa [norm_sub_rev]
 
 end Upper
 
 /-- **Corolario 9.1.9: for a strong Finsler manifold the two topologies coincide.** If `μ` is
-reversible and bounded (above and below), with a complete model and a Hausdorff manifold, the
-identity of `M` is a homeomorphism between the manifold topology and the topology of `d_b`. -/
-def homeomorphFinsler (hb : μ.toFinslerSeminormField.IsBounded) [Fact μ.IsReversible] :
+bounded (above and below), with a complete model and a Hausdorff manifold, the identity of `M` is
+a homeomorphism between the manifold topology and the topology of `d_b` (the topology of the
+symmetrized distance; no reversibility is needed). -/
+def homeomorphFinsler (hb : μ.toFinslerSeminormField.IsBounded) :
     M ≃ₜ FinslerSpace μ where
   toFun := μ.toFinsler
   invFun := μ.ofFinsler
