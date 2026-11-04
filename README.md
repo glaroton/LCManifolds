@@ -110,6 +110,16 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   Math. 2019, Lemma 3.19). Every Finsler metric is a Finsler length structure, because velocities
   of `C¹` curves are continuous in `TM` (`continuous_velocity`). Length of curves and the Finsler
   (quasi-)distance are defined for Finsler length structures.
+* [`LCManifolds/Metric/Bilinear.lean`](LCManifolds/Metric/Bilinear.lean): smooth fields of
+  symmetric bilinear forms, by signature. **Weak Riemannian** metrics (Schmeding, Def. 4.1.1;
+  "weak" refers to the topology of the fibers, `IsStrongAt` to the strong case) are Finsler
+  metrics, via Cauchy–Schwarz (`WeakRiemannianMetric.toFinslerMetric`). **Fundamental
+  decompositions** `E₊ ⊕ E₋` and the **index**, well defined as an algebraic dimension without
+  any completeness (`FundamentalDecomposition.rank_neg_eq`). **Weak pseudo-Riemannian** metrics of
+  arbitrary index (finite: Pontryagin type; infinite: Krein type) are weakly nondegenerate;
+  **weak Lorentzian** metrics have index `1`, and a timelike vector with positive definite
+  orthogonal gives a topological decomposition `ℝ v ⊕ v^⊥` (`FundamentalDecomposition.ofTimelike`).
+  Lorentzian and pseudo-Riemannian metrics are not Finsler metrics.
 * [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two
   notions differ already on `ℝ²`. With `β(x, y) = max(0, x² - |y|) / (x² + |y|)`, the Finsler
   norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the
