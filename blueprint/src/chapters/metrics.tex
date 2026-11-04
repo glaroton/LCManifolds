@@ -425,3 +425,120 @@ complementation has to be assumed.
   $(E_+, g)$ and $(E_-, -g)$, and the topology of the majorant $g(P_+\cdot, P_+\cdot) - g(P_-\cdot,
   P_-\cdot)$) are not formalized either.
 \end{remark}
+
+\section{The Levi-Civita connection}
+\label{sec:mt-levi-civita}
+
+In this section $g$ is a smooth field of symmetric bilinear forms of any signature
+(Definition~\ref{def:mt-bilin}). In a chart $i$ we write $G(y)(a, b)$ for its local representative
+and $\partial G(y)(u)(a, b)$ for the derivative of $G$ in the base point, in the direction $u$.
+Recall that, with the conventions of Chapter~\ref{chap:connections}, the covariant derivative is
+$\nabla_X Y = \dd \tilde Y \cdot \tilde X - \Gamma(\tilde X, \tilde Y)$ in a chart.
+
+\begin{definition}[Metric connections]
+  \label{def:mt-metric-connection}
+  \lean{LCManifolds.SymmBilinField.localForm, LCManifolds.SymmBilinField.localDeriv, LCManifolds.Connection.IsMetric}
+  \leanok
+  \uses{def:mt-bilin, def:connection}
+  A connection is \emph{metric} for $g$ if in every chart
+  \[
+    \partial G(y)(u)(a, b) = -G(y)\bigl(\Gamma_y(u, a), b\bigr) - G(y)\bigl(a, \Gamma_y(u, b)\bigr).
+  \]
+\end{definition}
+
+This is the chart expression of $X\, g(Y, Z) = g(\nabla_X Y, Z) + g(Y, \nabla_X Z)$: differentiate
+$y \mapsto G(y)(\tilde Y(y), \tilde Z(y))$ in the direction $\tilde X$ and use the bilinearity of
+$G(y)$.
+
+\begin{theorem}[Koszul formula]
+  \label{thm:mt-koszul}
+  \lean{LCManifolds.koszul, LCManifolds.koszul_eq, LCManifolds.Connection.koszul}
+  \leanok
+  \uses{def:mt-metric-connection}
+  If the connection is symmetric and metric for $g$, then in every chart
+  \[
+    G(y)\bigl(\Gamma_y(u, a), b\bigr) = \tfrac12 \bigl(-\partial G(y)(u)(a, b) - \partial G(y)(a)(u, b)
+      + \partial G(y)(b)(u, a)\bigr).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Write the compatibility condition for the three cyclic permutations of $(u, a, b)$, add the first
+  two and subtract the third; the symmetry of $\Gamma_y$ and of $G(y)$ cancels four of the six
+  terms.
+\end{proof}
+
+The proof is pure algebra at a point: it uses neither completeness, nor nondegeneracy, nor the
+sign of $g$.
+
+\begin{theorem}[Uniqueness of the Levi-Civita connection]
+  \label{thm:mt-lc-unique}
+  \lean{LCManifolds.eq_of_koszul, LCManifolds.SymmBilinField.localForm_nondegenerate, LCManifolds.Connection.Γ_eq_of_isMetric, LCManifolds.Connection.covDeriv_eq_of_isMetric, LCManifolds.WeakPseudoRiemannianMetric.covDeriv_eq, LCManifolds.WeakRiemannianMetric.covDeriv_eq}
+  \leanok
+  \uses{thm:mt-koszul, prop:mt-nondegenerate}
+  If $g$ is weakly nondegenerate, two symmetric metric connections have the same symbols in every
+  chart, hence the same covariant derivative. In particular this holds for weak pseudo-Riemannian
+  metrics of any index, finite or infinite, and for weak Riemannian and weak Lorentzian metrics.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:mt-koszul}, $G(y)(\Gamma_y(u, a) - \Gamma'_y(u, a), b) = 0$ for every $b$.
+  The local representative $G(y)$ is weakly nondegenerate because $g_x$ is and the coordinate
+  changes are invertible.
+\end{proof}
+
+\begin{theorem}[The metric spray]
+  \label{thm:mt-metric-spray}
+  \lean{LCManifolds.koszul_diag, LCManifolds.compatible_of_koszul, LCManifolds.koszul_of_spray, LCManifolds.compatible_iff_spray, LCManifolds.SymmBilinField.localDeriv_add_dir, LCManifolds.SymmBilinField.localDeriv_add_left, LCManifolds.SymmBilinField.localDeriv_add_right, LCManifolds.Connection.isMetric_iff_spray}
+  \leanok
+  \uses{thm:mt-koszul, prop:conn-to-spray}
+  A symmetric connection is metric for $g$ if and only if its spray $F_y(v) = \Gamma_y(v, v)$
+  satisfies, in every chart,
+  \[
+    G(y)\bigl(F_y(v), z\bigr) = -\partial G(y)(v)(v, z) + \tfrac12\, \partial G(y)(z)(v, v).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  On the diagonal $u = a = v$ the Koszul formula is the formula of the statement. Conversely,
+  polarizing the formula of the statement in $v$ gives back the Koszul formula, since $\Gamma_y$ is
+  symmetric and bilinear and $\partial G(y)$ is additive in each of its three arguments; and the
+  Koszul formula gives back the compatibility with $G$. The additivity of $\partial G(y)(u)(a, b)$
+  in $a$ and $b$ follows by differentiating the identity
+  $G(y + tu)(a + a', b) = G(y + tu)(a, b) + G(y + tu)(a', b)$, valid for small $t$.
+\end{proof}
+
+In the notation of \cite[Teorema 10.1.1]{Lar22}, where $G(y)(a, b) = \langle a, g(y) b\rangle$ and
+$\partial G(y)(z)(a, b) = \langle a, g_{*y,z}\, b\rangle$, the formula of the statement is
+$\langle F_y(v), g(y) z\rangle = -\langle g_{*y,v}\, v, z\rangle + \frac12 \langle g_{*y,z}\, v,
+v\rangle$, and the Koszul formula is its polarization; see also \cite[Ch.~VIII, \S4]{Lan99}.
+
+\begin{proposition}[The obstruction to existence]
+  \label{prop:mt-lc-existence}
+  \lean{LCManifolds.exists_symm_compatible_iff, LCManifolds.Connection.koszul_represented}
+  \leanok
+  \uses{thm:mt-koszul}
+  Let $B$ be a symmetric, weakly nondegenerate bilinear form and $D(u)(a, b)$ symmetric in $(a, b)$.
+  Symbols $\Gamma$ that are symmetric and compatible with $B$ exist if and only if every Koszul
+  functional $b \mapsto \frac12(-D(u)(a, b) - D(a)(u, b) + D(b)(u, a))$ is of the form $B(c, \cdot)$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  One direction is Theorem~\ref{thm:mt-koszul}. For the other, choose $\Gamma(u, a)$ representing
+  the Koszul functional; it is symmetric by weak nondegeneracy, and compatible by the algebra of the
+  previous proof.
+\end{proof}
+
+\begin{remark}[Existence is not automatic]
+  For a strong Riemannian metric on a Hilbert manifold every continuous functional is represented
+  (Riesz), and the Levi-Civita connection exists \cite[Ch.~VIII, \S4]{Lan99}. For weak metrics, and
+  every metric on a Fréchet manifold that is not normable is weak, the Koszul functional need not be
+  represented: Schmeding gives a weak Riemannian metric on $\ell^2$ with no metric spray
+  \cite[Example 4.3.7]{Sch23}. Even when it is represented at every point, the symbols so obtained
+  have to be smooth and satisfy the change of charts law; neither follows from the pointwise
+  statement. Existence is therefore a property of the metric at hand, to be checked in examples.
+\end{remark}

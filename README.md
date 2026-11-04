@@ -127,6 +127,16 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   **weak Lorentzian** metrics have index `1`, and a timelike vector with positive definite
   orthogonal gives a topological decomposition `ℝ v ⊕ v^⊥` (`FundamentalDecomposition.ofTimelike`).
   Lorentzian and pseudo-Riemannian metrics are not Finsler metrics.
+* [`LCManifolds/Metric/LeviCivita.lean`](LCManifolds/Metric/LeviCivita.lean): metric
+  connections for fields of symmetric bilinear forms of any signature. The **Koszul formula**
+  (`Connection.koszul`), **uniqueness** of the Levi-Civita connection for weakly nondegenerate
+  metrics, in particular weak pseudo-Riemannian metrics of any index
+  (`Connection.Γ_eq_of_isMetric`, `WeakPseudoRiemannianMetric.covDeriv_eq`), and the **metric
+  spray**: a symmetric connection is metric if and only if its spray satisfies
+  `G(F(v), z) = −∂G(v)(v, z) + ½ ∂G(z)(v, v)` in every chart (`Connection.isMetric_iff_spray`;
+  Larotonda, *Estructuras*, Teorema 10.1.1). Existence is not claimed: for weak metrics the
+  Koszul functional need not be represented (`exists_symm_compatible_iff`; Schmeding's
+  Example 4.3.7 on `ℓ²`).
 * [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two
   notions differ already on `ℝ²`. With `β(x, y) = max(0, x² - |y|) / (x² + |y|)`, the Finsler
   norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the
