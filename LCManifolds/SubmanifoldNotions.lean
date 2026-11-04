@@ -54,7 +54,8 @@ comparable; see the subtleties below.
 
 * *Weak immersions versus immersions.* The differential can be injective without having closed
   range, already between Banach spaces: the inclusion `ℓ¹ → ℓ²` is continuous, linear,
-  injective, and its range is dense and not closed.
+  injective, and its range is dense and not closed. Formalized in
+  `LCManifolds.Examples.Counterexamples` (`not_isImmersion_lpInclusion`).
 * *Immersions in the sense of Glöckner–Neeb.* Their Def. 3.3.25(b) asks for a local linear
   form with a continuous linear left inverse, which forces the range to be complemented. We do
   not use it as the definition of an immersion: it is much more restrictive than the notion
@@ -74,7 +75,9 @@ comparable; see the subtleties below.
     follow from injective immersion either: the figure eight `t ↦ (sin t, sin 2t)`,
     `t ∈ (-π, π)`, is an injectively immersed curve that is not initial. The curve
     `s ↦ (sin s, -sin 2s)` is smooth in `ℝ²`, stays in the figure eight, and crosses the origin
-    along the other branch; read in the parameter it jumps from `π` to `0` to `-π`.
+    along the other branch; read in the parameter it jumps from `π` to `0` to `-π`
+    Formalized, with the parameter `θ = 2 arctan t`, in `LCManifolds.Examples.Lemniscate`
+    (`not_isInitialSubmanifold_lemniscate`).
 * *Mechanisms that destroy initiality.* For an injective weak immersion, smooth maps into the
   ambient manifold that land in the image may fail to lift
   - continuously, because two pieces of the image accumulate on each other (figure eight;
