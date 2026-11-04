@@ -1,0 +1,165 @@
+/-
+Copyright (c) 2026 Gabriel Larotonda. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Gabriel Larotonda
+-/
+import LCManifolds.Metric.Finsler
+import LCManifolds.MetricGeometry.LengthMetric
+
+/-!
+# Finsler manifolds as metric spaces
+
+Reference: G. Larotonda, *Estructuras geométricas para las variedades de Banach*, Cap. 9, §9.1.1
+(Proposición 9.1.2).
+
+Let `μ` be a **reversible** Finsler length structure on `M`. Its distance `d_b`
+(`FinslerLengthStructure.dist`, defined with piecewise `C¹` paths) is then a pseudo-(extended)
+metric, and `FinslerSpace μ` is a copy of `M` with this distance. Reversibility is needed for the
+symmetry of `d_b`; without it `d_b` is only a quasi-metric (`FinslerLengthStructure.dist_triangle`
+still holds), and the metric theory of Cap. 8, which is symmetric, does not apply as such.
+
+The topology of `FinslerSpace μ` is the one of `d_b`, which need not be the manifold topology of
+`M`; comparing both is the subject of *Estructuras*, §9.1.2.
+
+## Main results
+
+* `edist_le_abs_length`, `continuous_toFinsler`: a `C¹` curve of `M` is continuous for `d_b`,
+  since `d_b(γ s, γ t) ≤ |L_b(γ|[s, t])|`;
+* `eVariationOn_le_length` (**Proposición 9.1.2**, first part): the metric length of a `C¹` arc
+  is at most its Finsler length, `ℓ(γ) ≤ L_b(γ)`;
+* `isInterior` (**Proposición 9.1.2**): `(M, d_b)` is an interior metric space, `d_ℓ = d_b`.
+-/
+
+open Set Filter MeasureTheory
+open scoped Topology ENNReal
+
+noncomputable section
+
+namespace LCManifolds
+
+universe u
+
+variable {E : Type u}
+  [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
+  [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+
+namespace FinslerLengthStructure
+
+variable (μ : FinslerLengthStructure E M)
+
+/-- A copy of `M` with the Finsler distance `d_b` (for a reversible `μ`). -/
+def FinslerSpace (_μ : FinslerLengthStructure E M) : Type _ := M
+
+/-- The identity `M → FinslerSpace μ`. -/
+def toFinsler : M → FinslerSpace μ := id
+
+/-- The identity `FinslerSpace μ → M`. -/
+def ofFinsler : FinslerSpace μ → M := id
+
+instance [hrev : Fact μ.IsReversible] : PseudoEMetricSpace (FinslerSpace μ) where
+  edist x y := μ.dist (μ.ofFinsler x) (μ.ofFinsler y)
+  edist_self x := μ.dist_self _
+  edist_comm x y := μ.dist_comm hrev.out _ _
+  edist_triangle x y z := μ.dist_triangle _ _ _
+
+variable [hrev : Fact μ.IsReversible]
+
+theorem edist_toFinsler (x y : M) : edist (μ.toFinsler x) (μ.toFinsler y) = μ.dist x y := rfl
+
+/-- **`d_b(γ s, γ t) ≤ |L_b(γ|[s, t])|`** for a `C¹` curve. -/
+theorem edist_le_abs_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (s t : ℝ) :
+    edist (μ.toFinsler (γ s)) (μ.toFinsler (γ t)) ≤ ENNReal.ofReal |μ.length γ s t| := by
+  rcases le_total s t with hst | hts
+  · rw [abs_of_nonneg (μ.length_nonneg γ hst)]
+    exact μ.dist_le hγ hst
+  · rw [edist_comm, edist_toFinsler]
+    have h := μ.dist_le hγ hts
+    have hsym : μ.length γ s t = -μ.length γ t s := intervalIntegral.integral_symm _ _
+    rwa [hsym, abs_neg, abs_of_nonneg (μ.length_nonneg γ hts)]
+
+/-- **`C¹` curves are continuous for `d_b`.** -/
+theorem continuous_toFinsler {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) :
+    Continuous fun t ↦ μ.toFinsler (γ t) := by
+  rw [continuous_iff_continuousAt]
+  intro s
+  have hprim : Continuous fun t ↦ μ.length γ s t :=
+    intervalIntegral.continuous_primitive
+      (fun _ _ ↦ (μ.continuous_velocity hγ).intervalIntegrable _ _) s
+  have h0 : Tendsto (fun t ↦ ENNReal.ofReal |μ.length γ s t|) (𝓝 s) (𝓝 0) := by
+    have := ((hprim.abs).tendsto s)
+    have hz : |μ.length γ s s| = 0 := by simp [length]
+    rw [hz] at this
+    have h := (ENNReal.continuous_ofReal.tendsto 0).comp this
+    rw [ENNReal.ofReal_zero] at h
+    exact h
+  rw [ContinuousAt, EMetric.tendsto_nhds]
+  intro ε hε
+  filter_upwards [(h0.eventually (gt_mem_nhds hε))] with t ht
+  rw [edist_comm]
+  exact (μ.edist_le_abs_length hγ s t).trans_lt ht
+
+omit hrev in
+/-- Lengths along a monotone sequence of times telescope. -/
+theorem sum_length_range {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (u : ℕ → ℝ) (n : ℕ) :
+    ∑ i ∈ Finset.range n, μ.length γ (u i) (u (i + 1)) = μ.length γ (u 0) (u n) := by
+  induction n with
+  | zero => simp [length]
+  | succ n ih => rw [Finset.sum_range_succ, ih, μ.length_add hγ]
+
+/-- **Proposición 9.1.2, `ℓ(γ) ≤ L_b(γ)`**: the length of a `C¹` arc in the metric space
+`(M, d_b)` is at most its Finsler length. -/
+theorem eVariationOn_le_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (_hab : a ≤ b) :
+    eVariationOn (fun t ↦ μ.toFinsler (γ t)) (Icc a b) ≤ ENNReal.ofReal (μ.length γ a b) := by
+  refine iSup_le fun ⟨n, u, hu, hus⟩ ↦ ?_
+  calc ∑ i ∈ Finset.range n, edist (μ.toFinsler (γ (u (i + 1)))) (μ.toFinsler (γ (u i)))
+      ≤ ∑ i ∈ Finset.range n, ENNReal.ofReal (μ.length γ (u i) (u (i + 1))) := by
+        refine Finset.sum_le_sum fun i _ ↦ ?_
+        rw [edist_comm]
+        exact μ.dist_le hγ (hu (Nat.le_succ i))
+    _ = ENNReal.ofReal (∑ i ∈ Finset.range n, μ.length γ (u i) (u (i + 1))) :=
+        (ENNReal.ofReal_sum_of_nonneg fun i _ ↦ μ.length_nonneg γ (hu (Nat.le_succ i))).symm
+    _ = ENNReal.ofReal (μ.length γ (u 0) (u n)) := by rw [μ.sum_length_range hγ]
+    _ ≤ ENNReal.ofReal (μ.length γ a b) := by
+        refine ENNReal.ofReal_le_ofReal ?_
+        have h1 := μ.length_add hγ a (u 0) b
+        have h2 := μ.length_add hγ (u 0) (u n) b
+        have h3 := μ.length_nonneg γ (hus 0).1
+        have h4 := μ.length_nonneg γ (hus n).2
+        linarith
+
+/-- A `C¹` arc as a continuous curve of `(M, d_b)`. -/
+def arcPath {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b) :
+    RectPath (μ.toFinsler (γ a)) (μ.toFinsler (γ b)) where
+  toFun t := μ.toFinsler (γ t)
+  a := a
+  b := b
+  le := hab
+  continuousOn := (μ.continuous_toFinsler hγ).continuousOn
+  source := rfl
+  target := rfl
+
+/-- `d_ℓ` is bounded by the length of every chain of `C¹` arcs. -/
+theorem lengthDist_le_of_reach {x y : M} {L : ℝ} (h : μ.Reach x y L) :
+    lengthDist (μ.toFinsler x) (μ.toFinsler y) ≤ ENNReal.ofReal L := by
+  induction h with
+  | refl x => simp
+  | @cons γ a b y L hγ hab hrest ih =>
+    calc lengthDist (μ.toFinsler (γ a)) (μ.toFinsler y)
+        ≤ lengthDist (μ.toFinsler (γ a)) (μ.toFinsler (γ b)) +
+            lengthDist (μ.toFinsler (γ b)) (μ.toFinsler y) := lengthDist_triangle _ _ _
+      _ ≤ ENNReal.ofReal (μ.length γ a b) + ENNReal.ofReal L := by
+          gcongr
+          exact (lengthDist_le (μ.arcPath hγ hab)).trans (μ.eVariationOn_le_length hγ hab)
+      _ = ENNReal.ofReal (μ.length γ a b + L) :=
+          (ENNReal.ofReal_add (μ.length_nonneg γ hab) hrest.nonneg).symm
+
+/-- **Proposición 9.1.2**: `(M, d_b)` is an interior metric space: `d_ℓ = d_b`. -/
+theorem isInterior : IsInterior (FinslerSpace μ) := by
+  intro x y
+  refine le_antisymm ?_ (edist_le_lengthDist x y)
+  exact le_iInf fun p ↦ μ.lengthDist_le_of_reach (x := μ.ofFinsler x) (y := μ.ofFinsler y) p.2
+
+end FinslerLengthStructure
+
+end LCManifolds
