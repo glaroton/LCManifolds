@@ -124,24 +124,67 @@ through Theorem~\ref{thm:mt-continuous-velocity}.
   of a constant curve vanishes and $\mu_x(0) = 0$ by positive homogeneity.
 \end{proof}
 
-\begin{definition}[Finsler distance]
-  \label{def:mt-dist}
-  \lean{LCManifolds.FinslerLengthStructure.dist, LCManifolds.FinslerLengthStructure.dist_le, LCManifolds.FinslerLengthStructure.dist_self, LCManifolds.FinslerMetric.dist}
+\begin{definition}[Chains of arcs]
+  \label{def:mt-chain}
+  \lean{LCManifolds.FinslerLengthStructure.Reach, LCManifolds.FinslerLengthStructure.Reach.single, LCManifolds.FinslerLengthStructure.Reach.nonneg, LCManifolds.FinslerLengthStructure.Reach.trans}
   \leanok
   \uses{def:mt-length}
-  The distance $d_\mu(x, y) \in [0, \infty]$ is the infimum of the lengths of the $\Ck{1}$ curves
-  from $x$ to $y$, and $\infty$ if there is none. It satisfies $d_\mu(x, x) = 0$.
+  A \emph{chain of $\Ck{1}$ arcs} from $x$ to $y$ of length $L$ is either empty ($x = y$, $L = 0$)
+  or an arc $\gamma|_{[a, b]}$ of a $\Ck{1}$ curve with $\gamma(a) = x$, followed by a chain from
+  $\gamma(b)$ to $y$; its length is the sum of the lengths of the arcs. Chains concatenate, and
+  their lengths add.
 \end{definition}
 
-This is \cite[Def.~2.7]{Lar19}, restricted for the moment to $\Ck{1}$ curves.
+A chain is a piecewise $\Ck{1}$ path, cut at its corners. Encoding the paths in this way makes
+concatenation a formality: there is no need to smooth the curve at the junctions, which on a
+manifold would require reparametrizations with vanishing velocity at the end points.
 
-\begin{remark}[What the distance is, and what is missing]
-  The distance need not be symmetric; it is when $\mu$ is reversible. It may vanish between
-  distinct points even when every $\mu_x$ is a norm: Michor and Mumford proved that the
-  geodesic distance of the $L^2$ metric on the diffeomorphism group of a manifold vanishes
-  \cite[Thm.~5.2]{MM05}. Concatenation and reparametrization of curves, and with them the
-  triangle inequality, are not formalized yet; they require piecewise $\Ck{1}$ curves, as in
-  \cite{Lar19}.
+\begin{definition}[Finsler distance]
+  \label{def:mt-dist}
+  \lean{LCManifolds.FinslerLengthStructure.dist, LCManifolds.FinslerLengthStructure.dist_le_of_reach, LCManifolds.FinslerLengthStructure.dist_le, LCManifolds.FinslerLengthStructure.dist_self, LCManifolds.FinslerMetric.dist}
+  \leanok
+  \uses{def:mt-chain}
+  The distance $d_\mu(x, y) \in [0, \infty]$ is the infimum of the lengths of the chains of
+  $\Ck{1}$ arcs from $x$ to $y$, and $\infty$ if there is none. It satisfies $d_\mu(x, x) = 0$.
+\end{definition}
+
+This is \cite[Def.~2.7]{Lar19}, where the infimum is taken over piecewise $\Ck{1}$ curves.
+
+\begin{theorem}[Triangle inequality]
+  \label{thm:mt-triangle}
+  \lean{LCManifolds.FinslerLengthStructure.dist_triangle}
+  \leanok
+  \uses{def:mt-dist}
+  $d_\mu(x, z) \leq d_\mu(x, y) + d_\mu(y, z)$ for all $x, y, z \in M$. Hence $d_\mu$ is an
+  extended, possibly asymmetric, pseudo-distance.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  If there is no chain from $x$ to $y$ or from $y$ to $z$, the right-hand side is $\infty$.
+  Otherwise concatenate a chain from $x$ to $y$ with a chain from $y$ to $z$, and take infima.
+\end{proof}
+
+\begin{proposition}[Reversible fields give symmetric distances]
+  \label{prop:mt-dist-comm}
+  \lean{LCManifolds.isCkCurve_reverse, LCManifolds.velocity_reverse, LCManifolds.FinslerLengthStructure.length_reverse, LCManifolds.FinslerLengthStructure.Reach.symm, LCManifolds.FinslerLengthStructure.dist_comm}
+  \leanok
+  \uses{thm:mt-triangle}
+  The reversed curve $t \mapsto \gamma(-t)$ of a $\Ck{1}$ curve is $\Ck{1}$, with velocity
+  $-\dot\gamma(-t)$. If $\mu$ is reversible, reversing an arc does not change its length, so
+  chains can be run backwards and $d_\mu(x, y) = d_\mu(y, x)$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In a chart, the reversed curve is the composition of $\gamma$ with $t \mapsto -t$, and the
+  chain rule gives the velocity. The length follows by the change of variables $t \mapsto -t$.
+\end{proof}
+
+\begin{remark}[Degenerate distances]
+  The distance may vanish between distinct points even when every $\mu_x$ is a norm: Michor and
+  Mumford proved that the geodesic distance of the $L^2$ metric on the diffeomorphism group of a
+  manifold vanishes \cite[Thm.~5.2]{MM05}. So $d_\mu$ is in general only a pseudo-distance.
 \end{remark}
 
 \section{Lifting curves versus lifting neighborhoods}

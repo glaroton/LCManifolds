@@ -109,7 +109,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   what lengths need and what quotient metrics on homogeneous spaces satisfy (Larotonda, Forum
   Math. 2019, Lemma 3.19). Every Finsler metric is a Finsler length structure, because velocities
   of `C¹` curves are continuous in `TM` (`continuous_velocity`). Length of curves and the Finsler
-  (quasi-)distance are defined for Finsler length structures.
+  distance are defined for Finsler length structures, the distance over piecewise `C¹` paths
+  (chains of `C¹` arcs, `Reach`). It satisfies the **triangle inequality** (`dist_triangle`), so
+  it is an extended, possibly asymmetric, pseudo-distance, and it is symmetric when `μ` is
+  reversible (`dist_comm`, by reversing curves).
 * [`LCManifolds/Metric/FinslerQuotient.lean`](LCManifolds/Metric/FinslerQuotient.lean): where
   the two continuity conditions come from, for a field `μ` on `M` controlled through a `C¹` map
   `π : N → M` (typically a quotient metric). If curves lift locally and `μ ∘ Tπ` is continuous

@@ -59,8 +59,12 @@ Finsler *norm*: `μ_p v = 0 → v = 0`) and `FinslerSeminormField.IsReversible` 
 ## Curves
 
 Curves are `C¹` maps `ℝ → M` (`IsCkCurve E 1`), restricted to an interval `[a, b]` when their
-length is measured. Larotonda allows piecewise `C¹` curves; concatenation, reparametrization and
-the triangle inequality for the distance are not yet formalized.
+length is measured. As in Larotonda, the distance is taken over **piecewise `C¹` paths**, encoded
+as chains of `C¹` arcs (`FinslerLengthStructure.Reach`): an arc `γ|[a, b]` followed by a chain
+from `γ b`. Concatenation of chains is then immediate (`Reach.trans`), and so is the **triangle
+inequality** (`FinslerLengthStructure.dist_triangle`); no smoothing at the junctions is needed.
+Reversing a curve (`isCkCurve_reverse`, `velocity_reverse`) preserves lengths when `μ` is
+reversible, and then the distance is symmetric (`FinslerLengthStructure.dist_comm`).
 -/
 
 open Set Filter Bundle MeasureTheory
@@ -253,28 +257,153 @@ theorem velocity_const (x : M) (t : ℝ) : velocity E (fun _ : ℝ ↦ x) t = �
 theorem length_const (x : M) (a b : ℝ) : μ.length (fun _ ↦ x) a b = 0 := by
   simp [length, velocity_const]
 
-/-- The **Finsler distance** (Larotonda, Def. 2.7): the infimum of the lengths of `C¹` curves
-from `x` to `y`, with value `∞` if there is none. It is defined for Finsler length structures.
-It need not be symmetric (it is when `μ` is reversible) and it may vanish between distinct
-points, even when every `μ_p` is a norm (Michor–Mumford, Doc. Math. 10 (2005), Thm. 5.2). -/
-def dist (x y : M) : ℝ≥0∞ :=
-  ⨅ (γ : ℝ → M) (a : ℝ) (b : ℝ) (_ : IsCkCurve E 1 γ) (_ : a ≤ b) (_ : γ a = x) (_ : γ b = y),
-    ENNReal.ofReal (μ.length γ a b)
+/-- `μ.Reach x y L`: the point `y` is reached from `x` by a **chain of `C¹` arcs** of total length
+`L`, that is, by a piecewise `C¹` path. A chain is either empty (`x = y`, `L = 0`) or an arc
+`γ|[a, b]` from `x = γ a` followed by a chain from `γ b`. Working with chains, instead of a
+single `C¹` curve, is what makes concatenation, hence the triangle inequality, immediate: no
+smoothing at the junctions is needed. -/
+inductive Reach : M → M → ℝ → Prop
+  | refl (x : M) : Reach x x 0
+  | cons {γ : ℝ → M} {a b : ℝ} {y : M} {L : ℝ} : IsCkCurve E 1 γ → a ≤ b →
+      Reach (γ b) y L → Reach (γ a) y (μ.length γ a b + L)
+
+variable {μ}
+
+/-- A single `C¹` arc is a chain. -/
+theorem Reach.single {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b) :
+    μ.Reach (γ a) (γ b) (μ.length γ a b) := by
+  simpa using Reach.cons hγ hab (Reach.refl (μ := μ) (γ b))
+
+theorem Reach.nonneg {x y : M} {L : ℝ} (h : μ.Reach x y L) : 0 ≤ L := by
+  induction h with
+  | refl => exact le_rfl
+  | cons _ hab _ ih => exact add_nonneg (μ.length_nonneg _ hab) ih
+
+/-- **Concatenation of chains**: lengths add. -/
+theorem Reach.trans {x y z : M} {L L' : ℝ} (h : μ.Reach x y L) (h' : μ.Reach y z L') :
+    μ.Reach x z (L + L') := by
+  induction h with
+  | refl => simpa using h'
+  | cons hγ hab _ ih =>
+    rw [add_assoc]
+    exact Reach.cons hγ hab (ih h')
+
+variable (μ)
+
+/-- The **Finsler distance** (Larotonda, Def. 2.7): the infimum of the lengths of piecewise `C¹`
+paths (chains of `C¹` arcs, `Reach`) from `x` to `y`, with value `∞` if there is none. It is
+defined for Finsler length structures. It need not be symmetric (it is when `μ` is reversible)
+and it may vanish between distinct points, even when every `μ_p` is a norm (Michor–Mumford,
+Doc. Math. 10 (2005), Thm. 5.2). -/
+def dist (x y : M) : ℝ≥0∞ := ⨅ L : {L : ℝ // μ.Reach x y L}, ENNReal.ofReal L.1
+
+theorem dist_le_of_reach {x y : M} {L : ℝ} (h : μ.Reach x y L) :
+    μ.dist x y ≤ ENNReal.ofReal L :=
+  iInf_le_of_le ⟨L, h⟩ le_rfl
 
 theorem dist_le {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b) :
     μ.dist (γ a) (γ b) ≤ ENNReal.ofReal (μ.length γ a b) :=
-  iInf₂_le_of_le γ a <| iInf₂_le_of_le b hγ <| iInf₂_le_of_le hab rfl <| iInf_le_of_le rfl le_rfl
+  μ.dist_le_of_reach (Reach.single hγ hab)
 
-/-- The distance from a point to itself is zero (constant curve). -/
+/-- The distance from a point to itself is zero (the empty chain). -/
 @[simp] theorem dist_self (x : M) : μ.dist x x = 0 := by
-  have hγ : IsCkCurve E 1 (fun _ : ℝ ↦ x) := by
-    refine ⟨continuous_const, fun i ↦ ?_⟩
-    exact contDiffMBOn_const 1 (i.1 x) _
-  have := μ.dist_le hγ (le_refl (0 : ℝ))
-  rw [length_const, ENNReal.ofReal_zero] at this
+  have := μ.dist_le_of_reach (Reach.refl (μ := μ) x)
+  rw [ENNReal.ofReal_zero] at this
   exact le_antisymm this bot_le
 
+/-- **The triangle inequality** `d(x, z) ≤ d(x, y) + d(y, z)`, by concatenation of chains. With
+`dist_self`, the Finsler distance is an extended, possibly asymmetric, pseudo-distance. -/
+theorem dist_triangle (x y z : M) : μ.dist x z ≤ μ.dist x y + μ.dist y z := by
+  rcases isEmpty_or_nonempty {L : ℝ // μ.Reach x y L} with hxy | hxy
+  · have : μ.dist x y = ⊤ := by simp [dist]
+    simp [this]
+  rcases isEmpty_or_nonempty {L : ℝ // μ.Reach y z L} with hyz | hyz
+  · have : μ.dist y z = ⊤ := by simp [dist]
+    simp [this]
+  refine ENNReal.le_iInf_add_iInf fun p q ↦ ?_
+  rw [← ENNReal.ofReal_add p.2.nonneg q.2.nonneg]
+  exact μ.dist_le_of_reach (p.2.trans q.2)
+
 end FinslerLengthStructure
+
+/-! ### Reversed curves and the symmetry of the distance -/
+
+omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [MBManifold E M] in
+/-- The reversed curve `t ↦ γ (-t)` of a `C¹` curve is `C¹`. -/
+theorem isCkCurve_reverse {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) :
+    IsCkCurve E 1 (fun t ↦ γ (-t)) := by
+  refine ⟨hγ.1.comp continuous_neg, fun i ↦ ?_⟩
+  have h := (hγ.2 i).comp_clm (-ContinuousLinearMap.id ℝ ℝ) (i.1.open_source.preimage hγ.1)
+  exact h
+
+/-- The velocity of the reversed curve is the opposite of the velocity. -/
+theorem velocity_reverse {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (t : ℝ) :
+    velocity E (fun s ↦ γ (-s)) t = ⟨γ (-t), -(show E from (velocity E γ (-t)).2)⟩ := by
+  set i : atlas E M := ⟨chartAt E (γ (-t)), chart_mem_atlas E _⟩
+  set L : ℝ →L[ℝ] ℝ := -ContinuousLinearMap.id ℝ ℝ
+  have hc : ContDiffMBOn 1 (i.1 ∘ γ) (γ ⁻¹' i.1.source) := hγ.2 i
+  have hV : IsOpen (γ ⁻¹' i.1.source) := i.1.open_source.preimage hγ.1
+  have hL : ContDiffMBOn 1 L (L ⁻¹' (γ ⁻¹' i.1.source)) := L.contDiffMBOn 1 _
+  have hmem : t ∈ L ⁻¹' (γ ⁻¹' i.1.source) := by
+    change γ (-t) ∈ i.1.source
+    exact mem_chart_source E _
+  have hcomp := ContDiffMBOn.dMB_comp hV hc hL (fun s hs ↦ hs) hmem 1
+  have hL1 : dMB L (t, 1) = -1 := by
+    rw [(L.hasDirDerivAt t 1).dMB_eq]
+    simp [L]
+  have hLt : L t = -t := by simp [L]
+  have hneg := hc.dMB_smul (x := L t) hmem (-1) 1
+  rw [hLt] at hneg hcomp
+  have hfun : (i.1 ∘ fun s ↦ γ (-s)) = (i.1 ∘ γ) ∘ L := by
+    funext s
+    simp [L]
+  have key : dMB (i.1 ∘ fun s ↦ γ (-s)) (t, 1) = -dMB (i.1 ∘ γ) (-t, 1) := by
+    rw [hfun, hcomp, hL1]
+    simpa using hneg
+  change (⟨γ (-t), dMB (i.1 ∘ fun s ↦ γ (-s)) (t, 1)⟩ : TangentBundle E M) =
+    ⟨γ (-t), -dMB (i.1 ∘ γ) (-t, 1)⟩
+  exact congrArg (fun v : E ↦ (⟨γ (-t), v⟩ : TangentBundle E M)) key
+
+namespace FinslerLengthStructure
+
+variable (μ : FinslerLengthStructure E M)
+
+/-- For a reversible `μ`, reversing a curve does not change its length. -/
+theorem length_reverse (hrev : μ.IsReversible) {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (a b : ℝ) :
+    μ.length (fun s ↦ γ (-s)) (-b) (-a) = μ.length γ a b := by
+  have hpt : ∀ t, μ.toFun (velocity E (fun s ↦ γ (-s)) t) = μ.toFun (velocity E γ (-t)) := by
+    intro t
+    rw [velocity_reverse hγ t]
+    exact hrev (γ (-t)) _
+  simp only [length, hpt]
+  rw [intervalIntegral.integral_comp_neg (fun t ↦ μ.toFun (velocity E γ t))]
+  simp
+
+variable {μ}
+
+/-- For a reversible `μ`, chains can be run backwards. -/
+theorem Reach.symm (hrev : μ.IsReversible) {x y : M} {L : ℝ} (h : μ.Reach x y L) :
+    μ.Reach y x L := by
+  induction h with
+  | refl x => exact Reach.refl x
+  | @cons γ a b y L hγ hab _ ih =>
+    have hback := Reach.single (μ := μ) (isCkCurve_reverse hγ) (neg_le_neg hab)
+    simp only [neg_neg] at hback
+    rw [μ.length_reverse hrev hγ] at hback
+    rw [add_comm]
+    exact ih.trans hback
+
+variable (μ)
+
+/-- **For a reversible `μ`, the Finsler distance is symmetric**, hence an extended
+pseudo-metric. -/
+theorem dist_comm (hrev : μ.IsReversible) (x y : M) : μ.dist x y = μ.dist y x := by
+  refine le_antisymm ?_ ?_
+  · exact le_iInf fun p ↦ μ.dist_le_of_reach (p.2.symm hrev)
+  · exact le_iInf fun p ↦ μ.dist_le_of_reach (p.2.symm hrev)
+
+end FinslerLengthStructure
+
 
 namespace FinslerMetric
 
