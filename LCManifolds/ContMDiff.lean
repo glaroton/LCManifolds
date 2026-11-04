@@ -207,6 +207,69 @@ theorem ContMDiffMBOn.contDiffMBOn_chart_of_mem_maximalAtlas {k : ℕ} {f : M �
   rintro z ⟨-, ⟨-, hzc⟩, hzc', -⟩
   simp only [Function.comp_apply, c.left_inv hzc, c'.left_inv hzc']
 
+/-- A continuous map whose local representatives in the preferred charts are `C^k` near the
+center of each chart is `C^k`. -/
+theorem contMDiffMB_of_chartAt {k : ℕ} {f : M → N} (hf : Continuous f)
+    (h : ∀ x, ∃ O : Set E, IsOpen O ∧ chartAt E x x ∈ O ∧
+      O ⊆ chartDomain f univ (chartAt E x) (chartAt F (f x)) ∧
+      ContDiffMBOn k (chartAt F (f x) ∘ f ∘ (chartAt E x).symm) O) :
+    ContMDiffMB E F k f := by
+  refine ⟨hf.continuousOn, fun x _ ↦ ?_⟩
+  set e := chartAt E x
+  set e' := chartAt F (f x)
+  have he : e ∈ atlas E M := chart_mem_atlas E x
+  have he' : e' ∈ atlas F N := chart_mem_atlas F (f x)
+  have hD := isOpen_chartDomain isOpen_univ hf.continuousOn e e'
+  refine ContDiffMBOn.of_local hD fun y hy ↦ ?_
+  obtain ⟨hye, -, hyf⟩ := hy
+  set p := e.symm y
+  set c := chartAt E p
+  set c' := chartAt F (f p)
+  have hc : c ∈ atlas E M := chart_mem_atlas E p
+  have hc' : c' ∈ atlas F N := chart_mem_atlas F (f p)
+  obtain ⟨O, hO, hpO, hOD, hμ⟩ := h p
+  -- near `y`, `e' ∘ f ∘ e⁻¹ = (e' ∘ c'⁻¹) ∘ (c' ∘ f ∘ c⁻¹) ∘ (c ∘ e⁻¹)`
+  have hτ : ContDiffMBOn k (c ∘ e.symm) (e.target ∩ e.symm ⁻¹' c.source) :=
+    smoothMBOn_transition he hc k
+  have hτc : ContinuousOn (c ∘ e.symm) (e.target ∩ e.symm ⁻¹' c.source) := hτ.continuousOn
+  set W := (e.target ∩ e.symm ⁻¹' (c.source ∩ f ⁻¹' e'.source)) ∩ (c ∘ e.symm) ⁻¹' O
+  have hW : IsOpen W := by
+    have h1 : IsOpen (e.target ∩ e.symm ⁻¹' (c.source ∩ f ⁻¹' e'.source)) :=
+      e.isOpen_inter_preimage_symm (c.open_source.inter (e'.open_source.preimage hf))
+    exact (hτc.mono fun z (hz : z ∈ e.target ∩ e.symm ⁻¹' (c.source ∩ f ⁻¹' e'.source)) ↦
+      ⟨hz.1, hz.2.1⟩).isOpen_inter_preimage h1 hO
+  have hyW : y ∈ W := ⟨⟨hye, mem_chart_source E p, hyf⟩, by
+    change c (e.symm y) ∈ O
+    exact hpO⟩
+  set T := c'.target ∩ c'.symm ⁻¹' e'.source
+  have hT : IsOpen T := c'.isOpen_inter_preimage_symm e'.open_source
+  have hτ' : ContDiffMBOn k (e' ∘ c'.symm) T := smoothMBOn_transition hc' he' k
+  have h1 : MapsTo (c ∘ e.symm) W O := fun z hz ↦ hz.2
+  have h2 : MapsTo (c' ∘ f ∘ c.symm) (O ∩ (c' ∘ f ∘ c.symm) ⁻¹' T) T := fun z hz ↦ hz.2
+  have hOT : IsOpen (O ∩ (c' ∘ f ∘ c.symm) ⁻¹' T) := hμ.continuousOn.isOpen_inter_preimage hO hT
+  have h1' : MapsTo (c ∘ e.symm) W (O ∩ (c' ∘ f ∘ c.symm) ⁻¹' T) := by
+    rintro z ⟨⟨hze, hzc, hzf⟩, hzO⟩
+    refine ⟨hzO, ?_⟩
+    have hcz : c.symm (c (e.symm z)) = e.symm z := c.left_inv hzc
+    have hzc' : f (e.symm z) ∈ c'.source := by
+      have := (hOD hzO).2.2
+      change f (c.symm (c (e.symm z))) ∈ c'.source at this
+      rwa [hcz] at this
+    refine ⟨by simp only [Function.comp_apply, hcz]; exact c'.map_source hzc', ?_⟩
+    simp only [Function.comp_apply, mem_preimage, hcz, c'.left_inv hzc']
+    exact hzf
+  have hcomp := (hτ'.comp hOT hT (hμ.mono inter_subset_left) h2).comp hW hOT
+    (hτ.mono fun z hz ↦ ⟨hz.1.1, hz.1.2.1⟩) h1'
+  refine ⟨W, hW, hyW, (ContDiffMBOn.congr_of_isOpen hW ?_ hcomp).mono inter_subset_right⟩
+  rintro z ⟨⟨-, hzc, -⟩, hzO⟩
+  have hcz : c.symm (c (e.symm z)) = e.symm z := c.left_inv hzc
+  have hzc' : f (e.symm z) ∈ c'.source := by
+    have := (hOD hzO).2.2
+    change f (c.symm (c (e.symm z))) ∈ c'.source at this
+    rwa [hcz] at this
+  change e' (c'.symm (c' (f (c.symm (c (e.symm z)))))) = e' (f (e.symm z))
+  rw [hcz, c'.left_inv hzc']
+
 /-- Compositions of `C^k` maps are `C^k`. -/
 theorem ContMDiffMBOn.comp {k : ℕ} {f : M → N} {g : N → P} {U : Set M} {V : Set N}
     (hU : IsOpen U) (hV : IsOpen V) (hg : ContMDiffMBOn (E := F) (F := G) k g V)

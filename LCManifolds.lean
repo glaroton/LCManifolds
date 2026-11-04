@@ -17,3 +17,4 @@ import LCManifolds.DoubleTangent
 import LCManifolds.CovariantCurve
 import LCManifolds.SubmanifoldNotions
 import LCManifolds.Projector
+import LCManifolds.ImmersionBanach
