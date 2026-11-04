@@ -48,8 +48,8 @@ point, in the direction `u`. With the convention `∇_X Y = dỸ · X̃ − Γ(X
 ## Existence: a word of caution
 
 For a strong Riemannian metric on a Hilbert manifold, the Koszul functional is always
-represented (Riesz), and the Levi-Civita connection exists (Lang, Ch. VIII, Theorem 4.1). For **weak**
-metrics, in particular on Fréchet manifolds, where every metric is weak, the representation may
+represented (Riesz), and the Levi-Civita connection exists (Lang, Ch. VIII, Theorem 4.1).
+For **weak** metrics, in particular on Fréchet manifolds, where every metric is weak, the representation may
 fail: Schmeding's Example 4.3.7 is a weak Riemannian metric on `ℓ²` whose Koszul functional is
 not represented, so that there is no metric spray. Even when the functional is represented at
 every point, the symbols so obtained still have to be smooth and to satisfy the change of charts
@@ -370,8 +370,8 @@ theorem koszul_represented (hC : C.IsSymmetric) (hm : C.IsMetric g) (i : atlas E
   ⟨C.Γ i y u a, koszul hC hm i hy u a⟩
 
 /-- **The metric spray** (Larotonda, *Estructuras*, Teorema 10.1.1, formula (10.3); Lang,
-Ch. VIII, Theorem 4.2, MS 1). A symmetric connection is metric for `g` if and only if, in every chart, its spray
-`v ↦ Γ(y)(v, v)` satisfies
+Ch. VIII, Theorem 4.2, MS 1). A symmetric connection is metric for `g` if and only if, in every
+chart, its spray `v ↦ Γ(y)(v, v)` satisfies
 `G(y)(Γ(y)(v, v), z) = −∂G(y)(v)(v, z) + ½ ∂G(y)(z)(v, v)`.
 In the notation of *Estructuras*, `G(y)(a, b) = ⟨a, g(y) b⟩` and
 `∂G(y)(z)(a, b) = ⟨a, g*_{y,z} b⟩`, and this is `⟨F_y(v), g(y) z⟩ = −⟨g*_{y,v} v, z⟩ +
