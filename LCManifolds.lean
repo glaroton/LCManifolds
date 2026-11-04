@@ -23,3 +23,4 @@ import LCManifolds.Examples.OpenAndGraph
 import LCManifolds.Examples.Sphere
 import LCManifolds.Examples.Counterexamples
 import LCManifolds.Examples.Lemniscate
+import LCManifolds.Examples.Unitary

@@ -124,6 +124,12 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   eight `t ↦ (sin θ, sin 2θ)`, `θ = 2 arctan t`, is an injectively immersed submanifold of `ℝ²`
   (`isImmersedSubmanifold_lemniscate`) that is not initial (`not_isInitialSubmanifold_lemniscate`):
   a smooth curve crossing the origin along the other branch has a lift that jumps.
+* [`LCManifolds/Examples/Unitary.lean`](LCManifolds/Examples/Unitary.lean): example. The
+  unitary group of a real Banach algebra with continuous involution (for instance `B(H)`, `H` a
+  complex Hilbert space) is a split submanifold modeled on the skew-adjoint elements
+  (`isSplitSubmanifold_unitary`, `isSplitSubmanifold_unitary_clm`), with explicit Cayley slice
+  charts `a ↦ (a - 1)(a + 1)⁻¹` and no inverse function theorem; `T_p U = p · 𝔲`
+  (`tangentSpace_unitary`).
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:
