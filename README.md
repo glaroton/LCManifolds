@@ -140,6 +140,12 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   Larotonda, *Estructuras*, Teorema 10.1.1). Existence is not claimed: for weak metrics the
   Koszul functional need not be represented (`exists_symm_compatible_iff`; Schmeding's
   Example 4.3.7 on `ℓ²`).
+* [`LCManifolds/Examples/NoLeviCivita.lean`](LCManifolds/Examples/NoLeviCivita.lean): the
+  obstruction happens. For a symmetric positive definite operator `T` and `v ∉ T(H)`, the weak
+  Riemannian metric `g_p(x, y) = e^{⟨v, p⟩} ⟨T x, y⟩` has no symmetric metric connection
+  (`NoLeviCivita.not_exists_isMetric`); on `ℓ²`, `T x = (x_n / (n + 1))_n` and
+  `v = (1 / (n + 1))_n` do it (`NoLeviCivita.L2.not_exists_isMetric`, after Schmeding,
+  Example 4.3.7).
 * [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two
   notions differ already on `ℝ²`. With `β(x, y) = max(0, x² - |y|) / (x² + |y|)`, the Finsler
   norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the

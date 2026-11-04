@@ -585,3 +585,36 @@ v\rangle$, and the Koszul formula is its polarization; see also \cite[Ch.~VIII, 
   have to be smooth and satisfy the change of charts law; neither follows from the pointwise
   statement. Existence is therefore a property of the metric at hand, to be checked in examples.
 \end{remark}
+
+The following example, after Schmeding, shows that the obstruction of
+Proposition~\ref{prop:mt-lc-existence} does occur.
+
+\begin{theorem}[A weak Riemannian metric without Levi-Civita connection]
+  \label{thm:mt-no-levi-civita}
+  \lean{LCManifolds.NoLeviCivita.form, LCManifolds.NoLeviCivita.conformalMetric, LCManifolds.NoLeviCivita.localDeriv_conformal, LCManifolds.NoLeviCivita.not_exists_isMetric, LCManifolds.NoLeviCivita.L2.diag, LCManifolds.NoLeviCivita.L2.diag_symm, LCManifolds.NoLeviCivita.L2.diag_pos, LCManifolds.NoLeviCivita.L2.v_not_mem_range, LCManifolds.NoLeviCivita.L2.not_exists_isMetric}
+  \leanok
+  \uses{prop:mt-lc-existence, def:weak-riemannian}
+  Let $H$ be a real inner product space, $T$ a continuous, symmetric and positive definite
+  operator on $H$, and $v \in H$. Then $g_p(x, y) = e^{\langle v, p\rangle} \langle Tx, y\rangle$
+  is a weak Riemannian metric on $H$, and if $v \notin T(H)$ it has no symmetric metric
+  connection. On $\ell^2$, the operator $Tx = (x_n / (n + 1))_n$ and the vector
+  $v = (1 / (n + 1))_n$ satisfy these hypotheses.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The derivative in the base point is $\partial G(p)(w)(x, y) = \langle v, w\rangle g_p(x, y)$.
+  By Theorem~\ref{thm:mt-metric-spray}, a symmetric metric connection would give $c \in H$ with
+  \[
+    \langle Tc, b\rangle = -\langle v, x\rangle \langle Tx, b\rangle
+      + \tfrac12 \langle Tx, x\rangle \langle v, b\rangle \qquad (b \in H),
+  \]
+  that is, $T(c + \langle v, x\rangle x) = \frac12 \langle Tx, x\rangle v$. For $x = v \neq 0$
+  this puts $v$ in $T(H)$. On $\ell^2$, $Tc = v$ forces $c_n = 1$ for every $n$, and the
+  constant sequence $1$ is not in $\ell^2$.
+\end{proof}
+
+When $T$ is invertible, $g$ is a strong metric and the Levi-Civita connection exists; the
+example needs a metric $\langle T\cdot, \cdot\rangle$ whose topology is strictly coarser than
+that of $H$. Schmeding's original example \cite[Example 4.3.7]{Sch23} uses the weight $n^{-3}$
+and the factor $e^{-\|p\|^2}$; the obstruction is the same.

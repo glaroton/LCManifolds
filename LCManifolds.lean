@@ -31,4 +31,5 @@ import LCManifolds.Metric.Finsler
 import LCManifolds.Metric.Bilinear
 import LCManifolds.Metric.FinslerQuotient
 import LCManifolds.Metric.LeviCivita
+import LCManifolds.Examples.NoLeviCivita
 import LCManifolds.Examples.FinslerCusp
