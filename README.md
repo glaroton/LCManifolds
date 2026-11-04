@@ -110,6 +110,13 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   Math. 2019, Lemma 3.19). Every Finsler metric is a Finsler length structure, because velocities
   of `C¹` curves are continuous in `TM` (`continuous_velocity`). Length of curves and the Finsler
   (quasi-)distance are defined for Finsler length structures.
+* [`LCManifolds/Metric/FinslerQuotient.lean`](LCManifolds/Metric/FinslerQuotient.lean): where
+  the two continuity conditions come from, for a field `μ` on `M` controlled through a `C¹` map
+  `π : N → M` (typically a quotient metric). If curves lift locally and `μ ∘ Tπ` is continuous
+  along curves, `μ` is a Finsler length structure; if `Tπ` is a quotient map and `μ ∘ Tπ` is
+  continuous, `μ` is a Finsler metric. Includes the chain rule `Tπ(Γ̇) = (π ∘ Γ)˙`
+  (`tangentMap_velocity`) and a discussion of Banach submersions versus homogeneous spaces of
+  locally convex Lie groups.
 * [`LCManifolds/Metric/Bilinear.lean`](LCManifolds/Metric/Bilinear.lean): smooth fields of
   symmetric bilinear forms, by signature. **Weak Riemannian** metrics (Schmeding, Def. 4.1.1;
   "weak" refers to the topology of the fibers, `IsStrongAt` to the strong case) are Finsler

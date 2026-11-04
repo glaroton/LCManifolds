@@ -29,4 +29,5 @@ import LCManifolds.Examples.PeriodicSmooth
 import LCManifolds.Examples.DiffCircle
 import LCManifolds.Metric.Finsler
 import LCManifolds.Metric.Bilinear
+import LCManifolds.Metric.FinslerQuotient
 import LCManifolds.Examples.FinslerCusp
