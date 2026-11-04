@@ -11,6 +11,11 @@ permissions:
   pages: write # Write access to GitHub Pages
   id-token: write # Write access to ID tokens
 
+# A newer push cancels the run in progress, so that two Pages deployments never overlap.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -43,10 +48,9 @@ jobs:
           free -h
       - uses: leanprover-community/docgen-action@v1
         with:
-          # The API documentation goes to `site/docs`; the action does not deploy it, because
-          # the blueprint and the home page are added below.
+          # The action also deploys the API documentation on its own; the blueprint and the
+          # home page are added below and deployed again.
           homepage: site
-          deploy: false
       - name: Build the blueprint
         # The blueprint step of the doc-gen action, with `pip` pinned below 26: its pygraphviz
         # install uses `--global-option`, which pip 26 removed.
