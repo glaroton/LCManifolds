@@ -6,6 +6,7 @@ Authors: Gabriel Larotonda
 import LCManifolds.Metric.Finsler
 import LCManifolds.MetricGeometry.LengthMetric
 import LCManifolds.MetricGeometry.AsymmDist
+import LCManifolds.MetricGeometry.ForwardLength
 
 /-!
 # Finsler manifolds as metric spaces
@@ -29,6 +30,9 @@ The topology of `FinslerSpace μ` is the one of `d_b`, which need not be the man
 * `eVariationOn_le_length` (**Proposición 9.1.2**, first part): the metric length of a `C¹` arc
   is at most its Finsler length, `ℓ(γ) ≤ L_b(γ)`;
 * `isInterior` (**Proposición 9.1.2**): `(M, d_b)` is an interior metric space, `d_ℓ = d_b`.
+* `fwdVar_le_length`, `isFwdInterior`: the same without reversibility, for the asymmetric distance
+  `d_b` (Mennucci, *On asymmetric distances*, 2013): the forward length of a `C¹` arc is at most its
+  Finsler length, and `(M, d_b)` is forward-interior (Mennucci's g-intrinsic, Def. 3.16).
 -/
 
 open Set Filter MeasureTheory
@@ -108,6 +112,68 @@ theorem continuous_toFinsler {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) :
   rw [edist_eq_max_bdist]
   refine max_lt ((μ.bdist_le_lengths hγ t s).trans_lt ?_) ((μ.bdist_le_lengths hγ s t).trans_lt ht)
   rwa [hsymm]
+
+/-! ### Proposición 9.1.2 without reversibility -/
+
+/-- Lengths along a monotone sequence of times telescope. -/
+theorem sum_length_range' {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (u : ℕ → ℝ) (n : ℕ) :
+    ∑ i ∈ Finset.range n, μ.length γ (u i) (u (i + 1)) = μ.length γ (u 0) (u n) := by
+  induction n with
+  | zero => simp [length]
+  | succ n ih => rw [Finset.sum_range_succ, ih, μ.length_add hγ]
+
+/-- **Proposición 9.1.2, `ℓ⁺(γ) ≤ L_b(γ)`, for any Finsler length structure**: the forward
+length of a `C¹` arc for the asymmetric distance `d_b` is at most its Finsler length. -/
+theorem fwdVar_le_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} :
+    fwdVar (fun t ↦ μ.toFinsler (γ t)) (Icc a b) ≤ ENNReal.ofReal (μ.length γ a b) := by
+  refine iSup_le fun ⟨n, u, hu, hus⟩ ↦ ?_
+  calc ∑ i ∈ Finset.range n, bdist (μ.toFinsler (γ (u i))) (μ.toFinsler (γ (u (i + 1))))
+      ≤ ∑ i ∈ Finset.range n, ENNReal.ofReal (μ.length γ (u i) (u (i + 1))) :=
+        Finset.sum_le_sum fun i _ ↦ μ.dist_le hγ (hu (Nat.le_succ i))
+    _ = ENNReal.ofReal (∑ i ∈ Finset.range n, μ.length γ (u i) (u (i + 1))) :=
+        (ENNReal.ofReal_sum_of_nonneg fun i _ ↦ μ.length_nonneg γ (hu (Nat.le_succ i))).symm
+    _ = ENNReal.ofReal (μ.length γ (u 0) (u n)) := by rw [μ.sum_length_range' hγ]
+    _ ≤ ENNReal.ofReal (μ.length γ a b) := by
+        refine ENNReal.ofReal_le_ofReal ?_
+        have h1 := μ.length_add hγ a (u 0) b
+        have h2 := μ.length_add hγ (u 0) (u n) b
+        have h3 := μ.length_nonneg γ (hus 0).1
+        have h4 := μ.length_nonneg γ (hus n).2
+        linarith
+
+/-- A `C¹` arc as a continuous curve of `(M, d_b)`, measured with the forward length. -/
+def fwdArcPath {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b) :
+    FwdPath (μ.toFinsler (γ a)) (μ.toFinsler (γ b)) where
+  toFun t := μ.toFinsler (γ t)
+  a := a
+  b := b
+  le := hab
+  continuousOn := (μ.continuous_toFinsler hγ).continuousOn
+  source := rfl
+  target := rfl
+
+/-- The forward rectifiable distance is bounded by the length of every chain of `C¹` arcs. -/
+theorem fwdLengthDist_le_of_reach {x y : M} {L : ℝ} (h : μ.Reach x y L) :
+    fwdLengthDist (μ.toFinsler x) (μ.toFinsler y) ≤ ENNReal.ofReal L := by
+  induction h with
+  | refl x => simp
+  | @cons γ a b y L hγ hab hrest ih =>
+    calc fwdLengthDist (μ.toFinsler (γ a)) (μ.toFinsler y)
+        ≤ fwdLengthDist (μ.toFinsler (γ a)) (μ.toFinsler (γ b)) +
+            fwdLengthDist (μ.toFinsler (γ b)) (μ.toFinsler y) := fwdLengthDist_triangle _ _ _
+      _ ≤ ENNReal.ofReal (μ.length γ a b) + ENNReal.ofReal L := by
+          gcongr
+          exact (fwdLengthDist_le (μ.fwdArcPath hγ hab)).trans (μ.fwdVar_le_length hγ)
+      _ = ENNReal.ofReal (μ.length γ a b + L) :=
+          (ENNReal.ofReal_add (μ.length_nonneg γ hab) hrest.nonneg).symm
+
+/-- **Proposición 9.1.2 for non-reversible Finsler structures**: `(M, d_b)` is a forward-interior
+asymmetric metric space (Mennucci's g-intrinsic, Def. 3.16): `d_b` is the infimum of the forward
+lengths of the curves continuous for the symmetrized topology. -/
+theorem isFwdInterior : IsFwdInterior (FinslerSpace μ) := by
+  intro x y
+  refine le_antisymm ?_ (bdist_le_fwdLengthDist x y)
+  exact le_iInf fun p ↦ μ.fwdLengthDist_le_of_reach (x := μ.ofFinsler x) (y := μ.ofFinsler y) p.2
 
 variable [hrev : Fact μ.IsReversible]
 
