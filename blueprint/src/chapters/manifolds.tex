@@ -1,0 +1,578 @@
+\chapter{Manifolds, tangent bundles and vector fields}
+\label{chap:manifolds}
+
+In this chapter we set up the basic objects of the library: manifolds modeled on locally convex
+spaces, $\Ck{k}$ maps between them, the tangent bundle and the tangent map, vector fields and
+their Lie bracket, the double tangent bundle with its canonical flip, and curves with their
+velocities. The calculus is the Michal--Bastiani calculus of \cite{LCA}; the references for the
+manifold theory are \cite[\S I.3]{Nee06} and \cite[Ch.~3]{GN26}, and \cite{Lan99} for the
+Banach case. Throughout, $E$, $F$, $G$ denote real Hausdorff locally convex spaces. We stress
+from the start that \emph{no completeness is assumed}: nothing in this chapter needs it.
+
+\section{Manifolds}
+
+\begin{definition}[The Michal--Bastiani groupoid]
+  \label{def:mb-groupoid}
+  \lean{LCManifolds.mbGroupoid}
+  \leanok
+  The groupoid $\mathcal{G}_{\mb}(E)$ consists of the homeomorphisms $\varphi\colon U \to V$
+  between open subsets of $E$ such that $\varphi$ is smooth on $U$ and $\varphi^{-1}$ is smooth
+  on $V$, in the sense of Michal--Bastiani.
+\end{definition}
+
+That this is a structure groupoid (closed under composition, inversion and restriction, and
+local in nature) follows from the chain rule and the locality of smoothness.
+
+\begin{definition}[Manifolds]
+  \label{def:mb-manifold}
+  \lean{LCManifolds.MBManifold, LCManifolds.BanachManifold, LCManifolds.HilbertManifold}
+  \leanok
+  \uses{def:mb-groupoid}
+  A \emph{manifold modeled on $E$} is a topological space $M$ with an atlas of charts with
+  values in $E$ whose transition maps belong to $\mathcal{G}_{\mb}(E)$
+  \cite[Definition I.3.1]{Nee06}. A \emph{Banach manifold} is a manifold modeled on a normed
+  space which is complete; a \emph{Hilbert manifold} is one modeled on a complete inner product
+  space.
+\end{definition}
+
+In Lean, a manifold is a Mathlib \texttt{ChartedSpace} $E$ $M$ with \texttt{HasGroupoid} for
+$\mathcal{G}_{\mb}(E)$; Mathlib's charted spaces accept an arbitrary topological model space, so
+no new infrastructure is needed. Every chart comes with a \emph{preferred chart}
+$c_x = \texttt{chartAt}\ x$ at each point $x \in M$, and we use it systematically.
+
+\begin{remark}[The model space need not be complete]
+  \label{rem:man-complete}
+  We follow the convention of Glöckner--Neeb \cite[\S5.7]{GN26}: the model space of a manifold
+  is not assumed to be complete. The formal theory of this and the following chapters (charts,
+  smooth maps, tangent bundle, vector fields, connections, submanifolds) does not use
+  completeness, since the calculus of \cite{LCA} replaces integrals in the model space by
+  Hahn--Banach arguments. Results that need completeness (integrals with values in $E$,
+  ordinary differential equations, exponential maps, inverse function theorems) say so in their
+  hypotheses. In particular, a manifold modeled on an incomplete normed space is a manifold in
+  our sense, but it is not a Banach manifold. Without completeness things do go wrong:
+  \cite[Example 5.6.8]{GN26} is a Lie group modeled on an incomplete normed algebra that has no
+  exponential function.
+\end{remark}
+
+On normed spaces, Michal--Bastiani smoothness agrees with Fréchet smoothness, so for complete
+normed $E$ a Banach manifold is the classical object of \cite{Lan99}.
+
+\begin{proposition}[Products]
+  \label{prop:man-product}
+  \lean{LCManifolds.prod_mem_mbGroupoid, LCManifolds.SmoothMBOn.prodMap,
+    LCManifolds.smoothMBM_fst, LCManifolds.smoothMBM_snd, LCManifolds.ContMDiffMBOn.prodMk}
+  \leanok
+  \uses{def:mb-manifold, def:contmdiff}
+  If $M$ and $N$ are manifolds modeled on $E$ and $F$, then $M \times N$, with the product
+  charts, is a manifold modeled on $E \times F$. The projections onto $M$ and $N$ are smooth, and
+  a pair $(f, g)$ of $\Ck{k}$ maps $P \to M$, $P \to N$ is a $\Ck{k}$ map $P \to M \times N$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The transition maps of the product atlas are products $\varphi \times \psi$ of transition
+  maps, and a product of smooth diffeomorphisms between open sets is again one, since
+  $(\varphi \times \psi) = (\varphi \circ \pi_1, \psi \circ \pi_2)$ and pairs of smooth maps are
+  smooth. In charts the projections are the linear maps $\pi_1, \pi_2$.
+\end{proof}
+
+In Lean the model space of the product is Mathlib's type synonym \texttt{ModelProd} $E$ $F$ of
+$E \times F$, which avoids instance diamonds when $M$ or $N$ is itself a product.
+
+\section{Smooth maps}
+
+For maps $f \colon M \to N$, open $U \subseteq M$ and charts $e$ of $M$, $e'$ of $N$, we denote
+by
+\[
+  D(f, U, e, e') = e(\operatorname{dom} e) \cap e^{-1}\bigl(U \cap f^{-1}(\operatorname{dom}
+  e')\bigr) \subseteq E
+\]
+the domain of the local representative $e' \circ f \circ e^{-1}$. It is open when $f$ is
+continuous on $U$ (\texttt{LCManifolds.isOpen\_chartDomain}).
+
+\begin{definition}[$\Ck{k}$ maps between manifolds]
+  \label{def:contmdiff}
+  \lean{LCManifolds.chartDomain, LCManifolds.ContMDiffMBOn, LCManifolds.ContMDiffMB,
+    LCManifolds.SmoothMBMOn, LCManifolds.SmoothMBM}
+  \leanok
+  \uses{def:mb-manifold}
+  A map $f \colon M \to N$ is $\Ck{k}$ on an open set $U \subseteq M$ if it is continuous on $U$
+  and, for every $x \in U$, the local representative $c'_{f(x)} \circ f \circ c_x^{-1}$ in the
+  preferred charts is $\Ck{k}$ on $D(f, U, c_x, c'_{f(x)})$. It is \emph{smooth} on $U$ if it is
+  $\Ck{k}$ on $U$ for every $k$.
+\end{definition}
+
+Only the preferred charts appear in the definition. The next result says that this is no
+restriction.
+
+\begin{theorem}[Independence of the charts]
+  \label{thm:man-contmdiff-chart}
+  \lean{LCManifolds.smoothMBOn_transition, LCManifolds.smoothMBOn_transition_of_mem_maximalAtlas,
+    LCManifolds.ContMDiffMBOn.contDiffMBOn_chart,
+    LCManifolds.ContMDiffMBOn.contDiffMBOn_chart_of_mem_maximalAtlas,
+    LCManifolds.contMDiffMB_of_chartAt}
+  \leanok
+  \uses{def:contmdiff}
+  If $f$ is $\Ck{k}$ on $U$, then its local representatives $e' \circ f \circ e^{-1}$ in arbitrary
+  charts of the atlases (or of the maximal atlases) are $\Ck{k}$ on $D(f, U, e, e')$.
+  Conversely, a continuous map whose local representatives in the preferred charts are
+  $\Ck{k}$ near the center of each chart is $\Ck{k}$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The transition maps are smooth by definition of the atlas. Near a point $y = e(p)$ we write
+  $e' f e^{-1} = (e' c'^{-1}) \circ (c' f c^{-1}) \circ (c e^{-1})$ with $c = c_p$,
+  $c' = c'_{f(p)}$; the three factors are $\Ck{k}$ and the chain rule applies. Since $\Ck{k}$ is a
+  local property, this suffices.
+\end{proof}
+
+\begin{theorem}[Composition]
+  \label{thm:man-comp}
+  \lean{LCManifolds.ContMDiffMBOn.comp, LCManifolds.SmoothMBMOn.comp, LCManifolds.SmoothMBM.comp,
+    LCManifolds.smoothMBMOn_id, LCManifolds.smoothMBMOn_const}
+  \leanok
+  \uses{def:contmdiff, thm:man-contmdiff-chart}
+  If $f$ is $\Ck{k}$ on $U$, $g$ is $\Ck{k}$ on $V$ and $f(U) \subseteq V$, then $g \circ f$ is
+  $\Ck{k}$ on $U$. Identities and constant maps are smooth.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In the preferred charts at $x$ and $g(f(x))$, near a point we insert the preferred chart $d$ at
+  the intermediate point and write the local representative of $g \circ f$ as the composition of
+  the local representatives of $g$ and $f$ in the charts involving $d$. These are $\Ck{k}$ by
+  Theorem~\ref{thm:man-contmdiff-chart}, and we conclude by the chain rule.
+\end{proof}
+
+\begin{proposition}[Consistency with the calculus]
+  \label{prop:man-consistency}
+  \lean{LCManifolds.contMDiffMBOn_iff_contDiffMBOn}
+  \leanok
+  \uses{def:contmdiff}
+  For a map $f \colon E \to F$ between the model spaces themselves (with their identity charts)
+  and $U \subseteq E$ open, $f$ is $\Ck{k}$ on $U$ as a map between manifolds if and only if it
+  is $\Ck{k}$ on $U$ in the sense of Michal--Bastiani.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The preferred charts are identities, so $D(f, U, \id, \id) = U$ and the local representative
+  is $f$ itself.
+\end{proof}
+
+\begin{remark}[Universes]
+  \label{rem:man-universes}
+  The model spaces $E$, $F$, $G$ live in a common universe, because the Michal--Bastiani
+  derivative of a map defined on $E$ is a map defined on $E \times E$. The manifolds themselves
+  are unrestricted. A consequence that will reappear below is that real-valued functions on
+  $M$ are not treated as maps between manifolds (the model space $\R$ need not be in the
+  universe of $E$), but through their local representatives.
+\end{remark}
+
+\section{The tangent bundle and tangent maps}
+
+\begin{definition}[The tangent bundle]
+  \label{def:tangent-bundle}
+  \lean{LCManifolds.tangentCoordChange, LCManifolds.tangentBundleCore,
+    LCManifolds.TangentBundle, LCManifolds.tangentChart}
+  \leanok
+  \uses{def:mb-manifold}
+  For charts $i$, $j$ of the atlas of $M$ and $x$ in both domains, the \emph{coordinate change}
+  of tangent vectors is $v \mapsto \dd(j \circ i^{-1})(i(x))\,v$. The \emph{tangent bundle}
+  $\T M$ is the fiber bundle with fiber $E$ obtained by gluing the trivial bundles over the
+  chart domains along these coordinate changes. For a chart $i$, the map
+  $\T M \supseteq \T M|_{\operatorname{dom} i} \to E \times E$ that sends $(x, v)$ to
+  $(i(x), v_i)$, with $v_i$ the coordinates of $v$ in the chart $i$, is the \emph{chart of $\T M$
+  over $i$}.
+\end{definition}
+
+In Lean, $\T M$ is the total space of a Mathlib \texttt{FiberBundleCore} indexed by the charts of
+the atlas, whose index at $x$ is the preferred chart $c_x$. Thus a point of $\T M$ is a pair
+$(x, v)$ with $x \in M$ and $v \in E$, and \emph{$v$ is the tangent vector written in the
+coordinates of the preferred chart at $x$}. In any other chart $i$, its coordinates are
+$\dd(i \circ c_x^{-1})(c_x(x))\,v$. This is a choice of representative, not a restriction:
+every construction below (tangent maps, local representatives of vector fields, Lie brackets,
+derivations, velocities) is defined in the preferred chart and then shown to transform correctly
+in every chart of the atlas. The coordinate changes satisfy the cocycle condition by the chain
+rule (\texttt{LCManifolds.tangentCoordChange\_comp}), and they are continuous in $(x, v)$ since
+the transition maps are $\Ck{1}$.
+
+\begin{theorem}[$\T M$ is a manifold]
+  \label{thm:man-tangent-manifold}
+  \lean{LCManifolds.smoothMBOn_tangentChart_transition, LCManifolds.tangentChart_transition_mem,
+    LCManifolds.tangentChart_mem_atlas, LCManifolds.tangentChart_transition_apply}
+  \leanok
+  \uses{def:tangent-bundle}
+  The charts of $\T M$ over the charts of $M$ form an atlas modeled on $E \times E$ whose
+  transition maps are
+  \[
+    (y, w) \longmapsto \bigl(\tau(y), \dd\tau(y)\,w\bigr), \qquad \tau = j \circ i^{-1}.
+  \]
+  In particular they are smooth, and $\T M$ is a manifold modeled on $E \times E$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The formula is the cocycle property of the coordinate changes. The map $(y, w) \mapsto
+  \dd\tau(y)\,w$ is smooth because $\tau$ is, by the recursive definition of $\Ck{k}$, and pairs of
+  smooth maps are smooth. The inverse transition has the same form with $\tau^{-1}$.
+\end{proof}
+
+\begin{definition}[The tangent map]
+  \label{def:tangent-map}
+  \lean{LCManifolds.tangentMap}
+  \leanok
+  \uses{def:tangent-bundle, def:contmdiff}
+  Let $f \colon M \to N$. The \emph{tangent map} $\T f \colon \T M \to \T N$ sends $(x, v)$ to
+  \[
+    \bigl(f(x),\ \dd(c'_{f(x)} \circ f \circ c_x^{-1})(c_x(x))\,v\bigr),
+  \]
+  where $c_x$ and $c'_{f(x)}$ are the preferred charts at $x$ and $f(x)$.
+\end{definition}
+
+The definition makes sense for every $f$, since $\dd$ is a total function in Lean; it is
+meaningful when $f$ is $\Ck{1}$.
+
+\begin{theorem}[The tangent map in charts; chain rule]
+  \label{thm:man-tangent-map}
+  \lean{LCManifolds.dMB_eq_comp_of_eventuallyEq, LCManifolds.dMB_chart_comp,
+    LCManifolds.dMB_comp_chart, LCManifolds.tangentMap_chart, LCManifolds.tangentMap_id,
+    LCManifolds.tangentMap_comp}
+  \leanok
+  \uses{def:tangent-map, thm:man-contmdiff-chart}
+  Let $f \colon M \to N$ be $\Ck{1}$. The derivatives of the local representatives of $f$
+  transform under changes of charts by the derivatives of the transition maps. Consequently, in
+  the charts of $\T M$ and $\T N$ over charts $i$ of $M$ and $j$ of $N$, the tangent map reads
+  \[
+    (y, w) \longmapsto \bigl(h(y), \dd h(y)\,w\bigr), \qquad h = j \circ f \circ i^{-1}.
+  \]
+  Moreover $\T\id = \id$ and, for $\Ck{1}$ maps $f$ and $g$, $\T(g \circ f) = \T g \circ \T f$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Near a point, the local representative of $f$ in one pair of charts agrees with the
+  composition of its local representative in another pair with transition maps; the chain rule for maps that agree with a composition near the point gives
+  the transformation laws. The formula in charts follows by composing these laws with the
+  coordinate changes of $\T M$ and $\T N$, and functoriality is the chain rule in the preferred
+  charts.
+\end{proof}
+
+\begin{theorem}[Smoothness of the tangent map]
+  \label{thm:man-tangent-map-smooth}
+  \lean{LCManifolds.ContMDiffMB.tangentMap}
+  \leanok
+  \uses{thm:man-tangent-map, thm:man-tangent-manifold}
+  If $f \colon M \to N$ is $\Ck{k+1}$, then $\T f \colon \T M \to \T N$ is $\Ck{k}$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In the charts of the tangent bundles $\T f$ is $(y, w) \mapsto (h(y), \dd h(y)\,w)$, and
+  $\dd h$ is $\Ck{k}$ on its domain because $h$ is $\Ck{k+1}$.
+\end{proof}
+
+\section{Vector fields and derivations}
+
+\begin{definition}[Vector fields]
+  \label{def:vector-field}
+  \lean{LCManifolds.IsVectorField, LCManifolds.localRep}
+  \leanok
+  \uses{def:tangent-bundle}
+  A \emph{vector field} on $M$ is a section $X \colon M \to \T M$ of the tangent bundle. Its
+  \emph{local representative} in a chart $i$ is $\widetilde{X}_i \colon i(\operatorname{dom} i)
+  \to E$, $\widetilde{X}_i(y) = $ the coordinates of $X(i^{-1}y)$ in the chart $i$.
+\end{definition}
+
+\begin{proposition}[Local representatives]
+  \label{prop:man-localrep}
+  \lean{LCManifolds.localRep_transition, LCManifolds.contDiffMBOn_localRep,
+    LCManifolds.contMDiffMB_of_localRep, LCManifolds.localRep_chartAt}
+  \leanok
+  \uses{def:vector-field, thm:man-tangent-manifold}
+  On chart overlaps, $\widetilde{X}_j \circ \tau = \dd\tau(\cdot)\,\widetilde{X}_i$ for the
+  transition map $\tau = j \circ i^{-1}$. A vector field is $\Ck{k}$ as a map $M \to \T M$ if and
+  only if its local representatives are $\Ck{k}$ (one direction in every chart of the atlas, the
+  other from the preferred charts).
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The transformation law is the cocycle property of the coordinate changes. The local
+  representative $\widetilde{X}_i$ is the second component of the local representative of $X$ in
+  the charts $i$ and $\T i$, which gives both implications.
+\end{proof}
+
+For maps $X, Y$ defined on an open subset of $E$, the \emph{local bracket} is
+\[
+  [X, Y](y) = \dd Y(y)\,X(y) - \dd X(y)\,Y(y).
+\]
+
+\begin{lemma}[The local bracket]
+  \label{lem:man-local-bracket}
+  \lean{LCManifolds.localBracket, LCManifolds.dMB_dMB_comp_apply,
+    LCManifolds.localBracket_transition, LCManifolds.localBracket_jacobi,
+    LCManifolds.contDiffMBOn_localBracket}
+  \leanok
+  Let $\tau$ be $\Ck{2}$, and let $X_i, Y_i, X_j, Y_j$ be $\Ck{1}$ with
+  $X_j \circ \tau = \dd\tau \cdot X_i$ and $Y_j \circ \tau = \dd\tau \cdot Y_i$ near $y$. Then
+  $[X_j, Y_j](\tau y) = \dd\tau(y)\,[X_i, Y_i](y)$. The local bracket satisfies the Jacobi identity
+  for $\Ck{2}$ fields, and it is $\Ck{k}$ for $\Ck{k+1}$ fields.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Differentiating $y \mapsto \dd\tau(y)\,X_i(y)$ in the direction $Y_i(y)$ gives
+  $\dd^2\tau(y)(Y_i, X_i) + \dd\tau(y)\,\dd X_i(y)\,Y_i$. In the difference defining the bracket
+  the second derivatives $\dd^2\tau(y)(Y_i, X_i)$ and $\dd^2\tau(y)(X_i, Y_i)$ cancel by the
+  symmetry of the second differential. The Jacobi identity is a direct computation with the
+  derivative of the local bracket, where again the second derivatives cancel by symmetry.
+\end{proof}
+
+\begin{definition}[The Lie bracket]
+  \label{def:man-lie-bracket}
+  \lean{LCManifolds.lieBracket}
+  \leanok
+  \uses{def:vector-field, lem:man-local-bracket}
+  The \emph{Lie bracket} of the vector fields $X$ and $Y$ is the vector field whose value at $x$
+  is the local bracket $[\widetilde{X}, \widetilde{Y}](c_x(x))$ of the local representatives in
+  the preferred chart at $x$.
+\end{definition}
+
+\begin{theorem}[The bracket is well defined]
+  \label{thm:man-lie-bracket}
+  \lean{LCManifolds.localRep_lieBracket, LCManifolds.localRep_lieBracket_eventuallyEq,
+    LCManifolds.lieBracket_swap, LCManifolds.lieBracket_jacobi,
+    LCManifolds.contMDiffMB_lieBracket}
+  \leanok
+  \uses{def:man-lie-bracket, prop:man-localrep}
+  Let $X$, $Y$ be $\Ck{1}$ vector fields. In every chart $j$ of the atlas, the local
+  representative of $[X, Y]$ is the local bracket $[\widetilde{X}_j, \widetilde{Y}_j]$. The
+  bracket is antisymmetric, it satisfies the Jacobi identity for $\Ck{2}$ fields, and if $X$ and
+  $Y$ are $\Ck{k+1}$, then $[X, Y]$ is $\Ck{k}$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \uses{lem:man-local-bracket}
+  The local representatives in the preferred chart at $x$ and in $j$ are related by
+  Proposition~\ref{prop:man-localrep}, so Lemma~\ref{lem:man-local-bracket} applies. The other
+  statements are then read in a single chart.
+\end{proof}
+
+\begin{remark}[No flows]
+  \label{rem:man-no-flows}
+  In finite dimensions, chart independence of the bracket is usually derived from its
+  description as the Lie derivative along the flow of $X$. In infinite dimensions vector fields
+  need not have flows, so this argument is not available. We prove it directly, as above: the
+  second derivatives of the transition maps cancel by the symmetry of second derivatives.
+\end{remark}
+
+\begin{theorem}[Related fields]
+  \label{thm:man-related}
+  \lean{LCManifolds.IsRelated, LCManifolds.localRep_related, LCManifolds.lieBracket_related}
+  \leanok
+  \uses{thm:man-lie-bracket, def:tangent-map}
+  Let $f \colon M \to N$ be $\Ck{2}$. We say that $X$ on $M$ and $X'$ on $N$ are $f$-related if
+  $\T f \circ X = X' \circ f$. If $X, Y$ are $f$-related to $X', Y'$ (all of them $\Ck{1}$), then
+  $[X, Y]$ is $f$-related to $[X', Y']$ \cite[\S V.1]{Lan99}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In charts, $\widetilde{X}'_j \circ h = \dd h \cdot \widetilde{X}_i$ with $h = j \circ f \circ
+  i^{-1}$. This is the hypothesis of Lemma~\ref{lem:man-local-bracket} with $h$ in place of
+  $\tau$, whose proof only uses that $\tau$ is $\Ck{2}$.
+\end{proof}
+
+We now let vector fields act on functions. As explained in Remark~\ref{rem:man-universes}, a
+function $\varphi \colon M \to \R$ is said to be $\Ck{k}$ when all its local representatives
+$\varphi \circ i^{-1}$ are $\Ck{k}$ on $i(\operatorname{dom} i)$.
+
+\begin{definition}[Derivative along a vector field]
+  \label{def:man-vf-deriv}
+  \lean{LCManifolds.IsCkFunction, LCManifolds.vfDeriv, LCManifolds.smulField}
+  \leanok
+  \uses{def:vector-field}
+  For a vector field $X$ and $\varphi \colon M \to \R$, we let
+  $X(\varphi)(x) = \dd(\varphi \circ c_x^{-1})(c_x(x))\,\widetilde{X}(c_x(x))$, computed in the
+  preferred chart at $x$. The product $\varphi Y$ of a function and a vector field is
+  $(\varphi Y)(x) = \varphi(x)\,Y(x)$.
+\end{definition}
+
+\begin{theorem}[Vector fields as derivations]
+  \label{thm:man-derivation}
+  \lean{LCManifolds.vfDeriv_chart, LCManifolds.vfDeriv_mul, LCManifolds.HasDirDerivAt.smul_fun,
+    LCManifolds.isVectorField_smulField, LCManifolds.localRep_smulField,
+    LCManifolds.lieBracket_smulField}
+  \leanok
+  \uses{def:man-vf-deriv, thm:man-lie-bracket}
+  Let $\varphi, \psi$ be $\Ck{1}$ functions. Then $X(\varphi)(x) = \dd(\varphi \circ
+  j^{-1})(j(x))\,\widetilde{X}_j(j(x))$ in every chart $j$ around $x$, and the Leibniz rules
+  \[
+    X(\varphi\psi) = X(\varphi)\,\psi + \varphi\,X(\psi), \qquad
+    [X, \varphi Y] = X(\varphi)\,Y + \varphi\,[X, Y]
+  \]
+  hold, the second one for $\Ck{1}$ vector fields $X$, $Y$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Chart independence follows from $\widetilde{X}_j \circ \tau = \dd\tau \cdot \widetilde{X}_i$
+  and the chain rule. The first Leibniz rule is the product rule in a chart. For the second one,
+  $\widetilde{(\varphi Y)}_i = (\varphi \circ i^{-1})\,\widetilde{Y}_i$, and we differentiate this
+  product in the local bracket.
+\end{proof}
+
+\begin{theorem}[Vector fields are determined by local functions]
+  \label{thm:man-determined}
+  \lean{LCManifolds.vfDeriv_clm_comp_chart, LCManifolds.eq_of_vfDeriv_clm_comp_chart}
+  \leanok
+  \uses{thm:man-derivation}
+  Let $c$ be a chart around $x$. For $\lambda \in E'$ we have $X(\lambda \circ c)(x) =
+  \lambda(\widetilde{X}_c(c(x)))$. Consequently, if $X(\lambda \circ c)(x) = Y(\lambda \circ c)(x)$
+  for every continuous linear functional $\lambda$, then $X(x) = Y(x)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The first statement is Theorem~\ref{thm:man-derivation} in the chart $c$, since $\lambda$ is
+  linear. The second follows because continuous linear functionals separate the points of the
+  Hausdorff locally convex space $E$ (Hahn--Banach).
+\end{proof}
+
+\begin{remark}[No bump functions]
+  \label{rem:man-no-bumps}
+  Smooth bump functions need not exist on manifolds modeled on locally convex spaces. Hence a vector field is not determined in general by its
+  action on \emph{globally} defined functions, and the classical identification of vector fields
+  with derivations of $\Ck{\infty}(M)$ is not available. Theorem~\ref{thm:man-determined} is the
+  substitute: functions defined on a chart domain suffice.
+\end{remark}
+
+\section{The double tangent bundle}
+
+The double tangent bundle is $\T\T M = \T(\T M)$, the tangent bundle of the manifold $\T M$
+(Theorem~\ref{thm:man-tangent-manifold}). We follow \cite[Cap.~5]{Lar22} and \cite[\S
+IV.3]{Lan99}. A chart $i$ of $M$ gives a chart of $\T M$ and then a chart of $\T\T M$, in which
+points are written $((x, v), (u, w))$: $(x, v)$ is the base point in $\T M$, and $(u, w)$ the
+tangent vector at it.
+
+\begin{theorem}[Transition maps of $\T\T M$]
+  \label{thm:man-double-transition}
+  \lean{LCManifolds.tangentAtlas, LCManifolds.dMB_tangentChart_transition,
+    LCManifolds.DoubleTangentBundle, LCManifolds.ddChart, LCManifolds.ddChart_transition_apply}
+  \leanok
+  \uses{thm:man-tangent-manifold}
+  Let $\tau = j \circ i^{-1}$. In the charts of $\T\T M$ over $i$ and $j$, the transition map is
+  \[
+    ((x, v), (u, w)) \longmapsto \bigl((\tau x, \dd\tau_x v),\ (\dd\tau_x u,\ \dd^2\tau_x(u, v)
+    + \dd\tau_x w)\bigr).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The transition maps of $\T\T M$ are those of the tangent bundle of $\T M$, namely the
+  transition map $\sigma(x, v) = (\tau x, \dd\tau_x v)$ of $\T M$ together with its derivative.
+  Differentiating $\sigma$ in the direction $(u, w)$ gives $(\dd\tau_x u, \dd^2\tau_x(u, v) +
+  \dd\tau_x w)$, since $\dd\tau_x$ is linear in $v$.
+\end{proof}
+
+\begin{theorem}[The canonical flip]
+  \label{thm:man-flip}
+  \lean{LCManifolds.swapUV, LCManifolds.ddChart_transition_swap, LCManifolds.ddChartAt,
+    LCManifolds.flip, LCManifolds.flip_proj_proj, LCManifolds.ddChart_flip,
+    LCManifolds.flip_flip}
+  \leanok
+  \uses{thm:man-double-transition}
+  The swap $((x, v), (u, w)) \mapsto ((x, u), (v, w))$ commutes with the transition maps of
+  $\T\T M$. Hence the map $\kappa \colon \T\T M \to \T\T M$ defined as the swap in the preferred
+  chart reads as the swap in every chart of $\T\T M$ over a chart of $M$. It covers the identity
+  of $M$, and $\kappa \circ \kappa = \id$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:man-double-transition}, the claim amounts to $\dd^2\tau_x(u, v) =
+  \dd^2\tau_x(v, u)$, the symmetry of the second differential. The rest is immediate from the
+  coordinate expression.
+\end{proof}
+
+The smoothness of $\kappa$ is not stated in the library.
+
+\section{Curves and velocities}
+
+Curves are maps $\alpha \colon \R \to M$. We treat them, like functions, through their local
+representatives, without regarding $\R$ as a manifold.
+
+\begin{definition}[$\Ck{k}$ curves and lifts]
+  \label{def:ck-curve}
+  \lean{LCManifolds.IsCkCurve, LCManifolds.liftCoord, LCManifolds.IsCkLift}
+  \leanok
+  \uses{def:mb-manifold, def:tangent-bundle}
+  A curve $\alpha \colon \R \to M$ is $\Ck{k}$ if it is continuous and $i \circ \alpha$ is
+  $\Ck{k}$ on the open set $\alpha^{-1}(\operatorname{dom} i)$ for every chart $i$ of the atlas. A
+  \emph{lift} of $\alpha$ is a curve $\beta \colon \R \to \T M$ with $\beta(t) \in \T_{\alpha(t)}
+  M$; its fiber coordinate in the chart $i$ is the second component $\mu_i(t)$ of the chart of
+  $\T M$ over $i$ at $\beta(t)$. The lift is $\Ck{k}$ if every $\mu_i$ is $\Ck{k}$ on
+  $\alpha^{-1}(\operatorname{dom} i)$.
+\end{definition}
+
+\begin{definition}[Velocity]
+  \label{def:velocity}
+  \lean{LCManifolds.velocity}
+  \leanok
+  \uses{def:ck-curve}
+  The \emph{velocity} of a curve $\alpha$ is the lift $\dot\alpha(t) = (\alpha(t),
+  (c_{\alpha(t)} \circ \alpha)'(t))$, the derivative of the local representative in the preferred
+  chart at $\alpha(t)$.
+\end{definition}
+
+\begin{theorem}[The velocity in charts]
+  \label{thm:man-velocity}
+  \lean{LCManifolds.dMB_chart_curve, LCManifolds.liftCoord_velocity,
+    LCManifolds.isCkLift_velocity, LCManifolds.continuous_velocity}
+  \leanok
+  \uses{def:velocity, thm:man-tangent-manifold}
+  Let $\alpha$ be a $\Ck{1}$ curve. For charts $i$, $j$ around $\alpha(t)$ we have
+  $(j \circ \alpha)'(t) = \dd(j \circ i^{-1})(i(\alpha(t)))\,(i \circ \alpha)'(t)$; hence the fiber
+  coordinate of $\dot\alpha(t)$ in any chart $j$ is $(j \circ \alpha)'(t)$. The velocity is a
+  continuous curve in $\T M$, and if $\alpha$ is $\Ck{k+1}$, then $\dot\alpha$ is a $\Ck{k}$ lift.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Near $t$, $j \circ \alpha = (j \circ i^{-1}) \circ (i \circ \alpha)$, and we apply the chain
+  rule. The second statement is the first one with $i$ the preferred chart. In the chart of
+  $\T M$ over $i$, $\dot\alpha$ reads $s \mapsto (i(\alpha(s)), (i \circ \alpha)'(s))$, which is
+  continuous (respectively $\Ck{k}$ in the second component); the charts of $\T M$ are
+  homeomorphisms onto their images.
+\end{proof}
+
+\begin{proposition}[Germs and the chain rule for velocities]
+  \label{prop:man-velocity-chain}
+  \lean{LCManifolds.velocity_congr, LCManifolds.tangentMap_velocity}
+  \leanok
+  \uses{def:velocity, def:tangent-map}
+  The velocity $\dot\alpha(t)$ only depends on the germ of $\alpha$ at $t$. If $p \colon N \to
+  M$ is $\Ck{1}$ and $\Gamma$ is a $\Ck{1}$ curve in $N$, then $\T p\,(\dot\Gamma(t))$ is the velocity of $p \circ \Gamma$
+  at $t$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Directional derivatives only depend on germs. For the chain rule, near $t$ we write
+  $c' \circ p \circ \Gamma = (c' \circ p \circ c^{-1}) \circ (c \circ \Gamma)$ in the preferred
+  charts $c$ at $\Gamma(t)$ and $c'$ at $p(\Gamma(t))$, and apply the chain rule.
+\end{proof}
+
+\begin{remark}
+  \label{rem:man-curves-ode}
+  The continuity of $\dot\alpha$ in $\T M$ is what makes lengths of curves meaningful for Finsler
+  metrics (see Definition~\ref{def:finsler-length-structure}); the chain rule for velocities is used for quotient
+  metrics, where curves in $N$ are pushed down along a projection $p$. On the other hand, we do
+  not claim the existence of integral curves of vector fields, or of curves with prescribed
+  velocity: this would require existence theorems for ordinary differential equations, which
+  fail in general locally convex spaces, and in Banach spaces need completeness.
+\end{remark}

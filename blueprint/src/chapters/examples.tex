@@ -1,0 +1,711 @@
+\chapter{Examples and counterexamples}
+\label{chap:examples}
+
+In this chapter we test the general notions of the previous chapters on concrete examples. The
+positive examples (closed subspaces, open subsets, graphs, the unit sphere of an inner product
+space, the unitary group of a Banach $*$-algebra) show that embedded and split submanifolds,
+fields of projectors and their geodesics behave as expected; in all of them the slice charts are
+explicit, so that no inverse function theorem is needed. The counterexamples separate the
+notions of submanifold and immersion (Definitions~\ref{def:weak-immersion},
+\ref{def:immersion}, \ref{def:split-immersion} and~\ref{def:initial-submanifold}): a weak
+immersion that is not an immersion ($\ell^1 \to \ell^2$), an injective immersion that is not
+initial (the figure eight), and an immersion between Banach spaces that is not split
+($c_0 \subseteq \ell^\infty$, by Phillips' lemma). The last section prepares the ground for
+groups of diffeomorphisms: we construct the Fréchet space $C^\infty_{per}$ of smooth periodic
+functions and identify the universal cover of $\Diff^+(S^1)$ with an open convex subset of it.
+
+Throughout, we keep track of completeness. A model space is a real locally convex Hausdorff
+space, not necessarily complete; when an example is a Banach, Hilbert or Fréchet manifold we say
+so, and we say where completeness is used.
+
+\section{Closed subspaces, open subsets and graphs}
+
+The simplest submanifolds are linear. Let $F$ be a locally convex space and $S \subseteq F$ a
+linear subspace.
+
+\begin{proposition}[Closed subspaces]
+  \label{prop:ex-subspace}
+  \lean{LCManifolds.isSliceChart_refl, LCManifolds.isEmbeddedSubmanifold_subspace,
+    LCManifolds.isSplitSubmanifold_subspace, LCManifolds.tangentSpace_subspace}
+  \leanok
+  \uses{def:embedded-submanifold, def:split-submanifold, def:tangent-space-submanifold}
+  If $S$ is closed, then $S$ is an embedded submanifold of $F$ modeled on $S$, with the identity
+  of $F$ as slice chart at every point, and $T_pS = S$ for every $p \in S$. If $S$ is
+  complemented, $S$ is a split submanifold.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The identity belongs to the maximal atlas of $F$, and $q \in S$ if and only if
+  $\id(q) \in S$. The differential of the identity is the identity, so the tangent space read
+  in this chart is $S$.
+\end{proof}
+
+\begin{proposition}[Linear inclusions]
+  \label{prop:ex-subspace-immersion}
+  \lean{LCManifolds.isImmersion_subtypeL, LCManifolds.isSplitImmersion_subtypeL_iff}
+  \leanok
+  \uses{def:immersion, def:split-immersion}
+  If $S$ is closed, the inclusion $\iota \colon S \to F$ is an immersion. It is a split
+  immersion if and only if $S$ is complemented in $F$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In the identity charts the differential of $\iota$ at every point is $\iota$ itself, which is
+  a topological isomorphism onto the closed subspace $S$. A continuous left inverse of $\iota$
+  is the same thing as a continuous projection of $F$ onto $S$.
+\end{proof}
+
+A continuous projection $P$ of $F$ onto $S$ ($P^2 = P$, $\operatorname{ran} P = S$) gives the
+simplest field of projectors: the constant one.
+
+\begin{proposition}[The flat connection of a subspace]
+  \label{prop:ex-subspace-flat}
+  \lean{LCManifolds.projectorField_subspace, LCManifolds.symb_subspace_refl, LCManifolds.isGeodesic_subspace_iff}
+  \leanok
+  \uses{prop:ex-subspace, def:projector-field, thm:projector-connection, def:geodesic}
+  Let $S$ be closed and $P$ a continuous projection onto $S$. Then $E_p = P$ for all $p \in S$
+  is a field of projectors, the symbols of its connection vanish in the identity chart, and a
+  $\Ck{2}$ curve $\alpha$ in $S$ is a geodesic if and only if $\ddot\alpha(t) = 0$ for all $t$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  \uses{thm:projector-geodesics}
+  Smoothness of $(p, w) \mapsto P w$ is that of a continuous linear map. The symbols involve the
+  second differential of the inclusion, which is zero. For the geodesics, the general criterion
+  says that $\alpha$ is a geodesic iff $P\ddot\alpha = 0$; since $\ddot\alpha$ takes values in
+  $S$ and $P$ is the identity on $S$, this is $\ddot\alpha = 0$.
+\end{proof}
+
+So the connection is flat and its geodesics are the curves of zero acceleration, that is, the
+affine lines $t \mapsto x + t v$ (this last reformulation is the usual one and is not stated
+separately in Lean).
+
+\begin{proposition}[Open subsets]
+  \label{prop:ex-open}
+  \lean{LCManifolds.isEmbeddedSubmanifold_open}
+  \leanok
+  \uses{def:embedded-submanifold, def:mb-manifold}
+  An open subset $U$ of a manifold $M$ modeled on $E$ is an embedded submanifold of $M$, modeled
+  on the whole space $E$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The restriction of the chart at $p$ to $U$ is again a chart (the Michal--Bastiani groupoid is
+  closed under restriction to open sets), and every point of its domain lies in $U$.
+\end{proof}
+
+Let now $E, G$ be locally convex spaces, $U \subseteq E$ open and $g \colon U \to G$ smooth.
+The graph of $g$ is
+\[
+  \Gamma_g = \{(x, y) \in E \times G : x \in U,\ y = g(x)\},
+\]
+and its model is the horizontal subspace $E \times 0$, the kernel of the second projection.
+
+\begin{proposition}[Graphs]
+  \label{prop:ex-graph}
+  \lean{LCManifolds.graph, LCManifolds.horizontal, LCManifolds.closedComplemented_horizontal, LCManifolds.graphChart, LCManifolds.graphChart_mem, LCManifolds.isSplitSubmanifold_graph}
+  \leanok
+  \uses{def:split-submanifold, def:mb-groupoid}
+  The map $\Phi(x, y) = (x, y - g(x))$, defined on $U \times G$, is a chart of $E \times G$ with
+  inverse $\Phi^{-1}(x, z) = (x, z + g(x))$, and $(x, y) \in \Gamma_g$ if and only if
+  $\Phi(x, y) \in E \times 0$. Hence $\Gamma_g$ is a split submanifold of $E \times G$ modeled on
+  $E \times 0$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Both $\Phi$ and $\Phi^{-1}$ are built from $g$, projections and sums, hence they are smooth on
+  $U \times G$. The subspace $E \times 0$ is closed and complemented by $0 \times G$, with
+  projection $(x, y) \mapsto (x, 0)$.
+\end{proof}
+
+\begin{remark}
+  In finite dimensions one usually proves that graphs (and level sets of submersions) are
+  submanifolds through the inverse function theorem. That theorem is not available for
+  Michal--Bastiani maps between locally convex spaces, and it is not needed here: the chart
+  $\Phi$ and its inverse are written down explicitly. The same strategy is used for the sphere
+  and the unitary group below.
+\end{remark}
+
+\section{The unit sphere of an inner product space}
+
+Let $H$ be a real inner product space and $e \in H$ a unit vector. We write
+$e^\perp = \{w : \langle w, e\rangle = 0\}$, a closed subspace of $H$, and
+$S = \{q \in H : \|q\| = 1\}$.
+
+\begin{remark}[Completeness]
+  We do not assume that $H$ is complete. If $H$ is complete, $H$ is a Hilbert manifold and $S$ is
+  a Hilbert submanifold. If $H$ is not complete, $H$ is still a manifold in our sense (model
+  spaces need not be complete), but neither $H$ nor $S$ is a Hilbert or Banach manifold. The
+  construction below does not use completeness, so it covers both cases; the statements about
+  Hilbert manifolds are the case of a complete $H$.
+\end{remark}
+
+On the open hemisphere around $e$ we use the explicit chart
+\[
+  \varphi_e(q) = q - \sqrt{1 - \|q - \langle q, e\rangle e\|^2}\; e, \qquad
+  \varphi_e^{-1}(r) = r + \sqrt{1 - \|r - \langle r, e\rangle e\|^2}\; e,
+\]
+defined on $\{q : \|q - \langle q, e\rangle e\| < 1,\ \langle q, e\rangle > 0\}$. By Pythagoras,
+$\|q\|^2 = \|q - \langle q, e\rangle e\|^2 + \langle q, e\rangle^2$, so on this set $\|q\| = 1$
+exactly when the height $\sqrt{1 - \|q - \langle q,e\rangle e\|^2}$ equals $\langle q, e\rangle$,
+that is, when $\varphi_e(q) \in e^\perp$. At another point $p \in S$ we first apply the
+Householder reflection $R_p$ exchanging $p$ and $e$ (the reflection across
+$(p - e)^\perp$), a linear isometry, and then $\varphi_e$.
+
+\begin{lemma}[The charts of the sphere]
+  \label{lem:ex-sphere-charts}
+  \lean{LCManifolds.Sphere.chart, LCManifolds.Sphere.chart_mem, LCManifolds.Sphere.norm_eq_one_iff, LCManifolds.Sphere.refl, LCManifolds.Sphere.chartAt', LCManifolds.Sphere.chartAt'_mem, LCManifolds.Sphere.mem_chartAt'_source}
+  \leanok
+  \uses{def:mb-groupoid}
+  The map $\varphi_e$ is a smooth chart of $H$ with smooth inverse; for $q$ in its domain,
+  $\|q\| = 1$ if and only if $\varphi_e(q) \in e^\perp$. For every unit vector $p$, the chart
+  $\varphi_e \circ R_p$ is smooth and its domain contains $p$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The square root is smooth where its argument is positive, and the remaining operations are
+  continuous linear or bilinear; Fréchet smoothness implies Michal--Bastiani smoothness. The
+  identity $\varphi_e^{-1}\varphi_e = \id$ holds because the component of $q$ orthogonal to $e$,
+  and hence the height, does not change when we add a multiple of $e$. The equivalence is
+  Pythagoras, and $R_p p = e$ lies in the domain of $\varphi_e$.
+\end{proof}
+
+\begin{theorem}[The sphere is an embedded submanifold]
+  \label{thm:ex-sphere}
+  \lean{LCManifolds.isEmbeddedSubmanifold_sphere, LCManifolds.tangentSpace_sphere}
+  \leanok
+  \uses{lem:ex-sphere-charts, def:embedded-submanifold, def:tangent-space-submanifold}
+  The unit sphere $S$ is an embedded submanifold of $H$ modeled on $e^\perp$, and
+  $T_pS = p^\perp$ for every $p \in S$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Since $R_p$ is an isometry, $\|q\| = 1$ iff $\|R_p q\| = 1$ iff
+  $\varphi_e(R_p q) \in e^\perp$. At $e$ the height has zero derivative, so
+  $\dd\varphi_e(e) = \id$, and by the chain rule $\dd(\varphi_e \circ R_p)(p) = R_p$. Then
+  $w \in T_pS$ iff $\langle e, R_p w\rangle = 0$ iff $\langle R_p p, R_p w\rangle = 0$ iff
+  $\langle p, w\rangle = 0$.
+\end{proof}
+
+The orthogonal projections onto the tangent spaces give a field of projectors, and the geodesics
+of its connection are the curves whose acceleration is normal to the sphere.
+
+\begin{theorem}[Geodesics of the sphere]
+  \label{thm:ex-sphere-geodesics}
+  \lean{LCManifolds.sphereProj, LCManifolds.projectorField_sphere, LCManifolds.isGeodesic_sphere_iff, LCManifolds.greatCircle, LCManifolds.isGeodesic_greatCircle}
+  \leanok
+  \uses{thm:ex-sphere, def:projector-field, thm:projector-connection, def:geodesic}
+  The maps $E_p w = w - \langle w, p\rangle p$, $p \in S$, form a field of projectors onto
+  the tangent spaces of $S$. A curve $\alpha$ in $S$ whose ambient curve is smooth is a geodesic
+  of the associated connection if and only if
+  \[
+    \ddot\alpha(t) = \langle \ddot\alpha(t), \alpha(t)\rangle\, \alpha(t) \quad
+    \text{for all } t .
+  \]
+  In particular, if $p, v \in H$ are unit vectors with $\langle p, v\rangle = 0$, the great
+  circle $t \mapsto \cos t\, p + \sin t\, v$ is a geodesic.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \uses{thm:projector-geodesics}
+  It is immediate that $E_p$ is linear, idempotent, with range $p^\perp$. In a slice chart,
+  $(x, w) \mapsto E_{\psi(x)} w$ is smooth because the parametrization $\psi$ is. By the general
+  criterion, $\alpha$ is a geodesic iff $E_{\alpha(t)}\ddot\alpha(t) = 0$, which is the stated
+  equation. For the great circle, $\ddot\alpha = -\alpha$ and $\|\alpha\| = 1$.
+\end{proof}
+
+\section{Weak immersions, injective immersions and split immersions}
+
+The notions of immersion form a chain: split immersions are immersions,
+immersions are weak immersions, and injective immersions need not be initial. In finite
+dimensions the first two notions coincide. The three examples of this section show that every
+implication is strict, and that the first two separations occur already between Banach spaces.
+
+\subsection{A weak immersion that is not an immersion}
+
+Let $\iota \colon \ell^1 \to \ell^2$ be the inclusion of real sequences. Both spaces are Banach
+spaces, hence manifolds with a single chart.
+
+\begin{proposition}[$\ell^1 \to \ell^2$]
+  \label{prop:ex-l1-l2}
+  \lean{LCManifolds.lpInclusion, LCManifolds.lpInclusion_injective, LCManifolds.not_boundedBelow_lpInclusion, LCManifolds.isWeakImmersion_lpInclusion, LCManifolds.not_isImmersion_lpInclusion}
+  \leanok
+  \uses{def:weak-immersion, def:immersion}
+  The inclusion $\iota$ is continuous, linear and injective, hence a weak immersion. It is not
+  bounded below, hence it is not an immersion.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Continuity follows from the closed graph theorem: the graph of $\iota$ is closed because the
+  coordinate evaluations are continuous on both spaces. The differential of $\iota$ at every
+  point is $\iota$, which is injective. For $x_n = e_0 + \dots + e_{n-1}$ we have
+  $\|x_n\|_1 = n$ and $\|x_n\|_2 = \sqrt n$, so no inequality $m\|x\|_1 \le \|\iota x\|_2$ with
+  $m > 0$ can hold, and $\iota$ is not a topological isomorphism onto its range.
+\end{proof}
+
+\begin{remark}
+  The range of $\iota$ is dense in $\ell^2$ and not closed. In finite dimensions an injective
+  linear map is automatically a topological isomorphism onto a closed subspace; in infinite
+  dimensions the condition that the differential be an embedding with closed range is a genuine
+  additional requirement, and this is the reason to distinguish weak immersions from
+  immersions.
+\end{remark}
+
+\subsection{An injective immersion that is not initial: the figure eight}
+
+Let $\theta(t) = 2\arctan t \in (-\pi, \pi)$ and
+\[
+  j \colon \R \to \R^2, \qquad j(t) = (\sin\theta(t), \sin 2\theta(t)).
+\]
+As $t$ runs over $\R$, $j(t)$ traces the figure eight (a lemniscate), passing through the origin
+at $t = 0$ and tending to the origin again as $t \to \pm\infty$.
+
+\begin{proposition}[The figure eight is immersed]
+  \label{prop:ex-lemniscate-immersed}
+  \lean{LCManifolds.Lemniscate.j, LCManifolds.Lemniscate.j_injective, LCManifolds.Lemniscate.vel_ne_zero, LCManifolds.Lemniscate.isImmersedSubmanifold_lemniscate}
+  \leanok
+  \uses{def:immersion}
+  The map $j$ is smooth, injective and has nonvanishing velocity; hence it is an injective
+  immersion.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  On $(-\pi, \pi)$ the pair $(\sin a, \sin 2a)$ determines $a$, which gives injectivity. If
+  $\dot j(t) = 0$, then $\cos\theta = 0$ and $\cos 2\theta = 0$ at the same time, which is
+  impossible. A nonzero vector spans a closed line, so $v \mapsto v\,\dot j(t)$ is a
+  topological isomorphism onto a closed subspace.
+\end{proof}
+
+\begin{theorem}[The figure eight is not initial]
+  \label{thm:ex-lemniscate-not-initial}
+  \lean{LCManifolds.Lemniscate.f, LCManifolds.Lemniscate.g, LCManifolds.Lemniscate.j_g, LCManifolds.Lemniscate.one_lt_g, LCManifolds.Lemniscate.g_zero, LCManifolds.Lemniscate.not_isInitialSubmanifold_lemniscate}
+  \leanok
+  \uses{prop:ex-lemniscate-immersed, def:initial-submanifold}
+  Let $\sigma(s) = \tfrac12\arctan s$ and $f(s) = (\sin\sigma, -\sin 2\sigma)$. Then $f$ is a
+  smooth curve in $\R^2$ with values in $j(\R)$, but its unique lift $g$ with $j \circ g = f$ is
+  not continuous at $0$. Hence $j$ is not an initial submanifold.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The curve $f$ crosses the origin along the branch that $j$ reaches only as $t \to \pm\infty$.
+  Explicitly, $g = \tan(\lambda/2)$ with $\lambda(s) = \pi - \sigma(s)$ for $s > 0$,
+  $\lambda(s) = -\pi - \sigma(s)$ for $s < 0$ and $\lambda(0) = 0$; trigonometric identities give
+  $j \circ g = f$. For $s > 0$ we have $g(s) > 1$, while $g(0) = 0$. If $j$ were initial, $g$
+  would be smooth, in particular continuous.
+\end{proof}
+
+\begin{remark}
+  This is the classical finite dimensional example; it shows that the condition defining
+  initial submanifolds is not a consequence of being an injective immersion, and has nothing to
+  do with infinite dimensions. The topology of $\R$ transported by $j$ is strictly finer than the
+  topology induced by $\R^2$ on the figure eight.
+\end{remark}
+
+\subsection{An immersion that is not split: \texorpdfstring{$c_0 \subseteq \ell^\infty$}{c0 in l-infinity}}
+
+We realize $\ell^\infty$ as the Banach space of bounded real sequences and $c_0$ as the closed
+subspace of sequences tending to $0$. The classical obstruction is the following result of
+Phillips \cite{Phi40}; we formalize the short proof of Whitley \cite{Whi66}.
+
+\begin{theorem}[Phillips' lemma]
+  \label{thm:ex-phillips}
+  \lean{LCManifolds.Phillips.Linf, LCManifolds.Phillips.c0, LCManifolds.Phillips.isClosed_c0, LCManifolds.Phillips.not_closedComplemented_c0}
+  \leanok
+  There is no continuous linear projection of $\ell^\infty$ onto $c_0$.
+\end{theorem}
+
+The proof rests on an uncountable family of almost disjoint subsets of $\N$, and on the fact
+that a functional vanishing on $c_0$ can only see countably many of them.
+
+\begin{lemma}[An almost disjoint family]
+  \label{lem:ex-almost-disjoint}
+  \lean{LCManifolds.Phillips.N, LCManifolds.Phillips.infinite_N, LCManifolds.Phillips.finite_N_inter, LCManifolds.Phillips.ind, LCManifolds.Phillips.ind_not_mem_c0}
+  \leanok
+  For each $A \subseteq \N$ there is an infinite set $N_A \subseteq \N$ such that
+  $N_A \cap N_B$ is finite whenever $A \ne B$. The indicator $\chi_A \in \ell^\infty$ of $N_A$
+  does not belong to $c_0$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Index the finite binary words by $\N$, and let $N_A$ be the set of indices of the initial
+  segments of the indicator function of $A$. If $A$ and $B$ differ at $i_0$, their initial
+  segments of length larger than $i_0$ are different, so $N_A \cap N_B$ is finite. Since $N_A$
+  is infinite, $\chi_A$ takes the value $1$ infinitely often.
+\end{proof}
+
+\begin{lemma}[Whitley]
+  \label{lem:ex-whitley}
+  \lean{LCManifolds.Phillips.abs_le_of_eventually, LCManifolds.Phillips.countable_ne_zero}
+  \leanok
+  \uses{lem:ex-almost-disjoint}
+  Let $f$ be a continuous linear functional on $\ell^\infty$ that vanishes on $c_0$. If
+  $|x_k| \le 1$ for all but finitely many $k$, then $|f(x)| \le \|f\|$. Consequently,
+  $f(\chi_A) \ne 0$ only for countably many $A \subseteq \N$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  For the first claim, modify $x$ on a finite set to obtain $y$ with $\|y\| \le 1$; then
+  $x - y \in c_0$ and $f(x) = f(y)$. For the second, suppose $|f(\chi_A)| > 1/m$ for every $A$ in
+  a finite set $\mathcal F$, and let $x = \sum_{A \in \mathcal F} \pm\chi_A$, with the signs of
+  $f(\chi_A)$. Off the finite set where two of the $N_A$ meet, $|x_k| \le 1$; hence
+  $\#\mathcal F/m < f(x) \le \|f\|$. So each set $\{A : |f(\chi_A)| > 1/m\}$ is finite.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:ex-phillips}]
+  \leanok
+  \uses{lem:ex-whitley}
+  Suppose $P$ is a continuous projection onto $c_0$, and apply Lemma~\ref{lem:ex-whitley} to the
+  functionals $f_n = e_n \circ (1 - P)$, where $e_n$ is the $n$-th coordinate. The subsets of
+  $\N$ are uncountable, so some $A$ avoids the countable union of the exceptional sets. Then
+  $(1 - P)\chi_A = 0$, that is, $\chi_A = P\chi_A \in c_0$, a contradiction.
+\end{proof}
+
+\begin{corollary}[Embedded but not split]
+  \label{cor:ex-c0}
+  \lean{LCManifolds.Phillips.isEmbeddedSubmanifold_c0, LCManifolds.Phillips.not_isSplitSubmanifold_c0, LCManifolds.Phillips.isImmersion_c0, LCManifolds.Phillips.not_isSplitImmersion_c0}
+  \leanok
+  \uses{thm:ex-phillips, prop:ex-subspace, prop:ex-subspace-immersion,
+    def:embedded-submanifold, def:split-submanifold, def:immersion, def:split-immersion}
+  The subspace $c_0$ is an embedded submanifold of $\ell^\infty$ that is not split, and the
+  inclusion $c_0 \to \ell^\infty$ is an immersion that is not a split immersion.
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  Combine Propositions~\ref{prop:ex-subspace} and~\ref{prop:ex-subspace-immersion} with
+  Theorem~\ref{thm:ex-phillips}.
+\end{proof}
+
+\begin{remark}
+  In Hilbert spaces every closed subspace is complemented, so the distinction between embedded
+  and split submanifolds, and between immersions and split immersions, is invisible there. For
+  Banach spaces it is not, and Corollary~\ref{cor:ex-c0} gives the standard witness.
+\end{remark}
+
+\section{The unitary group of a Banach \texorpdfstring{$*$}{*}-algebra}
+
+Let $A$ be a real Banach algebra with a continuous involution $a \mapsto a^*$ (in Lean:
+a complete normed $\R$-algebra which is a $*$-ring and a $*$-module, with continuous $*$). For
+instance $A = B(H)$, the bounded operators on a complex Hilbert space $H$, seen as a real
+algebra. The unitary group is
+\[
+  U(A) = \{u \in A : u^* u = 1 = u u^*\},
+\]
+and its model is the space $\mathfrak u(A) = \{X \in A : X^* = -X\}$ of skew-adjoint elements.
+
+\begin{remark}[Completeness]
+  Here $A$ is complete, so $A$ is a Banach manifold and $U(A)$ is a Banach submanifold of it.
+  Completeness is used twice: the invertible elements form an open set, and inversion is smooth
+  on it. Both facts may fail in an incomplete normed algebra.
+\end{remark}
+
+The slice charts are Cayley transforms. On the open set $\{a : a + 1 \text{ invertible}\}$ we
+let
+\[
+  \varphi(a) = 1 - 2(a + 1)^{-1} = (a - 1)(a + 1)^{-1}, \qquad
+  \varphi^{-1}(X) = 2(1 - X)^{-1} - 1 = (1 + X)(1 - X)^{-1}.
+\]
+At other points $p \in U(A)$ we compose with the left translation $a \mapsto p^* a$, a linear
+homeomorphism of $A$ with inverse $a \mapsto pa$.
+
+\begin{lemma}[The Cayley transform]
+  \label{lem:ex-cayley}
+  \lean{LCManifolds.Cayley.cay, LCManifolds.Cayley.cayInv, LCManifolds.Cayley.chart, LCManifolds.Cayley.chart_mem, LCManifolds.Cayley.mem_unitary_iff, LCManifolds.Cayley.chartAt', LCManifolds.Cayley.isSliceChart}
+  \leanok
+  \uses{def:mb-groupoid}
+  The Cayley transform $\varphi$ is a smooth chart of $A$ with smooth inverse. If $a + 1$ is
+  invertible, then $a \in U(A)$ if and only if $\varphi(a) \in \mathfrak u(A)$. For every
+  $p \in U(A)$, the chart $a \mapsto \varphi(p^* a)$ is a slice chart for $U(A)$ around $p$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The inverse of $\varphi$ is checked by a direct computation with units, and smoothness follows
+  from the smoothness of inversion on the open set of units. The equivalence is pure algebra:
+  writing $s = a + 1$ and using $(s^{-1})^* = (s^*)^{-1}$, the condition
+  $\varphi(a)^* = -\varphi(a)$ unwinds to $a^* a = 1 = a a^*$; no spectral theory is needed.
+  Finally $p^* p + 1 = 2$ is invertible, so $p$ lies in the domain of the translated chart.
+\end{proof}
+
+\begin{theorem}[The unitary group is a split submanifold]
+  \label{thm:ex-unitary}
+  \lean{LCManifolds.closedComplemented_skewAdjoint, LCManifolds.isSplitSubmanifold_unitary, LCManifolds.tangentSpace_unitary, LCManifolds.isSplitSubmanifold_unitary_clm}
+  \leanok
+  \uses{lem:ex-cayley, def:split-submanifold, def:tangent-space-submanifold}
+  The unitary group $U(A)$ is a split submanifold of $A$ modeled on $\mathfrak u(A)$, and
+  \[
+    T_pU(A) = \{w \in A : p^* w \in \mathfrak u(A)\} = p\,\mathfrak u(A) .
+  \]
+  In particular this holds for the unitary group of $B(H)$, $H$ a complex Hilbert space.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The skew-adjoint elements are closed and complemented by the self-adjoint ones, with
+  projection $X \mapsto (X - X^*)/2$. The derivative of $\varphi$ at $1$ is $w \mapsto w/2$, so
+  the derivative of the translated chart at $p$ is $w \mapsto p^* w/2$, and the tangent space
+  is read off as in Theorem~\ref{thm:ex-sphere}.
+\end{proof}
+
+The natural projector onto $T_pU(A)$ is $E_p w = \tfrac12(w - p w^* p)$; writing $X = p^* w$, it
+is $E_p w = p\,\tfrac12(X - X^*)$, the skew-adjoint part translated back to $p$.
+
+\begin{theorem}[Geodesics of the unitary group]
+  \label{thm:ex-unitary-geodesics}
+  \lean{LCManifolds.unitaryProj, LCManifolds.unitaryProj_idem, LCManifolds.projectorField_unitary, LCManifolds.isGeodesic_unitary_iff, LCManifolds.expCurve, LCManifolds.isGeodesic_expCurve}
+  \leanok
+  \uses{thm:ex-unitary, def:projector-field, thm:projector-connection, def:geodesic}
+  The maps $E_p w = \tfrac12(w - p w^* p)$, $p \in U(A)$, form a field of projectors onto the
+  tangent spaces of $U(A)$. A curve $\alpha$ in $U(A)$ whose ambient curve is smooth is a
+  geodesic of the associated connection if and only if
+  \[
+    \ddot\alpha(t) = \alpha(t)\, \ddot\alpha(t)^*\, \alpha(t) \quad \text{for all } t .
+  \]
+  For $p \in U(A)$ and $X \in \mathfrak u(A)$, the curve $t \mapsto p\, e^{tX}$ is a geodesic.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \uses{thm:projector-geodesics}
+  Using $p^*p = 1 = pp^*$ one checks $p (E_p w)^* p = \tfrac12(p w^* p - w)$, whence
+  $E_p^2 = E_p$, and $p^* E_p w = \tfrac12(p^* w - w^* p)$ is skew-adjoint. The geodesic
+  equation is the general criterion $E_{\alpha}\ddot\alpha = 0$. For $\alpha(t) = p e^{tX}$,
+  $e^{tX}$ is unitary and commutes with $X$, and $\ddot\alpha = p e^{tX}X^2$; a short
+  computation gives $\alpha\ddot\alpha^*\alpha = p e^{tX} X^2$.
+\end{proof}
+
+\begin{remark}
+  The structure of Lie group of $U(A)$ (smoothness of the product and of the inversion in these
+  charts) is not addressed in this chapter; we only use $U(A)$ as a submanifold of $A$. The
+  connection of Theorem~\ref{thm:ex-unitary-geodesics} is defined directly from the field of
+  projectors, with no metric behind it. The header of the Lean file also mentions $B(H)$ for a
+  real Hilbert space $H$; the formalized statement \texttt{isSplitSubmanifold\_unitary\_clm}
+  covers complex Hilbert spaces.
+\end{remark}
+
+\section{Smooth periodic functions and \texorpdfstring{$\Diff^+(S^1)$}{Diff+(S1)}}
+
+\subsection{The Fréchet space \texorpdfstring{$C^\infty_{per}$}{C-infinity-per}}
+
+Let $C^\infty_{per}$ be the space of smooth $1$-periodic functions $u \colon \R \to \R$ (smooth
+functions on the circle $S^1 = \R/\mathbb Z$), with the topology of uniform convergence of all
+the derivatives, that is, the topology of the seminorms
+\[
+  p_k(u) = \sup_{x \in \R} |u^{(k)}(x)|, \qquad k \in \N .
+\]
+
+\begin{definition}[$C^\infty_{per}$]
+  \label{def:ex-cinfper}
+  \lean{LCManifolds.CInfPer, LCManifolds.CInfPer.J, LCManifolds.CInfPer.isEmbedding_J, LCManifolds.CInfPer.seminorm}
+  \leanok
+  The topology and the uniform structure of $C^\infty_{per}$ are those induced by the injective
+  linear map
+  \[
+    J \colon C^\infty_{per} \to \prod_{k \in \N} BC(\R), \qquad J(u) = (u, u', u'', \dots),
+  \]
+  into a countable product of Banach spaces of bounded continuous functions. The seminorm $p_k$
+  is the sup norm of the $k$-th component of $J$.
+\end{definition}
+
+All the structure is inherited from the product: $C^\infty_{per}$ is a Hausdorff locally convex
+topological vector space, and it is metrizable, since the product is countable. In Lean these
+are instances on \texttt{CInfPer}.
+
+\begin{proposition}[Convergence and seminorms]
+  \label{prop:ex-cinfper-tendsto}
+  \lean{LCManifolds.CInfPer.tendsto_iff, LCManifolds.CInfPer.norm_iteratedDeriv_le_seminorm, LCManifolds.CInfPer.seminorm_le_iff}
+  \leanok
+  \uses{def:ex-cinfper}
+  A net $u_i$ converges to $u$ in $C^\infty_{per}$ if and only if $u_i^{(k)} \to u^{(k)}$
+  uniformly on $\R$ for every $k$. Moreover $p_k(u) \le C$ if and only if
+  $|u^{(k)}(x)| \le C$ for all $x$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  $J$ is a uniform embedding and convergence in a product is convergence of every component.
+\end{proof}
+
+\begin{theorem}[$C^\infty_{per}$ is a Fréchet space]
+  \label{thm:ex-cinfper-frechet}
+  \lean{LCManifolds.CInfPer.isClosed_range_J}
+  \leanok
+  \uses{def:ex-cinfper}
+  The range of $J$ is closed. Consequently $C^\infty_{per}$ is complete, and it is a Fréchet
+  space: locally convex, Hausdorff, metrizable and complete.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  If $u_n^{(k)} \to g_k$ uniformly for every $k$, the theorem on uniform limits of derivatives
+  shows that $g_0$ is differentiable with $g_0' = g_1$, and inductively $g_0^{(k)} = g_k$; so
+  $g_0$ is smooth, periodic, and $J(g_0) = (g_k)_k$. A closed subspace of the complete space
+  $\prod_k BC(\R)$ is complete, and $J$ is a uniform embedding.
+\end{proof}
+
+\begin{remark}
+  The space $C^\infty_{per}$ is not normable, so it is a Fréchet space that is not a Banach
+  space. Non-normability is the standard fact that a normable Fréchet space has a bounded
+  neighbourhood of $0$; it is not formalized here. Completeness, which we do prove, is what
+  makes the manifolds modeled on $C^\infty_{per}$ below Fréchet manifolds in the strict sense.
+\end{remark}
+
+\subsection{The universal cover of \texorpdfstring{$\Diff^+(S^1)$}{Diff+(S1)}}
+
+Let $\pi \colon \R \to S^1 = \R/\mathbb Z$ be the projection. We recall the classical facts
+that relate circle maps to their lifts; they are \emph{not} formalized, and the formalization
+works directly with the lifts.
+
+\begin{remark}[From the circle to its lifts]
+  \label{rem:ex-covering}
+  The map $\pi$ is a covering map and a local diffeomorphism.
+  \begin{itemize}
+    \item \emph{Existence and uniqueness of lifts.} Since $\R$ is simply connected, every
+    continuous $f \colon S^1 \to S^1$ has a continuous lift $\varphi \colon \R \to \R$,
+    $\pi \circ \varphi = f \circ \pi$, by the lifting criterion \cite[\S1.3, Prop.~1.33]{Hat02}
+    (see also the homotopy lifting property, \cite[Prop.~1.30]{Hat02}), and two lifts differ by
+    an integer constant: integer translations are deck transformations, and a lift is
+    determined by its value at one point \cite[Prop.~1.34]{Hat02}.
+    \item \emph{Degree.} $\varphi(x + 1) - \varphi(x)$ is a continuous integer valued function,
+    hence a constant $d$, the degree of $f$ \cite{KH95}. A homeomorphism has degree $\pm1$, and it
+    preserves the orientation exactly when $d = 1$, i.e.\ $\varphi(x + 1) = \varphi(x) + 1$;
+    then $\varphi = \id + u$ with $u$ $1$-periodic.
+    \item \emph{Smoothness.} Since $\pi$ is a local diffeomorphism, $\varphi$ is smooth if and
+    only if $f$ is, and $\varphi$ is a diffeomorphism of $\R$ exactly when $f$ is a
+    diffeomorphism of $S^1$ (the inverse of $f$ lifts to the inverse of $\varphi$).
+  \end{itemize}
+  So $\Diff^+(S^1) \cong \Omega/\mathbb Z$, where $n \in \mathbb Z$ acts by $u \mapsto u + n$ and
+  $\Omega$ is the set defined below. This is the description of Herman
+  \cite[Ch.~I, 1.7]{Her79}, where $D^r(T^1) = \{\id + \varphi\}$ is called the universal cover
+  of $\Diff^r_+(T^1)$; Hamilton \cite[Part~I, Example~4.2.6]{Ham82} parametrizes
+  $\Diff^+(S^1)$ instead by $S^1 \times \{f' > 0,\ \int f' = 2\pi\}$. Since $\Omega$ is convex,
+  hence contractible, $\Omega \to \Diff^+(S^1)$ is the universal cover
+  $\widetilde{\Diff}^+(S^1)$ \cite[Introduction (Remarque importante)]{Her79}. For Lie groups
+  of diffeomorphisms in the locally convex setting see \cite{GN26}. In Mathlib, the monotone
+  lifts with $\varphi(x+1) = \varphi(x) + 1$ of circle maps appear as
+  \texttt{CircleDeg1Lift}.
+\end{remark}
+
+An orientation preserving diffeomorphism of the circle thus lifts to a diffeomorphism
+$\varphi = \id + u$ of $\R$ with $u \in C^\infty_{per}$ and $\varphi' = 1 + u' > 0$.
+
+\begin{definition}[The domain $\Omega$]
+  \label{def:ex-omega}
+  \lean{LCManifolds.DiffCircle.domain, LCManifolds.DiffCircle.Ω, LCManifolds.DiffCircle.lift}
+  \leanok
+  \uses{def:ex-cinfper}
+  We let
+  \[
+    \Omega = \{u \in C^\infty_{per} : 1 + u'(x) > 0 \text{ for all } x \in \R\},
+  \]
+  and for $u \in C^\infty_{per}$ we let $\varphi_u = \id + u$ be its lift.
+\end{definition}
+
+\begin{proposition}[$\Omega$ is open and convex]
+  \label{prop:ex-omega-open}
+  \lean{LCManifolds.DiffCircle.exists_pos_le, LCManifolds.DiffCircle.isOpen_domain, LCManifolds.DiffCircle.convex_domain, LCManifolds.DiffCircle.zero_mem}
+  \leanok
+  \uses{def:ex-omega, thm:ex-cinfper-frechet, prop:ex-open, def:mb-manifold}
+  The set $\Omega$ is open and convex in $C^\infty_{per}$, and contains $0$. Hence $\Omega$ is a
+  manifold modeled on $C^\infty_{per}$; since the model is complete, it is a Fréchet manifold.
+  It is not a Banach manifold, since the model is not normable (an unformalized fact).
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  For $u \in \Omega$, the continuous periodic function $1 + u'$ attains a positive minimum $c$ on
+  the compact circle. If $p_1(v - u) < c$, then $1 + v' > 0$, so $\Omega$ contains a
+  neighbourhood of $u$. Convexity is the identity
+  $1 + (au + bv)' = a(1 + u') + b(1 + v')$ for $a, b \ge 0$, $a + b = 1$. An open subset of a
+  locally convex space is a manifold with the restricted identity chart.
+\end{proof}
+
+\begin{proposition}[Lifts are diffeomorphisms]
+  \label{prop:ex-lift-diffeo}
+  \lean{LCManifolds.DiffCircle.lift_add_one, LCManifolds.DiffCircle.strictMono_lift, LCManifolds.DiffCircle.surjective_lift, LCManifolds.DiffCircle.liftHomeomorph, LCManifolds.DiffCircle.contDiff_liftHomeomorph_symm, LCManifolds.DiffCircle.liftHomeomorph_symm_add_one}
+  \leanok
+  \uses{def:ex-omega}
+  For $u \in \Omega$, the lift $\varphi_u$ is an increasing homeomorphism of $\R$, smooth with
+  smooth inverse, and both $\varphi_u$ and $\varphi_u^{-1}$ commute with the translation by $1$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  $\varphi_u' = 1 + u' > 0$ gives strict monotonicity. Since $u$ is bounded, $\varphi_u(x) \to
+  \pm\infty$ as $x \to \pm\infty$, so $\varphi_u$ is surjective by the intermediate value
+  theorem. The inverse is smooth by the one-variable inverse function theorem, its derivative
+  being $1/\varphi_u' \circ \varphi_u^{-1}$.
+\end{proof}
+
+\begin{theorem}[$\Omega$ is closed under the group operations]
+  \label{thm:ex-omega-group}
+  \lean{LCManifolds.DiffCircle.inv, LCManifolds.DiffCircle.lift_inv, LCManifolds.DiffCircle.inv_mem, LCManifolds.DiffCircle.comp, LCManifolds.DiffCircle.lift_comp, LCManifolds.DiffCircle.comp_mem}
+  \leanok
+  \uses{prop:ex-lift-diffeo}
+  Let $u, w \in \Omega$. Then $\varphi_u^{-1} = \id + v$ with $v \in \Omega$, and
+  \[
+    \varphi_u \circ \varphi_w = \id + \bigl(w + u \circ \varphi_w\bigr), \qquad
+    w + u \circ \varphi_w \in \Omega .
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The function $v = \varphi_u^{-1} - \id$ is smooth and periodic by
+  Proposition~\ref{prop:ex-lift-diffeo}, and $(\varphi_u^{-1})'(y) =
+  1/\varphi_u'(\varphi_u^{-1}y) > 0$. For the composition, $w + u \circ \varphi_w$ is smooth and
+  periodic since $\varphi_w$ commutes with the translation by $1$, and by the chain rule
+  $1 + (w + u \circ \varphi_w)' = (1 + u' \circ \varphi_w)(1 + w') > 0$.
+\end{proof}
+
+Conversely, $\Omega$ captures all the diffeomorphisms of $\R$ that commute with the
+translation by $1$, and positivity of the derivative does not need to be assumed.
+
+\begin{theorem}[Characterization of $\Omega$]
+  \label{thm:ex-omega-characterization}
+  \lean{LCManifolds.DiffCircle.lift_injective, LCManifolds.DiffCircle.mem_domain_iff, LCManifolds.DiffCircle.ofLift, LCManifolds.DiffCircle.existsUnique_mem_domain_lift_eq}
+  \leanok
+  \uses{prop:ex-lift-diffeo}
+  For $u \in C^\infty_{per}$, $u \in \Omega$ if and only if $\varphi_u$ has a differentiable
+  left inverse. Consequently, if $\varphi \colon \R \to \R$ is smooth, has a differentiable left
+  inverse and satisfies $\varphi(x + 1) = \varphi(x) + 1$, then $\varphi = \id + u$ for a unique
+  $u \in \Omega$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  A continuous injective map of $\R$ is strictly monotone, and it cannot be decreasing since it
+  commutes with the translation by $1$; so $\varphi_u' \ge 0$, and the chain rule
+  $\psi'(\varphi_u x)\,\varphi_u'(x) = 1$ excludes zeros. For the second claim take
+  $u = \varphi - \id$, which is smooth and periodic; uniqueness is the injectivity of
+  $u \mapsto \id + u$.
+\end{proof}
+
+So $\Omega$ is exactly the group of diffeomorphisms of $\R$ commuting with the translation by $1$,
+that is (by Remark~\ref{rem:ex-covering}), the universal cover of $\Diff^+(S^1)$. Lifts of
+orientation reversing diffeomorphisms satisfy $\varphi(x + 1) = \varphi(x) - 1$ instead, and
+they are excluded by the hypothesis.
+
+\begin{remark}[What is not proved]
+  Theorem~\ref{thm:ex-omega-group} shows that $\Omega$ is closed under composition and
+  inversion, so it is a group, and Proposition~\ref{prop:ex-omega-open} shows that it is a
+  Fréchet manifold. The smoothness of the maps $\Omega \times \Omega \to \Omega$,
+  $(u, w) \mapsto w + u \circ \varphi_w$, and $\Omega \to \Omega$, $u \mapsto v$, is
+  \emph{not} proved here; this is what would make $\Omega$ a Lie group, and it belongs to the
+  Lie group phase of the project. We remark that no general inverse function theorem is
+  available in Fréchet spaces, so the smoothness of the inversion has to be obtained by a
+  direct argument.
+\end{remark}

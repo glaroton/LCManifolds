@@ -205,8 +205,8 @@ theorem mem_chartAt'_source (he : ‖e‖ = 1) {p : H} (hp : ‖p‖ = 1) :
 end Sphere
 
 open Sphere in
-/-- **The unit sphere of a Hilbert space is an embedded submanifold**, modeled on `e^⊥` for any
-unit vector `e`. -/
+/-- **The unit sphere of a real inner product space is an embedded submanifold**, modeled on
+`e^⊥` for any unit vector `e`. No completeness is assumed. -/
 theorem isEmbeddedSubmanifold_sphere {e : H} (he : ‖e‖ = 1) :
     IsEmbeddedSubmanifold (Metric.sphere (0 : H) 1) (ℝ ∙ e)ᗮ := by
   refine ⟨Submodule.isClosed_orthogonal _, fun p hp ↦ ⟨chartAt' he p, ⟨?_, fun q hq ↦ ?_⟩, ?_⟩⟩

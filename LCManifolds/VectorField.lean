@@ -412,7 +412,7 @@ theorem localRep_related {f : M → N} (hf : ContMDiffMB E F 1 f) {X : M → Tan
   unfold localRep
   rw [e1, hrep, hXq]
 
-/-- **Brackets of related fields are related** (Lang, Prop. V.1.4): if `X, Y` are `f`-related
+/-- **Brackets of related fields are related** (Lang, §V.1): if `X, Y` are `f`-related
 to `X', Y'`, then `[X, Y]` is `f`-related to `[X', Y']`. -/
 theorem lieBracket_related {f : M → N} (hf : ContMDiffMB E F 2 f)
     {X Y : M → TangentBundle E M} {X' Y' : N → TangentBundle F N} (hXv : IsVectorField X)

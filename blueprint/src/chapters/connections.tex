@@ -1,0 +1,657 @@
+\chapter{Sprays, connections and fields of projectors}
+\label{chap:connections}
+
+In this chapter we introduce the second-order structures of a manifold $M$ modeled on a locally
+convex space $E$: connections, given in charts by their Christoffel symbols, and sprays, given in
+charts by their local parts. We define the covariant derivative of vector fields and of lifts of
+curves, the torsion and the curvature, and the geodesics of a connection. All the objects are
+defined chart by chart, subject to a change of charts law, and the main point in each case is
+that the resulting object does not depend on the chart. We follow Lang \cite{Lan99}
+(\S\S IV.3, VIII.1--3, IX.1) and Chapter~6 of \cite{Lar22}.
+
+The last section is closer to \cite{Lar22}: a smooth field of projectors onto the tangent spaces
+of an embedded submanifold of a locally convex space defines a symmetric connection, whose
+covariant derivative is obtained by differentiating in the ambient space and projecting, and
+whose geodesics are the curves with normal acceleration.
+
+Two features of the locally convex setting shape the chapter. First, there is no good topology on
+spaces of continuous linear operators, so bilinear families such as $x \mapsto \Gamma_x$ or
+$p \mapsto E_p$ are encoded as maps of several variables, linear in some of them, with joint
+smoothness. Second, there is no existence theorem for ordinary differential equations in general
+locally convex spaces; consequently we define geodesics by their equation, but we never claim that
+they exist for given initial data, and parallel transport is not discussed.
+
+\section{Connections and the covariant derivative}
+
+Let $\tau$ be a $\Ck{2}$ map between open subsets of locally convex spaces. We write
+$\dd\tau(y)(a)$ for its derivative and $\dd^{(2)}\tau(y; a, b)$ for the derivative of
+$y \mapsto \dd\tau(y)(b)$ in the direction $a$; by the symmetry of second derivatives the latter is
+symmetric in $(a, b)$. For two charts $i, j$ of the atlas of $M$ we write $\tau = j \circ i^{-1}$
+for the transition map, defined on $i(U_i \cap U_j)$.
+
+\begin{definition}[Connection]
+  \label{def:connection}
+  \lean{LCManifolds.Connection}
+  \leanok
+  \uses{def:mb-manifold, def:mb-groupoid}
+  A \emph{connection} on $M$ assigns to each chart $i$ of the atlas a family of maps
+  $\Gamma_i(x) \colon E \times E \to E$, $x \in i(U_i)$, such that
+  \begin{enumerate}
+    \item each $\Gamma_i(x)$ is bilinear, and $(x, a, b) \mapsto \Gamma_i(x)(a, b)$ is smooth on
+    $i(U_i) \times E \times E$;
+    \item (change of charts law) for every pair of charts $i, j$, every $y$ in the domain of
+    $\tau = j \circ i^{-1}$ and all $a, b \in E$,
+    \[
+      \Gamma_j(\tau y)\bigl(\dd\tau(y)(a), \dd\tau(y)(b)\bigr)
+        = \dd\tau(y)\bigl(\Gamma_i(y)(a, b)\bigr) + \dd^{(2)}\tau(y; a, b).
+    \]
+  \end{enumerate}
+  The maps $\Gamma_i$ are the \emph{Christoffel symbols} of the connection in the chart $i$.
+\end{definition}
+
+The symbols are not tensorial: they transform affinely, the defect being the second derivative of
+the transition map. Our convention is that the first argument of $\Gamma$ is the direction in
+which the base point moves. Continuity of each bilinear map $\Gamma_i(x)$ is a consequence of the
+joint smoothness, and no topology on the space of bilinear maps is needed.
+
+\begin{definition}[Local covariant derivative]
+  \label{def:conn-local-cov-deriv}
+  \lean{LCManifolds.localCovDeriv}
+  \leanok
+  Let $\Gamma$ be a family of bilinear maps on an open set $U \subseteq E$ and let
+  $X, Y \colon U \to E$. The \emph{local covariant derivative} is
+  \[
+    (\nabla_X Y)(y) = \dd Y(y)\bigl(X(y)\bigr) - \Gamma(y)\bigl(X(y), Y(y)\bigr).
+  \]
+\end{definition}
+
+\begin{lemma}[Change of coordinates]
+  \label{lem:conn-local-transition}
+  \lean{LCManifolds.dMB_comp_transition, LCManifolds.localCovDeriv_transition}
+  \leanok
+  \uses{def:conn-local-cov-deriv}
+  Let $\tau$ be $\Ck{2}$, and let $X_i, Y_i$ and $X_j, Y_j$ be related by $\tau$, that is
+  $X_j \circ \tau = \dd\tau \cdot X_i$ and $Y_j \circ \tau = \dd\tau \cdot Y_i$, with $Y_i, Y_j$
+  of class $\Ck{1}$. If $\Gamma_i, \Gamma_j$ obey the change of charts law of
+  Definition~\ref{def:connection}, then
+  \[
+    (\nabla_{X_j} Y_j)(\tau y) = \dd\tau(y)\bigl((\nabla_{X_i} Y_i)(y)\bigr).
+  \]
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Differentiating $Y_j \circ \tau = \dd\tau \cdot Y_i$ in the direction $w$ gives, by the
+  second-order chain rule,
+  $\dd Y_j(\tau y)(\dd\tau(y) w) = \dd^{(2)}\tau(y; w, Y_i y) + \dd\tau(y)(\dd Y_i(y) w)$. Take
+  $w = X_i(y)$: the term $\dd^{(2)}\tau(y; X_i y, Y_i y)$ cancels with the one in the change of
+  charts law of $\Gamma$, and the rest is linear in $\dd\tau(y)$.
+\end{proof}
+
+\begin{definition}[Covariant derivative]
+  \label{def:conn-cov-deriv}
+  \lean{LCManifolds.Connection.covDeriv, LCManifolds.Connection.isVectorField_covDeriv}
+  \leanok
+  \uses{def:connection, def:conn-local-cov-deriv, def:vector-field}
+  Let $C$ be a connection on $M$ and $X, Y$ vector fields. The \emph{covariant derivative}
+  $\nabla_X Y$ is the vector field whose value at $x$ is the local covariant derivative of the
+  local representatives $\tilde X, \tilde Y$ of $X, Y$, computed in the preferred chart at $x$:
+  $\dd\tilde Y \cdot \tilde X - \Gamma(\tilde X, \tilde Y)$.
+\end{definition}
+
+\begin{theorem}[Chart independence]
+  \label{thm:conn-cov-deriv-chart}
+  \lean{LCManifolds.Connection.localRep_covDeriv}
+  \leanok
+  \uses{def:conn-cov-deriv, lem:conn-local-transition, def:tangent-bundle}
+  Let $Y$ be a $\Ck{1}$ vector field and $X$ any vector field. In every chart $j$ of the atlas,
+  the local representative of $\nabla_X Y$ is
+  $\dd\tilde Y_j \cdot \tilde X_j - \Gamma_j(\tilde X_j, \tilde Y_j)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply Lemma~\ref{lem:conn-local-transition} to the transition map from the preferred chart to
+  $j$, which is smooth; the local representatives of vector fields are related by its
+  derivative.
+\end{proof}
+
+So the choice of the preferred chart in Definition~\ref{def:conn-cov-deriv} is only a matter of
+convenience. The usual algebraic rules follow at once from the local formula.
+
+\begin{proposition}[Rules of the covariant derivative]
+  \label{prop:conn-rules}
+  \lean{LCManifolds.Connection.covDeriv_smulField_left, LCManifolds.Connection.covDeriv_smulField_right, LCManifolds.Connection.contMDiffMB_covDeriv}
+  \leanok
+  \uses{thm:conn-cov-deriv-chart, def:contmdiff}
+  Let $X, Y$ be vector fields with $Y$ of class $\Ck{1}$, and let $\varphi \colon M \to \R$.
+  \begin{enumerate}
+    \item $\nabla_{\varphi X} Y = \varphi\, \nabla_X Y$.
+    \item If $\varphi$ is $\Ck{1}$, then $\nabla_X(\varphi Y) = X(\varphi)\, Y + \varphi\,\nabla_X Y$
+    (Leibniz rule).
+    \item If $X$ is $\Ck{k}$ and $Y$ is $\Ck{k+1}$, then $\nabla_X Y$ is $\Ck{k}$.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The first two items are computed in the preferred chart: $\Gamma$ is linear in its first
+  argument, and the derivative of $\varphi \tilde Y$ in the direction $\tilde X$ is
+  $\dd\varphi(\tilde X)\,\tilde Y + \varphi\,\dd\tilde Y(\tilde X)$. For the third, in each chart
+  $y \mapsto \dd\tilde Y(y)(\tilde X y)$ and $y \mapsto \Gamma(y)(\tilde X y, \tilde Y y)$ are
+  compositions of $\Ck{k}$ maps.
+\end{proof}
+
+\begin{proposition}[Torsion]
+  \label{prop:conn-torsion}
+  \lean{LCManifolds.Connection.covDeriv_sub_covDeriv_sub_lieBracket, LCManifolds.Connection.IsSymmetric, LCManifolds.Connection.covDeriv_sub_covDeriv}
+  \leanok
+  \uses{def:conn-cov-deriv}
+  For vector fields $X, Y$, the vector $\nabla_X Y - \nabla_Y X - [X, Y]$ at $x$ is, in the
+  preferred chart, $\Gamma(\tilde Y, \tilde X) - \Gamma(\tilde X, \tilde Y)$; in particular it only
+  depends on $X(x)$ and $Y(x)$. We say that the connection is \emph{symmetric} (torsion free) if
+  its symbols are symmetric in every chart; in that case $\nabla_X Y - \nabla_Y X = [X, Y]$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The Lie bracket in a chart is $\dd\tilde Y \cdot \tilde X - \dd\tilde X \cdot \tilde Y$, and
+  the derivative terms cancel.
+\end{proof}
+
+\begin{remark}
+  Symmetry of a connection is a chart-free condition: the change of charts law shows that if
+  $\Gamma_i$ is symmetric then so is $\Gamma_j$, because $\dd^{(2)}\tau$ is symmetric and
+  $\dd\tau(y)$ is invertible on the overlap. In the Lean code the definition quantifies over all
+  the charts of the atlas, which avoids this argument.
+\end{remark}
+
+\section{Curvature}
+
+We use Lang's sign for the curvature.
+
+\begin{definition}[Curvature]
+  \label{def:conn-curvature}
+  \lean{LCManifolds.dSymb, LCManifolds.localCurv, LCManifolds.Connection.curvature}
+  \leanok
+  \uses{def:conn-cov-deriv}
+  For vector fields $X, Y, Z$, the \emph{curvature} at $x$ is
+  \[
+    R(X, Y) Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X, Y]} Z .
+  \]
+  Locally, for a family of symbols $\Gamma$ on an open set of $E$, we write
+  $\dd\Gamma_x(v)(a, b)$ for the derivative of $x \mapsto \Gamma(x)(a, b)$ in the direction $v$,
+  and
+  \[
+    R_x(u, v) w = \dd\Gamma_x(v)(u, w) - \dd\Gamma_x(u)(v, w)
+      + \Gamma_x\bigl(u, \Gamma_x(v, w)\bigr) - \Gamma_x\bigl(v, \Gamma_x(u, w)\bigr).
+  \]
+\end{definition}
+
+\begin{lemma}[Local curvature formula]
+  \label{lem:conn-local-curv}
+  \lean{LCManifolds.dMB_symb_comp, LCManifolds.localCovDeriv_curv}
+  \leanok
+  \uses{def:conn-curvature, def:conn-local-cov-deriv}
+  Let $X, Y, Z$ be $\Ck{2}$ fields on an open set $U \subseteq E$ and $\Gamma$ a $\Ck{1}$ family of
+  bilinear maps. Then, pointwise on $U$,
+  $\nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X, Y]} Z = R(X, Y) Z$
+  with $R$ the trilinear expression of Definition~\ref{def:conn-curvature}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Expand both covariant derivatives. The derivative of $y \mapsto \Gamma(y)(A y, B y)$ is
+  $\dd\Gamma_y(h)(A y, B y) + \Gamma_y(\dd A(y) h, B y) + \Gamma_y(A y, \dd B(y) h)$. All the
+  terms containing second derivatives of $Z$ cancel by the symmetry of second derivatives, and
+  the terms containing first derivatives of $X$, $Y$, $Z$ cancel with $\nabla_{[X,Y]} Z$ and
+  among themselves. This is Lang \cite{Lan99}, Prop.~IX.1.2.
+\end{proof}
+
+\begin{theorem}[The curvature is tensorial]
+  \label{thm:conn-curvature-tensorial}
+  \lean{LCManifolds.Connection.curvature_eq}
+  \leanok
+  \uses{lem:conn-local-curv, thm:conn-cov-deriv-chart}
+  Let $X, Y, Z$ be $\Ck{2}$ vector fields. Then $R(X, Y) Z$ at $x$ is the trilinear expression
+  $R_{\tilde x}(\tilde X, \tilde Y)\tilde Z$ in the preferred chart, evaluated at the values of
+  $X, Y, Z$ at $x$. In particular, it only depends on $X(x)$, $Y(x)$ and $Z(x)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Near $x$ the local representatives of $\nabla_Y Z$, $\nabla_X Z$ and $[X, Y]$ in the preferred
+  chart at $x$ are given by the local formulas (Theorem~\ref{thm:conn-cov-deriv-chart}), and the
+  local covariant derivative at a point only depends on the germ of the second field. Then apply
+  Lemma~\ref{lem:conn-local-curv}. Compare \cite{Lan99}, Prop.~IX.1.1--1.2.
+\end{proof}
+
+\begin{proposition}[Symmetries of the curvature]
+  \label{prop:conn-curvature-symmetries}
+  \lean{LCManifolds.localCurv_swap, LCManifolds.localCurv_bianchi, LCManifolds.Connection.curvature_swap, LCManifolds.Connection.curvature_bianchi}
+  \leanok
+  \uses{thm:conn-curvature-tensorial, prop:conn-torsion}
+  For $\Ck{2}$ vector fields, $R(Y, X) Z = -R(X, Y) Z$. If the connection is symmetric, the first
+  Bianchi identity holds: $R(X, Y) Z + R(Y, Z) X + R(Z, X) Y = 0$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Both identities are checked on the trilinear expression. Skew-symmetry is immediate. For
+  Bianchi, if $\Gamma$ is symmetric then so is $\dd\Gamma_x(v)$, and the twelve terms of the
+  cyclic sum cancel in pairs.
+\end{proof}
+
+\section{Sprays}
+
+A spray, or second order vector field, is a vector field $\xi$ on $TM$ such that
+$T\pi \circ \xi = \id$. In a chart it has the form $(x, v) \mapsto (x, v; v, f(x, v))$, and it is
+determined by its \emph{local part} $f$. As we did for connections, we encode sprays through their
+local parts.
+
+\begin{definition}[Spray]
+  \label{def:spray}
+  \lean{LCManifolds.Spray, LCManifolds.Spray.IsQuadratic}
+  \leanok
+  \uses{def:mb-manifold, def:tangent-bundle}
+  A \emph{spray} on $M$ assigns to each chart $i$ of the atlas a smooth map
+  $f_i \colon i(U_i) \times E \to E$ such that, for every pair of charts $i, j$, every $y$ in the
+  domain of $\tau = j \circ i^{-1}$ and every $v \in E$,
+  \[
+    f_j\bigl(\tau y, \dd\tau(y)(v)\bigr) = \dd\tau(y)\bigl(f_i(y, v)\bigr) + \dd^{(2)}\tau(y; v, v).
+  \]
+  The spray is \emph{quadratic} if $f_i(x, s v) = s^2 f_i(x, v)$ for all $i$, $x$, $v$ and
+  $s \in \R$.
+\end{definition}
+
+The change of charts law is the change of charts law of the double tangent bundle $T(TM)$,
+restricted to the points of the form $(x, v; v, w)$. In \cite{Lan99}, \S IV.3, a spray is by
+definition quadratic; we keep the two notions apart, since the quadratic condition is what is
+needed to pass to connections.
+
+\begin{proposition}[The spray of a connection]
+  \label{prop:conn-to-spray}
+  \lean{LCManifolds.Connection.toSpray, LCManifolds.Connection.toSpray_isQuadratic}
+  \leanok
+  \uses{def:connection, def:spray}
+  Every connection defines a quadratic spray, with local parts $f_i(x, v) = \Gamma_i(x)(v, v)$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Restrict the change of charts law of $\Gamma$ to the diagonal $a = b = v$. Homogeneity of degree
+  two follows from bilinearity.
+\end{proof}
+
+The converse requires recovering a bilinear map from its quadratic form, and checking that the
+polarization obeys the change of charts law of connections. For the first point, the following
+identity holds without any regularity assumption.
+
+\begin{lemma}[Homogeneous maps of degree two]
+  \label{lem:conn-homogeneous}
+  \lean{LCManifolds.hasDirDerivAt_of_homogeneous, LCManifolds.dMB_dMB_zero_of_homogeneous, LCManifolds.polarization}
+  \leanok
+  Let $g \colon E \to F$ satisfy $g(s v) = s^2 g(v)$ for all $s \in \R$, $v \in E$. Then
+  $\dd^{(2)} g(0; v, v) = 2\, g(v)$. Moreover, if $B$ is symmetric and bilinear, then
+  $B(a + b, a + b) - B(a - b, a - b) = 4 B(a, b)$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By homogeneity, $g(s v + t v) - g(s v) = \bigl((s + t)^2 - s^2\bigr) g(v)$, so the difference
+  quotient can be computed exactly and $\dd g(s v)(v) = 2 s\, g(v)$ for every $s$.
+  Differentiating once more along the line $s \mapsto s v$ at $s = 0$ gives $2 g(v)$. The
+  polarization identity is immediate.
+\end{proof}
+
+\begin{theorem}[The connection of a quadratic spray]
+  \label{thm:conn-spray-to-connection}
+  \lean{LCManifolds.Spray.polar, LCManifolds.Spray.polar_eq, LCManifolds.Spray.polar_transition, LCManifolds.Spray.toConnection, LCManifolds.Spray.toConnection_isSymmetric, LCManifolds.Spray.toConnection_toSpray}
+  \leanok
+  \uses{def:spray, def:connection, lem:conn-homogeneous, prop:conn-to-spray}
+  Let $f$ be a quadratic spray. In each chart $i$ put
+  \[
+    \Gamma_i(x)(a, b) = \tfrac14\bigl(f_i(x, a + b) - f_i(x, a - b)\bigr)
+      = \tfrac12\, \dd^{(2)}\bigl(f_i(x, \cdot)\bigr)(0; a, b).
+  \]
+  Then the $\Gamma_i$ are the symbols of a symmetric connection, whose spray is $f$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:conn-homogeneous} applied to $g = f_i(x, \cdot)$ and to the symmetric
+  bilinear map $\tfrac12 \dd^{(2)} g(0; \cdot, \cdot)$, the two expressions agree; the second one
+  is bilinear and symmetric, and $\Gamma_i(x)(v, v) = f_i(x, v)$. Smoothness of the symbols
+  follows from the first expression. The change of charts law for $\Gamma$ is obtained by
+  polarizing the change of charts law of the spray, using that $\dd\tau(y)$ is linear and
+  $\dd^{(2)}\tau(y; \cdot, \cdot)$ is symmetric and bilinear. This is \cite{Lan99}, Prop.~IV.3.2
+  and \S VIII.2.
+\end{proof}
+
+Thus quadratic sprays and symmetric connections are the same object, through
+$f(x, v) = \Gamma_x(v, v)$; in the rest of the chapter we work with connections.
+
+\section{Covariant derivative along curves and geodesics}
+
+We use the $\Ck{k}$ curves of Definition~\ref{def:ck-curve} and the velocity of
+Definition~\ref{def:velocity}. Let $\alpha \colon \R \to M$ be a curve. A \emph{lift} of $\alpha$
+is a map $\beta \colon \R \to TM$ with $\beta(t) \in T_{\alpha(t)} M$. In a chart $i$ we write
+$\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\beta(t)$.
+
+\begin{definition}[Lifts of curves]
+  \label{def:conn-lift}
+  \lean{LCManifolds.liftCoord, LCManifolds.IsCkLift}
+  \leanok
+  \uses{def:ck-curve, def:tangent-bundle}
+  A lift $\beta$ of $\alpha$ is $\Ck{k}$ if, for every chart $i$, its fiber coordinate $\mu_i$ is
+  $\Ck{k}$ on $\alpha^{-1}(U_i)$.
+\end{definition}
+
+\begin{lemma}[Change of charts along a curve]
+  \label{lem:conn-curve-transition}
+  \lean{LCManifolds.tangentChart_snd_transition, LCManifolds.dMB_dMB_curve}
+  \leanok
+  \uses{def:conn-lift, def:velocity}
+  For two charts $i, j$ and $\tau = j \circ i^{-1}$, we have
+  $\mu_j(t) = \dd\tau(\tilde\alpha_i t)(\mu_i t)$ and
+  $\dot{\tilde\alpha}_j = \dd\tau(\tilde\alpha_i)(\dot{\tilde\alpha}_i)$, and
+  \[
+    \dot\mu_j = \dd^{(2)}\tau\bigl(\tilde\alpha_i; \dot{\tilde\alpha}_i, \mu_i\bigr)
+      + \dd\tau(\tilde\alpha_i)(\dot\mu_i).
+  \]
+  The fiber coordinate of the velocity in any chart $j$ is $\dot{\tilde\alpha}_j$, and the
+  velocity of a $\Ck{k+1}$ curve is a $\Ck{k}$ lift.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The first identity is the change of charts of the tangent bundle, and the others follow from
+  the chain rule and the product rule applied to $t \mapsto \dd\tau(\tilde\alpha_i t)(\mu_i t)$.
+\end{proof}
+
+\begin{definition}[Covariant derivative along a curve]
+  \label{def:cov-deriv-along}
+  \lean{LCManifolds.Connection.covDerivAlong}
+  \leanok
+  \uses{def:connection, def:conn-lift}
+  Let $C$ be a connection and $\beta$ a lift of $\alpha$. The \emph{covariant derivative of
+  $\beta$ along $\alpha$} at $t$ is, in the preferred chart at $\alpha(t)$,
+  \[
+    D_t \beta = \dot\mu - \Gamma(\tilde\alpha)\bigl(\dot{\tilde\alpha}, \mu\bigr).
+  \]
+\end{definition}
+
+\begin{theorem}[Chart independence along curves]
+  \label{thm:conn-cov-deriv-along-chart}
+  \lean{LCManifolds.Connection.covDerivAlong_chart}
+  \leanok
+  \uses{def:cov-deriv-along, lem:conn-curve-transition}
+  Let $\alpha$ be a $\Ck{1}$ curve and $\beta$ a $\Ck{1}$ lift. Read in any chart $j$ around
+  $\alpha(t)$, the covariant derivative $D_t\beta$ is
+  $\dot\mu_j - \Gamma_j(\tilde\alpha_j)(\dot{\tilde\alpha}_j, \mu_j)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:conn-curve-transition}, $\dot\mu_j$ contains the term
+  $\dd^{(2)}\tau(\tilde\alpha_i; \dot{\tilde\alpha}_i, \mu_i)$, which cancels with the one in the
+  change of charts law of $\Gamma$ applied to $(\dot{\tilde\alpha}_i, \mu_i)$. The remaining
+  terms are $\dd\tau(\tilde\alpha_i)$ applied to the expression in the chart $i$. Compare
+  \cite{Lan99}, \S VIII.3.
+\end{proof}
+
+\begin{definition}[Geodesic]
+  \label{def:geodesic}
+  \lean{LCManifolds.Connection.IsGeodesic}
+  \leanok
+  \uses{def:cov-deriv-along, def:velocity}
+  A curve $\alpha$ is a \emph{geodesic} of the connection $C$ if its velocity is parallel:
+  $D_t \alpha' = 0$ for every $t$.
+\end{definition}
+
+\begin{theorem}[The geodesic equation]
+  \label{thm:conn-geodesic-equation}
+  \lean{LCManifolds.Connection.isGeodesic_iff}
+  \leanok
+  \uses{def:geodesic, thm:conn-cov-deriv-along-chart}
+  A $\Ck{2}$ curve $\alpha$ is a geodesic if and only if, in every chart $j$,
+  \[
+    \ddot{\tilde\alpha}_j = \Gamma_j(\tilde\alpha_j)\bigl(\dot{\tilde\alpha}_j, \dot{\tilde\alpha}_j\bigr).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:conn-cov-deriv-along-chart} and Lemma~\ref{lem:conn-curve-transition}, in
+  the chart $j$ the covariant derivative of the velocity is
+  $\ddot{\tilde\alpha}_j - \Gamma_j(\dot{\tilde\alpha}_j, \dot{\tilde\alpha}_j)$, transported by
+  the invertible map $\dd\tau$. For the converse it suffices to use the preferred chart.
+\end{proof}
+
+In terms of the spray of the connection (Proposition~\ref{prop:conn-to-spray}), the geodesic
+equation reads $\ddot{\tilde\alpha} = f(\tilde\alpha, \dot{\tilde\alpha})$ in every chart, which is
+the classical definition of the geodesics of a spray.
+
+\begin{remark}[Existence of geodesics]
+  \label{rem:conn-no-existence}
+  We do not claim that geodesics exist, nor that they are unique, for given initial position and
+  velocity. In a Banach space the geodesic equation is an ordinary differential equation with a
+  smooth right hand side, and the Picard--Lindel\"of theorem gives local existence and
+  uniqueness; this is how the exponential map is constructed in \cite{Lan99} and \cite{Lar22}.
+  In a general locally convex space, and even in Fr\'echet spaces, ordinary differential equations
+  with smooth right hand side may have no solutions, or many \cite[Part~I, 5.6.1]{Ham82}. Therefore existence of geodesics,
+  the exponential map and parallel transport along curves are not part of the theory developed
+  here; they would have to be proved case by case, or under additional hypotheses on $E$.
+  What we can do in general is to recognize geodesics, as in Theorem~\ref{thm:projector-geodesics}
+  below.
+\end{remark}
+
+\section{Fields of projectors: derive and project}
+
+Let $F$ be a locally convex space and $X \subseteq F$ an embedded submanifold modeled on a closed
+subspace $S \subseteq F$ (Definition~\ref{def:embedded-submanifold}). Recall that in a slice chart
+$\varphi$ the tangent space at $p$ is $T_p X = \{w \in F : \dd\varphi(p)(w) \in S\}$, and that it
+does not depend on the slice chart (Definition~\ref{def:tangent-space-submanifold}). We write
+$\psi = \varphi^{-1}|_S$ for the local parametrization of $X$ given by $\varphi$; then
+$\dd\psi(y)$ maps $S$ injectively onto $T_{\psi(y)} X$.
+
+\begin{definition}[Field of projectors]
+  \label{def:projector-field}
+  \lean{LCManifolds.ProjectorField, LCManifolds.ProjectorField.param, LCManifolds.ProjectorField.localE}
+  \leanok
+  \uses{def:embedded-submanifold, def:tangent-space-submanifold}
+  A \emph{field of projectors} onto the tangent spaces of $X$ is a map
+  $E \colon X \times F \to F$, $(p, w) \mapsto E_p w$, such that
+  \begin{enumerate}
+    \item each $E_p$ is linear, $E_p^2 = E_p$, and the range of $E_p$ is $T_p X$;
+    \item for every slice chart $\varphi$, the map $(y, w) \mapsto E_{\psi(y)} w$ is smooth on
+    $\varphi(U) \cap S \times F$.
+  \end{enumerate}
+\end{definition}
+
+\begin{remark}
+  In \cite{Lar22} the field of projectors is a smooth map $X \to \mathcal B(F)$ into the bounded
+  operators of a Banach space. For a locally convex space $F$ there is no good topology on the
+  space of continuous operators, so we replace it by a map of two variables, linear in the second
+  one, with joint smoothness. Note also that no complement of $S$ in $F$ is assumed: the kernels
+  $\ker E_p$ are complements of the tangent spaces $T_p X$, but they are not required to come from
+  a global splitting of $F$, nor to be related to each other.
+\end{remark}
+
+\begin{lemma}[Tangent vectors]
+  \label{lem:projector-tangent}
+  \lean{LCManifolds.ProjectorField.mem_tangentSpace, LCManifolds.ProjectorField.E_eq_self, LCManifolds.IsEmbeddedSubmanifold.dMB_symm_mem_tangentSpace, LCManifolds.ProjectorField.E_dMB_param, LCManifolds.ProjectorField.dMB_param_injective}
+  \leanok
+  \uses{def:projector-field}
+  $E_p w \in T_p X$ for every $w$, and $E_p w = w$ if $w \in T_p X$. In a slice chart,
+  $\dd\psi(y)(s) \in T_{\psi(y)} X$ for $s \in S$, hence $E_{\psi(y)}\dd\psi(y)(s) = \dd\psi(y)(s)$,
+  and $\dd\psi(y)$ is injective on $S$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The first two claims follow from $E_p^2 = E_p$ and the description of the range. Since
+  $\dd\varphi$ is a left and right inverse of $\dd\varphi^{-1}$, we have
+  $\dd\varphi(\dd\psi(y) s) = s \in S$, which gives the rest.
+\end{proof}
+
+\begin{definition}[Symbols of a field of projectors]
+  \label{def:projector-symbols}
+  \lean{LCManifolds.ProjectorField.symb, LCManifolds.ProjectorField.symb_mem, LCManifolds.ProjectorField.coe_symb}
+  \leanok
+  \uses{def:projector-field}
+  In a slice chart $\varphi$, with $\psi = \varphi^{-1}|_S$ and $y \in \varphi(U) \cap S$, put
+  \[
+    \Gamma_y(a, b) = -\,\dd\varphi(\psi y)\Bigl(E_{\psi(y)}\bigl(\dd^{(2)}\psi(y; a, b)\bigr)\Bigr),
+    \qquad a, b \in S .
+  \]
+  This vector lies in $S$, because $E_{\psi(y)}(\cdot)$ is tangent.
+\end{definition}
+
+Equivalently, $\dd\psi(y)\bigl(\Gamma_y(a, b)\bigr) = -E\bigl(\dd^{(2)}\psi(y; a, b)\bigr)$: the
+symbols are the tangent part of the second derivative of the parametrization, read in the chart.
+
+\begin{lemma}[Properties of the symbols]
+  \label{lem:projector-symbols}
+  \lean{LCManifolds.ProjectorField.symb_symm, LCManifolds.ProjectorField.smoothMBOn_symb, LCManifolds.ProjectorField.dMB_param_symb, LCManifolds.ProjectorField.symb_transition}
+  \leanok
+  \uses{def:projector-symbols, lem:projector-tangent, def:connection}
+  The symbols $\Gamma_y$ are bilinear and symmetric, they are smooth on the chart domain, and for
+  two slice charts they obey the change of charts law of Definition~\ref{def:connection}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Symmetry and bilinearity come from those of $\dd^{(2)}\psi(y; \cdot, \cdot)$ (Schwarz), and
+  smoothness from the smoothness of $E$ in slice charts and of $\psi$. For the change of charts
+  law let $\tau$ be the transition map between two slice charts, so that $\psi' \circ \tau = \psi$
+  near $y$. The second-order chain rule gives
+  $\dd^{(2)}\psi = \dd^{(2)}\psi'(\dd\tau\, a, \dd\tau\, b) + \dd\psi'(\dd^{(2)}\tau(a, b))$. The
+  last term is tangent, so $E$ fixes it; applying $-\dd\varphi' \circ E$ yields the law.
+\end{proof}
+
+\begin{theorem}[The connection of a field of projectors]
+  \label{thm:projector-connection}
+  \lean{LCManifolds.ProjectorField.connection, LCManifolds.ProjectorField.connection_isSymmetric}
+  \leanok
+  \uses{lem:projector-symbols, def:connection, prop:conn-torsion}
+  A field of projectors $E$ onto the tangent spaces of $X$ defines a symmetric connection on $X$,
+  whose symbols in the chart induced by a slice chart $\varphi$ are
+  $\Gamma_y(a, b) = -\dd\varphi\bigl(E(\dd^{(2)}\psi(y; a, b))\bigr)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The charts of the atlas of $X$ are the restrictions of slice charts, and
+  Lemma~\ref{lem:projector-symbols} provides all the axioms. This is the first part of
+  \cite[Teorema~6.6.1]{Lar22}.
+\end{proof}
+
+The next result explains the title of the section: the covariant derivative is obtained by
+differentiating in $F$ and projecting onto the tangent space.
+
+\begin{theorem}[Derive and project]
+  \label{thm:projector-derive-project}
+  \lean{LCManifolds.ProjectorField.dMB_param_localCovDeriv}
+  \leanok
+  \uses{thm:projector-connection, def:conn-local-cov-deriv}
+  Let $A, B$ be fields on an open subset of the chart domain in $S$, with $B$ of class $\Ck{1}$,
+  and let $\hat B(y) = \dd\psi(y)(B y)$ be the corresponding tangent field read in $F$. Then
+  \[
+    \dd\psi(y)\bigl((\nabla_A B)(y)\bigr) = E_{\psi(y)}\bigl(\dd\hat B(y)(A y)\bigr).
+  \]
+  In other words, $\nabla_X Y = E(\dd Y \cdot X)$ when the fields are read in the ambient
+  space $F$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By the second-order chain rule,
+  $\dd\hat B(y)(A y) = \dd^{(2)}\psi(y; A y, B y) + \dd\psi(y)(\dd B(y)(A y))$. Apply $E$: the
+  second term is tangent and is fixed, and $E(\dd^{(2)}\psi(y; A y, B y))
+  = -\dd\psi(y)(\Gamma_y(A y, B y))$ by Definition~\ref{def:projector-symbols}. Compare
+  \cite[\S6.6]{Lar22}.
+\end{proof}
+
+\begin{lemma}[Acceleration in a slice chart]
+  \label{lem:projector-accel}
+  \lean{LCManifolds.ProjectorField.E_accel_eq, LCManifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
+  \leanok
+  \uses{def:projector-symbols, def:ck-curve}
+  Let $c$ be a $\Ck{2}$ curve in the chart domain in $S$ and $\alpha = \psi \circ c$. Then
+  \[
+    E_{\alpha(t)}\bigl(\ddot\alpha(t)\bigr)
+      = \dd\psi(c t)\bigl(\ddot c(t) - \Gamma_{c(t)}(\dot c(t), \dot c(t))\bigr),
+  \]
+  where $\ddot\alpha$ is the acceleration of $\alpha$ in $F$. Moreover, a curve in $X$ which is
+  smooth as a curve in $F$ is a $\Ck{k}$ curve of $X$ for every $k$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  We have $\dot\alpha = \dd\psi(c)(\dot c)$ and, by the chain rule and the product rule,
+  $\ddot\alpha = \dd^{(2)}\psi(c; \dot c, \dot c) + \dd\psi(c)(\ddot c)$; apply $E$ as in
+  the proof of Theorem~\ref{thm:projector-derive-project}. For the last claim, the local
+  representative in a slice chart is the corestriction to $S$ of $\varphi \circ \alpha$.
+\end{proof}
+
+\begin{theorem}[Derive and project: geodesics]
+  \label{thm:projector-geodesics}
+  \lean{LCManifolds.ProjectorField.connection_isGeodesic_iff}
+  \leanok
+  \uses{thm:projector-connection, thm:conn-geodesic-equation, lem:projector-accel, def:geodesic}
+  Let $\alpha$ be a $\Ck{2}$ curve in $X$. Then $\alpha$ is a geodesic of the connection defined
+  by the field of projectors $E$ if and only if its acceleration in $F$ is normal:
+  \[
+    E_{\alpha(t)}\bigl(\ddot\alpha(t)\bigr) = 0 \qquad \text{for every } t.
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:conn-geodesic-equation}, $\alpha$ is a geodesic if and only if
+  $\ddot c = \Gamma_c(\dot c, \dot c)$ in every chart, where $c$ is the local representative. By
+  Lemma~\ref{lem:projector-accel} this is equivalent to $E(\ddot\alpha) = 0$, since $\dd\psi(c)$ is
+  injective on $S$ (Lemma~\ref{lem:projector-tangent}). This is part of \cite[Teorema~6.6.1]{Lar22}.
+\end{proof}
+
+For instance, for the unit sphere of a (complete) Hilbert space with the orthogonal projectors
+onto $p^\perp$, the geodesics are the curves in the sphere with $\ddot\alpha(t)$ proportional to
+$\alpha(t)$. This example is not formalized.
+
+Finally, we compare with the formulation of the book, where the connection is written in terms of
+the derivative of the field of projectors. We denote with $E_{*p, v} w$ the derivative of
+$q \mapsto E_q w$ at $p$ in the direction $v$, computed in the slice chart.
+
+\begin{proposition}[The identity of the book]
+  \label{prop:projector-book-identity}
+  \lean{LCManifolds.ProjectorField.dMB_localE_param, LCManifolds.ProjectorField.dMB_localE_param_symm}
+  \leanok
+  \uses{def:projector-field, lem:projector-tangent}
+  Let $v = \dd\psi(y)(a)$ and $w = \dd\psi(y)(b)$ be tangent vectors at $p = \psi(y)$, with
+  $a, b \in S$. Then
+  \[
+    E_{*p, v}\, w = (1 - E_p)\, \dd^{(2)}\psi(y; a, b).
+  \]
+  In particular $E_{*p, v}\, w = E_{*p, w}\, v$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Since $\dd\psi(y')(b)$ is tangent, $E_{\psi(y')}\dd\psi(y')(b) = \dd\psi(y')(b)$ for $y'$ near
+  $y$. Differentiate this identity in the direction $a$: by linearity of $E$ in the second
+  variable, the left side gives $E_{*p, v} w + E_p\, \dd^{(2)}\psi(y; a, b)$, and the right side
+  gives $\dd^{(2)}\psi(y; a, b)$. The symmetry follows from the symmetry of $\dd^{(2)}\psi$.
+\end{proof}
+
+\begin{remark}
+  In \cite{Lar22} the connection is presented through $\Gamma_p(v, w) = E_{*p, v} w$, which by
+  Proposition~\ref{prop:projector-book-identity} is the normal part $(1 - E)\dd^{(2)}\psi(a, b)$
+  of the second derivative, read in $F$. The symbols of
+  Theorem~\ref{thm:projector-connection} are instead the tangent part, pulled back to $S$ by the
+  chart; the two descriptions are related through the decomposition
+  $\dd^{(2)}\psi = E\,\dd^{(2)}\psi + (1 - E)\dd^{(2)}\psi$. In both cases the symmetry of the
+  connection is a consequence of the symmetry of second derivatives of $\psi$. In the Lean code
+  the connection is defined by the tangent part, and the book's formula enters only through
+  Proposition~\ref{prop:projector-book-identity}.
+\end{remark}

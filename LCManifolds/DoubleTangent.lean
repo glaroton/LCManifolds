@@ -17,12 +17,12 @@ is the base point in `TM` and `(u, w)` the tangent vector at it. We show:
 
 * `tangentChart_transition_apply`: the transition maps of `TM` are `(x, v) ↦ (τ x, dτₓ v)`,
   `τ = j ∘ i⁻¹`;
-* `doubleTangent_transition_apply`: the transition maps of `TTM` are
+* `ddChart_transition_apply`: the transition maps of `TTM` are
   `((x, v), (u, w)) ↦ ((τ x, dτₓ v), (dτₓ u, d²τₓ(u, v) + dτₓ w))`.
 
 Since `d²τₓ(u, v)` is symmetric in `(u, v)` (Schwarz), the canonical flip
 `((x, v), (u, w)) ↦ ((x, u), (v, w))` commutes with these transition maps
-(`doubleTangent_transition_swap`), so it is a well defined map of `TTM`.
+(`ddChart_transition_swap`), so it is a well defined map of `TTM`.
 -/
 
 open Set Filter Bundle

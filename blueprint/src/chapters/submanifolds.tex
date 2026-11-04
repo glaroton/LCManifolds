@@ -1,0 +1,645 @@
+\chapter{Submanifolds and immersions}
+\label{chap:submanifolds}
+
+In finite dimensions all reasonable notions of submanifold and immersion agree, up to some
+topological phenomena such as the figure eight. In infinite dimensions they split apart, already
+for Banach models and more so for locally convex ones. In this chapter we first construct
+embedded submanifolds, defined by slice charts onto a closed subspace of the model, and show that
+they are manifolds in their own right. Then we introduce three notions of immersion (weak,
+plain, split) and the corresponding notions of submanifold given by an injective map (weakly
+immersed, immersed, initial), and we prove the implications among them. Finally we show that
+for a Banach domain an immersion reflects smoothness of continuous maps. The chapter closes with
+a list of the infinite-dimensional subtleties; some are formalized as counterexamples in
+Chapter~\ref{chap:examples}, others are only discussed. The references are
+\cite[Def.~3.1.10, Def.~3.3.22, Rem.~3.3.23, Lemma~3.3.24]{GN26}, \cite[\S II.6, \S IV.4]{Nee06},
+\cite{KMW22} and \cite[Cap.~2]{Lar22}.
+
+Throughout, $E$ and $F$ are real locally convex Hausdorff spaces, not necessarily complete, and
+$M$, $N$ are manifolds modeled on $E$ and $F$ (Definition~\ref{def:mb-manifold}).
+
+\section{Embedded submanifolds}
+
+The whole construction rests on one calculus fact: a map with values in a closed subspace is as
+smooth into the subspace as it is into the ambient space.
+
+\begin{lemma}[Corestriction to a closed subspace]
+  \label{lem:sub-codrestrict}
+  \lean{LCManifolds.ContDiffMBOn.codRestrict}
+  \leanok
+  Let $T \subseteq F$ be a closed subspace, $D$ a locally convex space, $V \subseteq D$ open,
+  and $h \colon V \to F$ a
+  $\Ck{k}$ map with $h(V) \subseteq T$. Then $h$ is $\Ck{k}$ as a map $V \to T$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Induction on $k$. The difference quotients of $h$ lie in $T$, so their limit $\dd h(x)(w)$
+  lies in $T$ because $T$ is closed; the directional derivative of the corestriction is the
+  corestriction of $\dd h$, and the inductive hypothesis applies to $\dd h$ on $V \times D$.
+  This is \cite[Lemma~1.3.19]{GN26}.
+\end{proof}
+
+\begin{definition}[Slice chart]
+  \label{def:sub-slice-chart}
+  \lean{LCManifolds.IsSliceChart}
+  \leanok
+  \uses{def:mb-manifold}
+  Let $N \subseteq M$ and let $S \subseteq E$ be a subspace. A chart $\varphi \colon U \to E$ is
+  a \emph{slice chart} for $N$ with model $S$ if $\varphi$ belongs to the maximal atlas of $M$
+  and $\varphi(U \cap N) = \varphi(U) \cap S$, that is, $q \in N$ iff $\varphi(q) \in S$ for
+  $q \in U$.
+\end{definition}
+
+\begin{definition}[Embedded submanifold]
+  \label{def:embedded-submanifold}
+  \lean{LCManifolds.IsEmbeddedSubmanifold}
+  \leanok
+  \uses{def:sub-slice-chart}
+  A subset $N \subseteq M$ is an \emph{embedded submanifold} modeled on the subspace
+  $S \subseteq E$ if $S$ is closed and every point of $N$ lies in the domain of a slice chart
+  for $N$ with model $S$.
+\end{definition}
+
+This is \cite[Def.~3.1.10]{GN26}. No complement of $S$ is required.
+
+\begin{remark}[Slice charts and the maximal atlas]
+  \label{rem:sub-maximal-atlas}
+  The slice charts must be taken in the maximal atlas, i.e.\ among the charts compatible with
+  the atlas of $M$, and not in the atlas itself. For instance, when $M = E$ the atlas only
+  contains the identity, which is a slice chart only for subspaces.
+\end{remark}
+
+\begin{definition}[Induced charts]
+  \label{def:sub-induced-chart}
+  \lean{LCManifolds.sliceChart, LCManifolds.sliceChart_apply_coe, LCManifolds.sliceChart_symm_apply_coe}
+  \leanok
+  \uses{def:sub-slice-chart}
+  A slice chart $\varphi \colon U \to E$ induces a chart of $N$ with values in $S$, namely the
+  restriction $\varphi|_{U \cap N} \colon U \cap N \to \varphi(U) \cap S$, whose inverse is the
+  restriction of $\varphi^{-1}$ to $\varphi(U) \cap S$.
+\end{definition}
+
+In Lean the induced chart is a total function, and a base point of $N$ is used as a junk value
+outside the target of the inverse.
+
+\begin{lemma}[Transition maps of induced charts]
+  \label{lem:sub-transition}
+  \lean{LCManifolds.smoothMBOn_sliceChart_transition, LCManifolds.sliceChart_transition_mem}
+  \leanok
+  \uses{def:sub-induced-chart, def:mb-groupoid, lem:sub-codrestrict}
+  If $S$ is closed, the transition map between two induced charts is smooth, and so is its
+  inverse; hence it belongs to the Michal--Bastiani groupoid of $S$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  \uses{lem:sub-codrestrict}
+  The transition map is the restriction to $S$ of the transition map $\psi \circ \varphi^{-1}$
+  of $M$, which is smooth because both charts are in the maximal atlas. It takes values in
+  $S$, so it is smooth into $S$ by Lemma~\ref{lem:sub-codrestrict}. The inverse is handled by
+  symmetry.
+\end{proof}
+
+\begin{theorem}[Embedded submanifolds are manifolds]
+  \label{thm:sub-manifold}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.chartedSpace, LCManifolds.IsEmbeddedSubmanifold.mbManifold}
+  \leanok
+  \uses{def:embedded-submanifold, lem:sub-transition}
+  Let $N \subseteq M$ be an embedded submanifold modeled on $S$. The induced charts form an
+  atlas of $N$, with the topology induced by $M$, and with it $N$ is a manifold modeled on $S$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The atlas consists of all induced charts; at each point we choose one given by the
+  definition. Compatibility is Lemma~\ref{lem:sub-transition}.
+\end{proof}
+
+\begin{proposition}[The inclusion is smooth]
+  \label{prop:sub-inclusion-smooth}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.smoothMBM_val}
+  \leanok
+  \uses{thm:sub-manifold, def:contmdiff}
+  The inclusion $N \hookrightarrow M$ of an embedded submanifold is smooth.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In an induced chart and a chart $c$ of $M$, the local representative of the inclusion is
+  $(c \circ \varphi^{-1}) \circ \iota_S$, with $\iota_S \colon S \to E$ the inclusion: a smooth
+  transition map of $M$ composed with a continuous linear map.
+\end{proof}
+
+The simplest example is a closed subspace of the model space itself.
+
+\begin{proposition}[Closed subspaces]
+  \label{prop:sub-subspace}
+  \lean{LCManifolds.isSliceChart_refl, LCManifolds.isEmbeddedSubmanifold_subspace, LCManifolds.isSplitSubmanifold_subspace}
+  \leanok
+  \uses{def:embedded-submanifold, def:split-submanifold}
+  A closed subspace $S \subseteq F$ is an embedded submanifold of $F$ modeled on $S$, with the
+  identity as slice chart. If $S$ is complemented, it is a split submanifold.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The identity of $F$ satisfies $q \in S \iff \id(q) \in S$.
+\end{proof}
+
+\begin{remark}[Subtleties of the definition]
+  \label{rem:sub-embedded-subtleties}
+  When $S$ is complemented, Glöckner and Neeb call $N$ a \emph{split} submanifold
+  (Definition~\ref{def:split-submanifold}). In the Banach literature (e.g.\ Bourbaki)
+  ``submanifold'' usually means split, and non-split ones are called quasi-submanifolds. For
+  locally convex models the splitting condition is much less useful
+  \cite[Rem.~3.1.11]{GN26}. On the other hand, the usual criteria to produce submanifolds
+  (regular values, split immersions) rest on the inverse or implicit function theorems, which
+  are not available for general locally convex models. In this library embedded submanifolds
+  are therefore produced by exhibiting slice charts by hand (see Chapter~\ref{chap:examples}).
+\end{remark}
+
+\section{The tangent space of a submanifold of a vector space}
+
+When the ambient manifold is a locally convex space $F$ itself, the tangent space of an
+embedded submanifold can be described as a subspace of $F$. This is the description used for
+fields of projectors and the induced connections in the chapter on connections.
+
+\begin{definition}[Tangent space]
+  \label{def:tangent-space-submanifold}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.tangentSpace}
+  \leanok
+  \uses{def:embedded-submanifold}
+  Let $X \subseteq F$ be an embedded submanifold modeled on $S$ and $p \in X$. Choose a slice
+  chart $\varphi$ at $p$. The tangent space of $X$ at $p$ is
+  \[
+    \T_p X = \{ w \in F : \dd\varphi(p)(w) \in S \}.
+  \]
+\end{definition}
+
+\begin{lemma}[Independence of the chart]
+  \label{lem:sub-tangent-chart}
+  \lean{LCManifolds.dMB_mem_iff_of_isSliceChart, LCManifolds.IsEmbeddedSubmanifold.mem_tangentSpace_iff}
+  \leanok
+  \uses{def:tangent-space-submanifold}
+  If $\varphi, \varphi'$ are slice charts at $p \in X$, then $\dd\varphi(p)(w) \in S$ iff
+  $\dd\varphi'(p)(w) \in S$. Hence $\T_p X$ can be read in any slice chart, and it contains
+  $\dd\varphi^{-1}(\varphi(p))(s)$ for every $s \in S$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The transition map $\tau = \varphi' \circ \varphi^{-1}$ maps the slice into the slice, so by
+  closedness of $S$ its derivative at $\varphi(p)$ maps $S$ into $S$; the same holds for
+  $\tau^{-1}$. The chain rule then gives the equivalence. The last claim follows since
+  $\dd\varphi \circ \dd\varphi^{-1}$ is the identity.
+\end{proof}
+
+\begin{proposition}[Curves]
+  \label{prop:sub-curves}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
+  \leanok
+  \uses{thm:sub-manifold, def:ck-curve, lem:sub-codrestrict}
+  A curve $\beta \colon \R \to X$ which is smooth as a curve in $F$ is a $\Ck{k}$ curve of the
+  manifold $X$, for every $k$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In a slice chart $\varphi$ the local representative is the corestriction to $S$ of
+  $\varphi \circ \beta$, which is smooth by Lemma~\ref{lem:sub-codrestrict}.
+\end{proof}
+
+\begin{proposition}[Tangent space of a closed subspace]
+  \label{prop:sub-tangent-subspace}
+  \lean{LCManifolds.tangentSpace_subspace}
+  \leanok
+  \uses{prop:sub-subspace, def:tangent-space-submanifold}
+  For a closed subspace $S \subseteq F$, $\T_p S = S$ at every $p \in S$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Read the tangent space in the identity chart, whose derivative is the identity.
+\end{proof}
+
+\section{Immersions}
+
+Let $f \colon M \to N$ be smooth. We read its differential at $x$ in the preferred charts
+$c$ at $x$ and $c'$ at $f(x)$, as the map
+$v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous and linear.
+
+\begin{lemma}[Derivatives of transition maps]
+  \label{lem:sub-transition-inverse}
+  \lean{LCManifolds.dMB_transition_leftInverse, LCManifolds.dMB_transition_injective, LCManifolds.SmoothMBM.continuous_dMB_chart}
+  \leanok
+  \uses{def:mb-manifold, def:contmdiff}
+  For charts $e, e'$ of the maximal atlas, the derivative of $e \circ e'^{-1}$ at the image
+  point is a left inverse of the derivative of $e' \circ e^{-1}$; in particular the latter is
+  injective. The differential of a smooth map, read in the preferred charts, is continuous.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Differentiate $(e \circ e'^{-1}) \circ (e' \circ e^{-1}) = \id$ near the point, by the
+  chain rule.
+\end{proof}
+
+\begin{definition}[Weak immersion]
+  \label{def:weak-immersion}
+  \lean{LCManifolds.IsWeakImmersion}
+  \leanok
+  \uses{def:contmdiff}
+  A smooth map $f \colon M \to N$ is a \emph{weak immersion} if its differential is injective
+  at every point. No condition is imposed on its range.
+\end{definition}
+
+\begin{definition}[Immersion]
+  \label{def:immersion}
+  \lean{LCManifolds.IsImmersion}
+  \leanok
+  \uses{def:contmdiff}
+  A smooth map $f \colon M \to N$ is an \emph{immersion} if, at every point, its differential
+  has closed range and is a topological embedding, i.e.\ a topological isomorphism onto a
+  closed subspace of $F$.
+\end{definition}
+
+\begin{definition}[Split immersion]
+  \label{def:split-immersion}
+  \lean{LCManifolds.IsSplitImmersion}
+  \leanok
+  \uses{def:contmdiff}
+  A smooth map $f \colon M \to N$ is a \emph{split immersion} if, at every point, its
+  differential has a continuous linear left inverse $r \colon F \to E$. Equivalently, the
+  differential is a topological isomorphism onto a complemented subspace.
+\end{definition}
+
+\begin{proposition}[Split immersion $\Rightarrow$ immersion $\Rightarrow$ weak immersion]
+  \label{prop:sub-immersion-implications}
+  \lean{LCManifolds.IsSplitImmersion.isImmersion, LCManifolds.IsImmersion.isWeakImmersion}
+  \leanok
+  \uses{def:weak-immersion, def:immersion, def:split-immersion}
+  Every split immersion is an immersion, and every immersion is a weak immersion.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Let $D$ be the differential and $r$ a continuous left inverse. The range of $D$ is the fixed
+  set of the continuous map $D \circ r$, hence closed, and $D$ is an embedding since $r$ is a
+  continuous left inverse. The second implication is immediate: embeddings are injective.
+\end{proof}
+
+\begin{remark}[Dependence on charts]
+  The three definitions are stated in the preferred charts. Since the derivatives of transition
+  maps are linear homeomorphisms (Lemma~\ref{lem:sub-transition-inverse}), the conditions do not
+  depend on this choice; the chart independence is not stated separately in Lean.
+\end{remark}
+
+\begin{proposition}[Inclusion of a closed subspace]
+  \label{prop:sub-subtype-immersion}
+  \lean{LCManifolds.dMB_chart_subtypeL, LCManifolds.isImmersion_subtypeL, LCManifolds.isSplitImmersion_subtypeL_iff}
+  \leanok
+  \uses{def:immersion, def:split-immersion}
+  The linear inclusion $S \hookrightarrow F$ of a closed subspace is an immersion. It is a
+  split immersion if and only if $S$ is complemented.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In the identity charts the differential is the inclusion itself, a topological embedding with
+  closed range $S$. A continuous left inverse $r \colon F \to S$ gives the continuous projection
+  $\iota_S \circ r$ onto $S$, and conversely.
+\end{proof}
+
+\begin{remark}[Immersions in the sense of Glöckner--Neeb]
+  \label{rem:sub-gn-immersion}
+  \cite[Def.~3.3.25(b)]{GN26} calls $f$ an immersion when it has, locally, the form of a
+  continuous linear map with a continuous linear left inverse; this forces the range of the
+  differential to be complemented. We do not use it as the definition of an immersion: it is
+  much more restrictive than Definition~\ref{def:immersion}. For Banach models, an immersion with
+  complemented range has this local form by the inverse function theorem; for locally convex
+  models that theorem is not available.
+\end{remark}
+
+\section{Submanifolds given by an injective map}
+
+An injective map $f \colon M \to N$ exhibits its image as a submanifold of $N$, with the
+manifold structure transported from $M$. This structure is extra data: the figure eight carries
+two such structures. Initial submanifolds are the exception, since their structure is unique
+\cite[Lemma~3.3.24]{GN26}; this uniqueness is not formalized.
+
+\begin{definition}[Weakly immersed and immersed submanifolds]
+  \label{def:sub-immersed}
+  \lean{LCManifolds.IsWeaklyImmersedSubmanifold, LCManifolds.IsImmersedSubmanifold}
+  \leanok
+  \uses{def:weak-immersion, def:immersion}
+  The map $f$ exhibits its image as a \emph{weakly immersed submanifold} if it is an injective
+  weak immersion, and as an \emph{immersed submanifold} if it is an injective immersion.
+\end{definition}
+
+\begin{definition}[Initial submanifold]
+  \label{def:initial-submanifold}
+  \lean{LCManifolds.IsInitialSubmanifold}
+  \leanok
+  \uses{def:weak-immersion}
+  The map $f$ exhibits its image as an \emph{initial submanifold} if it is an injective weak
+  immersion and, for every manifold $P$ modeled on a locally convex space $H$ and every map
+  $g \colon P \to M$, the map $g$ is smooth as soon as $f \circ g$ is smooth.
+\end{definition}
+
+This is \cite[Def.~3.3.22]{GN26}: smooth maps into $N$ with values in the image lift to smooth
+maps into $M$. The topology of $M$ may be finer than the one induced by $N$
+\cite[Rem.~3.3.23]{GN26}. In Lean the test spaces $H$ and $P$ range over the universe of the
+model spaces.
+
+\begin{proposition}
+  \label{prop:sub-weakly-immersed}
+  \lean{LCManifolds.IsImmersedSubmanifold.isWeaklyImmersedSubmanifold, LCManifolds.IsInitialSubmanifold.isWeaklyImmersedSubmanifold}
+  \leanok
+  \uses{def:sub-immersed, def:initial-submanifold, prop:sub-immersion-implications}
+  Immersed submanifolds and initial submanifolds are weakly immersed.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The first claim is Proposition~\ref{prop:sub-immersion-implications}; the second holds by
+  definition.
+\end{proof}
+
+\section{Embedded and split submanifolds as immersions}
+
+\begin{definition}[Split submanifold]
+  \label{def:split-submanifold}
+  \lean{LCManifolds.IsSplitSubmanifold}
+  \leanok
+  \uses{def:embedded-submanifold}
+  An embedded submanifold $X \subseteq M$ modeled on $S$ is \emph{split} if $S$ is
+  complemented in $E$ \cite[Def.~3.1.10]{GN26}.
+\end{definition}
+
+\begin{lemma}[Differential of the inclusion]
+  \label{lem:sub-dmb-inclusion}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.exists_dMB_chart_val}
+  \leanok
+  \uses{thm:sub-manifold, lem:sub-transition-inverse}
+  Let $X \subseteq M$ be an embedded submanifold modeled on $S$ and $p \in X$. In the preferred
+  charts, the differential of the inclusion at $p$ is the restriction to $S$ of a continuous
+  linear automorphism $L$ of $E$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  \uses{lem:sub-transition-inverse}
+  Near the point, the local representative is $(c \circ \varphi^{-1}) \circ \iota_S$, where
+  $\varphi$ is the slice chart and $c$ the preferred chart of $M$. Take $L$ the derivative of
+  $c \circ \varphi^{-1}$; its inverse is the derivative of $\varphi \circ c^{-1}$ by
+  Lemma~\ref{lem:sub-transition-inverse}.
+\end{proof}
+
+\begin{theorem}[The inclusion is an immersion]
+  \label{thm:sub-inclusion-immersion}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.isImmersion_val, LCManifolds.IsEmbeddedSubmanifold.isImmersedSubmanifold_val}
+  \leanok
+  \uses{lem:sub-dmb-inclusion, def:immersion, def:sub-immersed, prop:sub-inclusion-smooth}
+  The inclusion of an embedded submanifold is an immersion; hence it exhibits $X$ as an
+  immersed submanifold.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  With $L$ as in Lemma~\ref{lem:sub-dmb-inclusion}, the range $L(S) = (L^{-1})^{-1}(S)$ is
+  closed, and $L|_S$ is an embedding since $L^{-1}$ is a continuous left inverse.
+\end{proof}
+
+\begin{theorem}[Split submanifolds]
+  \label{thm:sub-inclusion-split}
+  \lean{LCManifolds.IsSplitSubmanifold.isSplitImmersion_val}
+  \leanok
+  \uses{lem:sub-dmb-inclusion, def:split-submanifold, def:split-immersion}
+  The inclusion of a split submanifold is a split immersion.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  A continuous projection of $E$ onto $S$, composed with $L^{-1}$, is a continuous left inverse
+  of $L|_S$.
+\end{proof}
+
+\begin{theorem}[The inclusion is initial]
+  \label{thm:sub-inclusion-initial}
+  \lean{LCManifolds.IsEmbeddedSubmanifold.isInitialSubmanifold_val}
+  \leanok
+  \uses{thm:sub-inclusion-immersion, def:initial-submanifold, lem:sub-codrestrict}
+  The inclusion of an embedded submanifold exhibits it as an initial submanifold: a map into
+  $X$ is smooth as soon as it is smooth into $M$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \uses{lem:sub-codrestrict}
+  In a slice chart $\varphi$, the local representative of a map $g \colon P \to X$ is the
+  corestriction to $S$ of the local representative of $g$ as a map into $M$, read in
+  $\varphi$. The latter is smooth, and so is the former by Lemma~\ref{lem:sub-codrestrict}.
+\end{proof}
+
+Summing up, for a subset $X \subseteq M$ and an injective map $f \colon M \to N$,
+\[
+  \text{split} \Rightarrow \text{embedded} \Rightarrow
+  \text{immersed and initial} \Rightarrow \text{weakly immersed}.
+\]
+None of these implications can be reversed, and initial and immersed submanifolds are not
+comparable; see Section~\ref{sec:sub-subtleties}.
+
+\section{Immersions with a Banach domain}
+
+In this section $E$ and $F$ are normed spaces and $E$ is complete, so that $M$ is a Banach
+manifold; $F$ need not be complete. Recall that a manifold modeled on an incomplete normed space
+is not a Banach manifold.
+
+\begin{theorem}[Immersions reflect smoothness]
+  \label{thm:sub-banach-reflect}
+  \lean{LCManifolds.IsImmersion.smoothMBM_of_comp}
+  \leanok
+  \uses{def:immersion, def:contmdiff}
+  Let $E$ be a Banach space, $F$ a normed space, and $f \colon M \to N$ an immersion. Let $P$
+  be a manifold modeled on a locally convex space $H$ and $g \colon P \to M$ continuous. If
+  $f \circ g$ is smooth, then $g$ is smooth.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Work in charts, with $J$ the local representative of $f$ at $g(x)$. For Banach spaces,
+  Michal--Bastiani smooth maps are Fréchet smooth, so $J'$ is continuous in norm. The
+  differential $J'(y_0)$ is an embedding, hence bounded below, and a bound with half the
+  constant persists on a neighborhood $V$ of $y_0$. On the open set where the local
+  representative $\gamma$ of $g$ lands in $V$, $J \circ \gamma$ is $\Ck{k}$, and the calculus
+  result \texttt{LCAnalysis.ContDiffMBOn.of\_comp\_of\_boundedBelow} of \cite{LCA} gives that
+  $\gamma$ is $\Ck{k}$: the derivative of $\gamma$ is obtained as the limit of difference
+  quotients, which are Cauchy by the lower bound.
+\end{proof}
+
+\begin{corollary}[Topologically embedded immersions are initial]
+  \label{cor:sub-banach-initial}
+  \lean{LCManifolds.IsImmersedSubmanifold.isInitialSubmanifold}
+  \leanok
+  \uses{thm:sub-banach-reflect, def:initial-submanifold, def:sub-immersed,
+    prop:sub-immersion-implications}
+  Let $E$ be a Banach space and $F$ a normed space. An injective immersion $f \colon M \to N$
+  which is a homeomorphism onto its image exhibits its image as an initial submanifold.
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  If $f \circ g$ is smooth, it is continuous, so $g$ is continuous because $f$ is a topological
+  embedding. Then $g$ is smooth by Theorem~\ref{thm:sub-banach-reflect}.
+\end{proof}
+
+\begin{remark}[Scope of the Banach results]
+  \label{rem:sub-banach-scope}
+  No inverse function theorem is used, and no complement of the range of the differential is
+  needed. On the other hand, the image of a non-split immersion need not have slice charts:
+  whether such an immersion, when it is a homeomorphism onto its image, is an embedded
+  submanifold is open. Completeness of $E$ is used, to produce the derivative of the lift as a
+  limit of Cauchy difference quotients; completeness of $F$ is not needed. For Fréchet or more
+  general locally convex model spaces the statement is open, since the lower bound of the
+  differential need not persist near a point. Continuity of $g$ cannot be dropped: the figure
+  eight (Remark~\ref{rem:sub-initial-embedded}) is an injective immersion that is not initial,
+  because a smooth curve in the plane can lift discontinuously.
+\end{remark}
+
+\section{Subtleties in infinite dimensions}
+\label{sec:sub-subtleties}
+
+We collect the phenomena that separate the notions above. For each we say whether it is
+formalized (in Chapter~\ref{chap:examples}) or only discussed.
+
+\begin{remark}[Weak immersions versus immersions; formalized]
+  \label{rem:sub-weak-vs-immersion}
+  The differential can be injective without having closed range, already between Banach
+  spaces: the inclusion $\ell^1 \to \ell^2$ is continuous, linear and injective, and its range
+  is dense and not closed. Hence it is a weak immersion and not an immersion. This is formalized
+  (\texttt{not\_isImmersion\_lpInclusion}, Chapter~\ref{chap:examples}).
+\end{remark}
+
+\begin{remark}[Immersions versus split immersions; formalized]
+  \label{rem:sub-immersion-vs-split}
+  A closed subspace need not be complemented, already in Banach spaces: by Phillips' lemma
+  \cite{Phi40}, $c_0$ has no complement in $\ell^\infty$. So $c_0 \subseteq \ell^\infty$ is an
+  embedded submanifold that is not split, and the inclusion is an immersion that is not a split
+  immersion (compare Proposition~\ref{prop:sub-subtype-immersion}). This is formalized, with
+  Whitley's proof \cite{Whi66} (\texttt{Phillips.not\_isSplitImmersion\_c0},
+  Chapter~\ref{chap:examples}).
+\end{remark}
+
+\begin{remark}[The universal property alone; not formalized]
+  \label{rem:sub-joris}
+  The universal property of Definition~\ref{def:initial-submanifold} alone does not give an
+  injective differential. By Joris' theorem \cite{Jor82} ($g^2$ and $g^3$ smooth imply $g$
+  smooth), the cusp $t \mapsto (t^2, t^3)$ has it, and its differential vanishes at $0$. This is
+  why injectivity of the differential is part of the definition \cite[p.~336]{GN26};
+  Karshon, Miyamoto and Watts call the universal property alone a \emph{diffeological
+  submanifold} \cite{KMW22}.
+\end{remark}
+
+\begin{remark}[Initial versus embedded; the figure eight is formalized]
+  \label{rem:sub-initial-embedded}
+  Initial does not mean embedded: the dense line in the torus is initial (not formalized).
+  Embedded does not follow from injective immersion either. The figure eight
+  $t \mapsto (\sin t, \sin 2t)$, $t \in (-\pi, \pi)$, is an injectively immersed curve that is
+  not initial: the curve $s \mapsto (\sin s, -\sin 2s)$ is smooth in $\R^2$, stays in the figure
+  eight, and crosses the origin along the other branch, so read in the parameter it jumps from
+  $\pi$ to $0$ to $-\pi$. This is formalized, with the parameter $\theta = 2\arctan t$
+  (\texttt{Lemniscate.isImmersedSubmanifold\_lemniscate} and
+  \texttt{Lemniscate.not\_isInitialSubmanifold\_lemniscate}, Chapter~\ref{chap:examples}).
+\end{remark}
+
+\begin{remark}[Mechanisms that destroy initiality]
+  \label{rem:sub-mechanisms}
+  For an injective weak immersion, smooth maps into the ambient manifold that land in the image
+  may fail to lift:
+  \begin{enumerate}
+    \item continuously, because two pieces of the image accumulate on each other (the figure
+      eight; this occurs in finite dimensions and is formalized);
+    \item continuously, because there are uncountably many pieces ($\R \times \R_{\mathrm{discrete}}
+      \to \R^2$); this is excluded for second countable domains, which is why Glöckner and Neeb
+      assume separability in \cite[Thm.~9.2.15]{GN26} (not formalized);
+    \item continuously, because the map is not even locally a topological embedding (the linear
+      inclusion $\ell^1 \to \ell^2$; infinite dimensions only; that it is not an immersion is
+      formalized, the failure of initiality is only discussed);
+    \item continuously, but not smoothly, even when the map is a homeomorphism onto its image
+      (infinite dimensions only; not formalized). Let $A$ act diagonally on the $n$-th block of
+      $\ell^2(\N, \R^2)$ by a scalar $a_n \le e^{-n}$ and let
+      $j \colon \ell^2 \to \ell^2 \times \R$, $j(x) = (Ax, \|x\|^2)$. Its differential
+      $v \mapsto (Av, 2\langle x, v\rangle)$ is injective, with non-closed range at $0$, and $j$
+      is a homeomorphism onto its image (weak convergence plus convergence of norms). The curve
+      $y(t) = \bigoplus_n n^{-2}(\cos nt, \sin nt)$ has constant norm and $A \circ y$ is smooth,
+      so $j \circ y$ is smooth; but $y$ is $\Ck{1}$ and not $\Ck{2}$ in $\ell^2$. So $j$ is
+      topologically embedded, weakly immersed and not initial. In finite dimensions a weak
+      immersion whose lifts are continuous is initial, so this phenomenon has no
+      finite-dimensional analogue. Compare Corollary~\ref{cor:sub-banach-initial}, where the
+      closed range of the differential rules it out.
+  \end{enumerate}
+\end{remark}
+
+\begin{remark}[Unitary orbits; not formalized]
+  \label{rem:sub-unitary-orbits}
+  Let $A = i\sum_n \lambda_n p_n$ be a skew-adjoint operator on a Hilbert space $\mathcal{H}$,
+  with distinct real $\lambda_n$ and pairwise orthogonal projections $p_n$ (of any rank) summing
+  to $1$. Its stabilizer in $U(\mathcal{H})$ is the block-diagonal group
+  $K = \bigoplus_n U(p_n\mathcal{H})$, a split Lie subgroup via the conditional expectation
+  $X \mapsto \sum_n p_n X p_n$. The orbit map $U(\mathcal{H})/K \to B(\mathcal{H})$,
+  $uK \mapsto uAu^*$, is a weak immersion with differential $X \mapsto [X, A]$, and it is
+  initial if and only if there are finitely many $p_n$.
+  If there are finitely many $p_n$, the spectrum is finite and the orbit is a closed embedded
+  split submanifold \cite{BL23}; with two projections of infinite rank it is a Grassmannian.
+  If there are infinitely many $p_n$, the spectrum is infinite, so $[\,\cdot\,, A]$ does not
+  have closed range \cite{BL23}, and the orbit is not initial. Indeed, for orbits of Banach--Lie
+  group actions with split stabilizer, initiality forces closed range: along
+  $s \mapsto \exp(s\xi)\cdot A$ every derivative is bounded by a constant times
+  $\|[\xi, A]\|$, and bump curves along directions with $\|[\xi, A]\|$ tiny are smooth in
+  $B(\mathcal{H})$ while their lifts to $U(\mathcal{H})/K$ are continuous but not $\Ck{1}$.
+\end{remark}
+
+\begin{remark}[Initial does not imply immersion; not formalized]
+  \label{rem:sub-initial-not-immersion}
+  Let $A$ be a compact injective diagonal operator on $\ell^2$ and
+  \[
+    j \colon \ell^2 \to \ell^2 \times (\ell^2 \otimes \ell^2) \times
+      (\ell^2 \otimes \ell^2 \otimes \ell^2), \qquad
+    j(x) = (Ax, x \otimes x, x \otimes x \otimes x),
+  \]
+  with Hilbert tensor products. Then $j$ is injective, its differential
+  $v \mapsto (Av, x \otimes v + v \otimes x, \dots)$ is injective, and at $0$ its range
+  $A(\ell^2) \times 0 \times 0$ is not closed. Nevertheless $j$ is a homeomorphism onto its
+  image, the image is closed, and $j$ is initial with respect to all test manifolds modeled on
+  Fréchet spaces. The argument, which is only discussed, runs as follows. Let $f \colon P \to
+  \ell^2$ with $j \circ f$ smooth.
+  \begin{enumerate}
+    \item Along a smooth curve $c$, each coordinate $\langle f \circ c, e\rangle$ has smooth
+      square and cube, namely $\langle (f \circ c) \otimes (f \circ c), e \otimes e\rangle$ and
+      its cubic analogue; so it is smooth by Joris' theorem \cite{Jor82}. A curve in a Banach
+      space all of whose scalar components are smooth is smooth, by uniform boundedness and
+      Taylor's formula.
+    \item Smoothness along curves gives Michal--Bastiani smoothness when $P$ is modeled on a
+      Fréchet space. First, the directional derivatives $\dd^k f(p)(v, \dots, v)$ are locally
+      bounded: otherwise there are $p_m \to p_0$ and small $w_m$ with
+      $\|\dd^k f(p_m)(w_m, \dots, w_m)\| > m$. With $t_m = 2^{-m}$, $r_m = 2^{-m-2}$ and a bump
+      $\beta$ supported in $[-1,1]$, equal to $1$ on $[-\tfrac12, \tfrac12]$, the curve
+      $c(t) = p_0 + \sum_m \beta((t - t_m)/r_m)\,(p_m - p_0 + (t - t_m)w_m)$ is smooth if
+      $p_m - p_0$ and $w_m$ decay fast enough in every seminorm. Near $t_m$ it is affine,
+      $c(t) = p_m + (t - t_m)w_m$, so $(f \circ c)^{(k)}(t_m) = \dd^k f(p_m)(w_m, \dots, w_m)$
+      is unbounded, a contradiction. Local bounds then give multilinearity (Boman's theorem on
+      finite-dimensional subspaces) and joint continuity of the derivatives (mean value
+      inequality).
+  \end{enumerate}
+  So for this $j$ the closed-range condition fails at $0$ although $j$ is initial, and initial
+  and immersed submanifolds are not comparable. Whether $j$ is initial with respect to test
+  manifolds modeled on non-metrizable spaces is open: the argument above uses sequences.
+\end{remark}
+
+\begin{remark}[Initial Lie subgroups; not formalized]
+  \label{rem:sub-initial-lie}
+  Glöckner and Neeb call an initial Lie subgroup \emph{strictly initial} when the induced map
+  of Lie algebras is injective \cite[Def.~9.1.5]{GN26}, a condition that Neeb includes in the
+  definition \cite{Nee06}. Not every subgroup carries an initial Lie subgroup structure:
+  $\ell^\infty \subseteq \R^{\N}$ does not \cite[Ex.~9.1.8]{GN26}.
+\end{remark}

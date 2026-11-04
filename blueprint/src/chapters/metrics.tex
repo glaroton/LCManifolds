@@ -1,0 +1,427 @@
+\chapter{Metrics}
+\label{chap:metrics}
+
+This chapter collects the metric structures on a manifold $M$ modeled on a locally convex space
+$E$. There are two families, and it is worth separating them from the start. A \emph{Finsler}
+structure assigns to each tangent space a (possibly asymmetric) seminorm; it measures lengths of
+curves and gives a distance. A \emph{bilinear} structure assigns to each tangent space a symmetric
+bilinear form, of any signature; it gives Riemannian, Lorentzian and pseudo-Riemannian metrics.
+The two families meet in exactly one place: a Riemannian metric is a Finsler metric, through
+$v \mapsto \sqrt{g_x(v,v)}$. Lorentzian and pseudo-Riemannian metrics are not.
+
+In infinite dimensions each family splits further, according to two different questions. For
+Finsler structures the question is \emph{how $\mu_p$ depends on $p$}: continuously on the tangent
+bundle, or only along curves. For bilinear structures the question is \emph{which topology $g_x$
+induces on $\T_x M$}: the one of the model (strong) or a coarser one (weak). We keep a separate
+word for each question, and we never use one for the other.
+
+\section{Finsler seminorms and two continuity conditions}
+
+\begin{definition}[Finsler seminorm]
+  \label{def:finsler-seminorm}
+  \lean{LCManifolds.FinslerSeminorm, LCManifolds.FinslerSeminorm.IsNorm, LCManifolds.FinslerSeminorm.IsReversible}
+  \leanok
+  A \emph{Finsler seminorm} on a topological vector space $E$ is a continuous function
+  $\mu \colon E \to [0, \infty)$ that is subadditive, $\mu(v + w) \le \mu(v) + \mu(w)$, and
+  positively homogeneous, $\mu(c v) = c\,\mu(v)$ for $c \ge 0$. It is a \emph{Finsler norm} if
+  $\mu(v) = 0$ only for $v = 0$, and it is \emph{reversible} if $\mu(-v) = \mu(v)$.
+\end{definition}
+
+This is the notion of \cite[Def.~2.2]{Lar19}. A Finsler seminorm need not be symmetric: a
+reversible one is a continuous seminorm in the usual sense. Nothing is lost by allowing asymmetry
+at this stage.
+
+\begin{definition}[Field of Finsler seminorms]
+  \label{def:mt-field}
+  \lean{LCManifolds.FinslerSeminormField, LCManifolds.FinslerSeminormField.fiber, LCManifolds.FinslerSeminormField.IsNondegenerate, LCManifolds.FinslerSeminormField.IsReversible}
+  \leanok
+  \uses{def:finsler-seminorm, def:tangent-bundle}
+  A \emph{field of Finsler seminorms} on $M$ is a function $\mu \colon \T M \to [0,\infty)$ whose
+  restriction $\mu_x$ to each tangent space $\T_x M$ is a Finsler seminorm.
+\end{definition}
+
+No condition relates $\mu_x$ and $\mu_y$ for $x \neq y$. There are two natural ones, and the
+whole point of this section is that they are different.
+
+\begin{definition}[Finsler metric]
+  \label{def:finsler-metric}
+  \lean{LCManifolds.FinslerMetric}
+  \leanok
+  \uses{def:mt-field}
+  A \emph{Finsler metric} is a field of Finsler seminorms $\mu$ that is continuous as a function
+  $\mu \colon \T M \to \R$ on the tangent bundle.
+\end{definition}
+
+\begin{definition}[Finsler length structure]
+  \label{def:finsler-length-structure}
+  \lean{LCManifolds.FinslerLengthStructure}
+  \leanok
+  \uses{def:mt-field, def:ck-curve, def:velocity}
+  A \emph{Finsler length structure} is a field of Finsler seminorms $\mu$ such that
+  $t \mapsto \mu(\dot\gamma(t))$ is continuous for every $\Ck{1}$ curve $\gamma$ in $M$.
+\end{definition}
+
+These are, respectively, the ``continuous'' Finsler metrics and the Finsler metrics ``continuous
+along paths'' of \cite[Def.~2.3]{Lar19}. We reserve the name \emph{Finsler metric} for the first
+notion, since this is what the term means for any reader, and we give the second one its own name:
+a Finsler length structure is exactly what is needed to measure lengths of curves (compare the
+length structures of \cite{BBI01}), and nothing more.
+
+\begin{remark}[Two words we avoid]
+  We do not speak of \emph{weak} Finsler metrics: the word \emph{weak} is used below for bilinear
+  metrics, and there it refers to the topology of the fibers, not to the continuity on $\T M$.
+  We do not use \emph{Finsler structure} alone either: Palais \cite[Def.~2.1 and 2.6]{Pal66} uses
+  it for a much stronger notion, in which each $\mu_x$ is a norm inducing the topology of the
+  fiber, locally uniformly equivalent to $\mu_{x_0}$. That notion only makes sense for normable
+  models and is not formalized here.
+\end{remark}
+
+\begin{theorem}[Velocities are continuous]
+  \label{thm:mt-continuous-velocity}
+  \lean{LCManifolds.FinslerMetric.toFinslerLengthStructure}
+  \leanok
+  \uses{def:finsler-metric, def:finsler-length-structure, def:velocity}
+  The velocity $t \mapsto \dot\gamma(t)$ of a $\Ck{1}$ curve is a continuous curve in $\T M$.
+  Consequently, every Finsler metric is a Finsler length structure.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In a chart $i$ around $\gamma(t_0)$ the velocity reads $s \mapsto (i(\gamma(s)), (i \circ
+  \gamma)'(s))$, which is continuous because $i \circ \gamma$ is $\Ck{1}$. The corresponding chart
+  of $\T M$ is a homeomorphism onto its image, so the velocity is continuous near $t_0$.
+\end{proof}
+
+The converse fails, already on $\R^2$ (Section~\ref{sec:mt-cusp}). The natural source of Finsler
+length structures that are not Finsler metrics are quotient metrics (Section~\ref{sec:mt-quotients}).
+
+\section{Length and distance}
+
+The following notions only use the continuity of $\mu$ along curves. We state them for Finsler
+length structures, so that they apply to quotient metrics; for a Finsler metric they are obtained
+through Theorem~\ref{thm:mt-continuous-velocity}.
+
+\begin{definition}[Length]
+  \label{def:mt-length}
+  \lean{LCManifolds.FinslerLengthStructure.length, LCManifolds.FinslerMetric.length}
+  \leanok
+  \uses{def:finsler-length-structure}
+  The length of a $\Ck{1}$ curve $\gamma$ on $[a, b]$ is
+  $L_\mu(\gamma) = \int_a^b \mu\bigl(\dot\gamma(t)\bigr)\, dt$.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:mt-length}
+  \lean{LCManifolds.FinslerLengthStructure.length_nonneg, LCManifolds.FinslerLengthStructure.length_add, LCManifolds.FinslerLengthStructure.length_const}
+  \leanok
+  \uses{def:mt-length}
+  Lengths are nonnegative, additive on adjacent intervals, and constant curves have length zero.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The integrand is continuous and nonnegative; additivity is that of the integral. The velocity
+  of a constant curve vanishes and $\mu_x(0) = 0$ by positive homogeneity.
+\end{proof}
+
+\begin{definition}[Finsler distance]
+  \label{def:mt-dist}
+  \lean{LCManifolds.FinslerLengthStructure.dist, LCManifolds.FinslerLengthStructure.dist_le, LCManifolds.FinslerLengthStructure.dist_self, LCManifolds.FinslerMetric.dist}
+  \leanok
+  \uses{def:mt-length}
+  The distance $d_\mu(x, y) \in [0, \infty]$ is the infimum of the lengths of the $\Ck{1}$ curves
+  from $x$ to $y$, and $\infty$ if there is none. It satisfies $d_\mu(x, x) = 0$.
+\end{definition}
+
+This is \cite[Def.~2.7]{Lar19}, restricted for the moment to $\Ck{1}$ curves.
+
+\begin{remark}[What the distance is, and what is missing]
+  The distance need not be symmetric; it is when $\mu$ is reversible. It may vanish between
+  distinct points even when every $\mu_x$ is a norm: Michor and Mumford proved that the
+  geodesic distance of the $L^2$ metric on the diffeomorphism group of a manifold vanishes
+  \cite[Thm.~5.2]{MM05}. Concatenation and reparametrization of curves, and with them the
+  triangle inequality, are not formalized yet; they require piecewise $\Ck{1}$ curves, as in
+  \cite{Lar19}.
+\end{remark}
+
+\section{Lifting curves versus lifting neighborhoods}
+\label{sec:mt-quotients}
+
+Let $\pi \colon N \to M$ be a $\Ck{1}$ map and $\mu$ a field of Finsler seminorms on $M$. Typically
+$\mu$ is defined through $\pi$, as a quotient metric $\mu(w) = \inf\{\mu_N(v) : \T\pi\, v = w\}$, and
+what one controls is the function $\mu \circ \T\pi$ on $\T N$. The two continuity conditions then
+correspond to two lifting properties of $\pi$.
+
+\begin{lemma}[Chain rule for velocities]
+  \label{lem:mt-chain}
+  \lean{LCManifolds.tangentMap_velocity, LCManifolds.velocity_congr}
+  \leanok
+  \uses{def:tangent-map, def:velocity}
+  If $\pi$ is $\Ck{1}$ and $\Gamma$ is a $\Ck{1}$ curve in $N$, then
+  $\T\pi\bigl(\dot\Gamma(t)\bigr) = (\pi \circ \Gamma)^{\boldsymbol\cdot}(t)$. The velocity at $t$
+  only depends on the germ of the curve at $t$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  In charts, this is the chain rule of Michal--Bastiani calculus \cite{LCA} for the composition of
+  the local representative of $\pi$ with the local representative of $\Gamma$.
+\end{proof}
+
+\begin{theorem}[Lifting curves gives a Finsler length structure]
+  \label{thm:mt-lift-curves}
+  \lean{LCManifolds.FinslerSeminormField.toFinslerLengthStructureOfLifts}
+  \leanok
+  \uses{lem:mt-chain, def:finsler-length-structure}
+  Suppose that every $\Ck{1}$ curve of $M$ has, near each time, a $\Ck{1}$ lift to $N$, and that
+  $\mu \circ \T\pi$ is continuous along the velocities of $\Ck{1}$ curves of $N$. Then $\mu$ is a
+  Finsler length structure.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Near $t_0$, $\gamma = \pi \circ \Gamma$, so $\dot\gamma = \T\pi(\dot\Gamma)$ by
+  Lemma~\ref{lem:mt-chain}, and $\mu(\dot\gamma) = (\mu \circ \T\pi)(\dot\Gamma)$ is continuous.
+\end{proof}
+
+\begin{theorem}[Lifting neighborhoods gives a Finsler metric]
+  \label{thm:mt-quotient-map}
+  \lean{LCManifolds.FinslerSeminormField.toFinslerMetricOfIsQuotientMap}
+  \leanok
+  \uses{def:finsler-metric, def:tangent-map}
+  If $\T\pi \colon \T N \to \T M$ is a quotient map and $\mu \circ \T\pi$ is continuous on $\T N$,
+  then $\mu$ is a Finsler metric.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  This is the universal property of quotient maps.
+\end{proof}
+
+\begin{remark}[Submersions and homogeneous spaces]
+  For Banach manifolds, a submersion (surjective differential with complemented kernel) has local
+  smooth sections through every point, by the inverse function theorem. Then $\T\pi$ is open,
+  hence a quotient map, and $\Ck{1}$ curves lift locally (compose them with a local section): the
+  hypotheses on $\pi$ of both theorems hold. On locally convex manifolds there is no inverse
+  function theorem and neither property is automatic; a curve may have $\Ck{1}$ lifts while
+  $\T\pi$ is not a quotient map. This is the situation of homogeneous spaces $G/K$ of
+  infinite-dimensional Lie groups in \cite[Lemma~3.19]{Lar19}: under a uniformity assumption on
+  the metric of $G$, the quotient metric is continuous along paths that have piecewise smooth
+  lifts, and continuous on the tangent bundle when $\pi_*$ is a quotient map.
+\end{remark}
+
+\section{A Finsler length structure that is not a Finsler metric}
+\label{sec:mt-cusp}
+
+The difference between the two notions is not an infinite-dimensional phenomenon. On $\R^2$ with
+the sup norm, let
+\[
+  \beta(x, y) = \frac{\max(0, x^2 - |y|)}{x^2 + |y|} \quad (\beta(0,0) = 0), \qquad
+  \mu_p(v) = \|v\| + \beta(p)\,|v_2| .
+\]
+The weight $\beta$ takes values in $[0,1]$, is supported in the cusp $\{|y| < x^2\}$, equals $1$
+on the $x$-axis minus the origin, and is continuous away from the origin.
+
+\begin{proposition}
+  \label{prop:mt-cusp-fibers}
+  \lean{LCManifolds.CuspFinsler.field, LCManifolds.CuspFinsler.isNondegenerate, LCManifolds.CuspFinsler.isReversible, LCManifolds.CuspFinsler.continuousAt_β}
+  \leanok
+  \uses{def:mt-field}
+  Each $\mu_p$ is a reversible Finsler norm.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  It is the sum of the norm and a nonnegative multiple of the seminorm $|v_2|$.
+\end{proof}
+
+\begin{theorem}
+  \label{thm:mt-cusp}
+  \lean{LCManifolds.CuspFinsler.not_continuous, LCManifolds.CuspFinsler.lengthStructure, LCManifolds.CuspFinsler.eventually_outside_cusp, LCManifolds.CuspFinsler.lengthStructure_not_finslerMetric}
+  \leanok
+  \uses{prop:mt-cusp-fibers, def:finsler-metric, def:finsler-length-structure}
+  The field $\mu$ is a Finsler length structure but not a Finsler metric.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  It is not continuous on $\T\R^2$ at $(0, e_2)$: $\mu_{(t,0)}(e_2) = 2$ for $t \neq 0$, while
+  $\mu_0(e_2) = 1$. Let now $\gamma$ be a $\Ck{1}$ curve. Away from the times where $\gamma$ passes
+  through the origin, $\beta \circ \gamma$ is continuous. Suppose that $\gamma(t_0) = 0$. If
+  $\dot\gamma_2(t_0) \neq 0$, then $|\gamma_2(t)| \ge c\,|t - t_0|$ while $\gamma_1(t)^2 =
+  O(|t-t_0|^2)$, so near $t_0$ the curve stays outside the cusp and $\beta(\gamma(t)) = 0$. If
+  $\dot\gamma_2(t_0) = 0$, then $0 \le \beta(\gamma)\,|\dot\gamma_2| \le |\dot\gamma_2| \to 0$.
+\end{proof}
+
+The example shows what a $\Ck{1}$ curve can and cannot see: through a point $p$ it only meets the
+pairs $(p, v)$ that are compatible with the way it approaches $p$. The pairs $((1/n, 0), e_2)$,
+which converge to $(0, e_2)$ in $\T\R^2$, are not of this kind.
+
+\section{Bilinear metrics}
+
+\begin{definition}[Smooth symmetric bilinear field]
+  \label{def:mt-bilin}
+  \lean{LCManifolds.SymmBilinField, LCManifolds.bilinLocalRep, LCManifolds.SymmBilinField.continuous_fiber, LCManifolds.SymmBilinField.continuous_quadratic, LCManifolds.SymmBilinField.IsWeaklyNondegenerate}
+  \leanok
+  \uses{def:tangent-bundle}
+  A smooth field of symmetric bilinear forms on $M$ assigns to each $x$ a symmetric bilinear form
+  $g_x$ on $\T_x M$, such that the local representatives $(y, a, b) \mapsto g_{i^{-1}(y)}(a, b)$ are
+  smooth in every chart $i$. Each $g_x$ is then jointly continuous, and $v \mapsto g_x(v,v)$ is
+  continuous on $\T M$. The field is \emph{weakly nondegenerate} if $g_x(v, \cdot) = 0$ forces
+  $v = 0$.
+\end{definition}
+
+\subsection{Riemannian metrics}
+
+\begin{definition}[Weak Riemannian metric]
+  \label{def:weak-riemannian}
+  \lean{LCManifolds.WeakRiemannianMetric, LCManifolds.WeakRiemannianMetric.IsStrongAt}
+  \leanok
+  \uses{def:mt-bilin}
+  A \emph{weak Riemannian metric} is a smooth field of positive definite symmetric bilinear forms.
+  It is \emph{strong} at $x$ if the sets $\{v : g_x(v,v) < \varepsilon\}$ form a basis of
+  neighborhoods of $0$ in $\T_x M$.
+\end{definition}
+
+This is \cite[Def.~4.1.1]{Sch23}. \emph{Weak} refers to the topology of the fibers: $g_x$ is
+continuous on $\T_x M$, but the norm $\sqrt{g_x(v,v)}$ may induce a strictly coarser topology than
+the one of the model. A strong Riemannian metric forces the model to be a pre-Hilbert space; it is
+a Hilbert space only if the model is complete, and we say so only in that case. On a Fréchet model
+that is not normable, such as the space $C^\infty_{\mathrm{per}}$ of Chapter~\ref{chap:examples},
+every Riemannian metric is weak.
+
+\begin{theorem}[Riemannian metrics are Finsler metrics]
+  \label{thm:mt-riemannian-finsler}
+  \lean{LCManifolds.BilinForm.sq_le_mul, LCManifolds.BilinForm.sqrt_add_le, LCManifolds.WeakRiemannianMetric.toFinslerMetric, LCManifolds.WeakRiemannianMetric.toFinslerMetric_isNondegenerate, LCManifolds.WeakRiemannianMetric.toFinslerMetric_isReversible}
+  \leanok
+  \uses{def:weak-riemannian, def:finsler-metric}
+  If $g$ is a weak Riemannian metric, $\mu_x(v) = \sqrt{g_x(v, v)}$ is a Finsler metric, and each
+  $\mu_x$ is a reversible Finsler norm.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Subadditivity is the triangle inequality, which follows from the Cauchy--Schwarz inequality
+  $g_x(v,w)^2 \le g_x(v,v)\,g_x(w,w)$; the latter is the nonpositivity of the discriminant of
+  $t \mapsto g_x(v + t w, v + t w) \ge 0$. Continuity on $\T M$ is that of $v \mapsto g_x(v,v)$.
+\end{proof}
+
+So lengths and distances of Riemannian metrics are those of the previous sections.
+
+\subsection{Fundamental decompositions and the index}
+
+\begin{definition}[Fundamental decomposition]
+  \label{def:fundamental-decomposition}
+  \lean{LCManifolds.FundamentalDecomposition}
+  \leanok
+  Let $B$ be a symmetric bilinear form on a topological vector space $E$. A \emph{fundamental
+  decomposition} of $B$ is a splitting $E = E_+ \oplus E_-$ given by a continuous projection,
+  $B$-orthogonal, with $B$ positive definite on $E_+$ and negative definite on $E_-$.
+\end{definition}
+
+\begin{theorem}[The index is well defined]
+  \label{thm:mt-index}
+  \lean{LCManifolds.FundamentalDecomposition.rank_le_rank_neg, LCManifolds.FundamentalDecomposition.rank_neg_eq}
+  \leanok
+  \uses{def:fundamental-decomposition}
+  A negative definite subspace has (algebraic) dimension at most $\dim E_-$. In particular, two
+  fundamental decompositions of $B$ have negative parts of the same dimension.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  A negative definite subspace $N$ meets $E_+$ only at $0$, so the projection onto $E_-$ along
+  $E_+$ is injective on $N$. Apply this to the negative part of each decomposition.
+\end{proof}
+
+\begin{remark}[Algebraic versus Hilbert dimension]
+  The argument works for any cardinal and needs no completeness. For a Krein space one usually
+  measures $E_-$ by its \emph{Hilbert} dimension; for infinite index the two dimensions differ, and
+  the invariance of the Hilbert dimension uses the completeness of $(E_+, B)$ and $(E_-, -B)$
+  \cite{Bog74}. That version is not formalized.
+\end{remark}
+
+\begin{proposition}
+  \label{prop:mt-nondegenerate}
+  \lean{LCManifolds.FundamentalDecomposition.nondegenerate}
+  \leanok
+  \uses{def:fundamental-decomposition}
+  A form with a fundamental decomposition is weakly nondegenerate.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  If $B(v, \cdot) = 0$, write $v = a + b$ with $a \in E_+$, $b \in E_-$. By orthogonality
+  $B(a,a) = B(v,a) = 0$ and $B(b,b) = B(v,b) = 0$, so $a = b = 0$.
+\end{proof}
+
+\subsection{Pseudo-Riemannian and Lorentzian metrics}
+
+\begin{definition}[Weak pseudo-Riemannian metric]
+  \label{def:weak-pseudo-riemannian}
+  \lean{LCManifolds.WeakPseudoRiemannianMetric, LCManifolds.WeakPseudoRiemannianMetric.index, LCManifolds.WeakPseudoRiemannianMetric.index_eq, LCManifolds.WeakPseudoRiemannianMetric.isWeaklyNondegenerate}
+  \leanok
+  \uses{def:mt-bilin, thm:mt-index, prop:mt-nondegenerate}
+  A \emph{weak pseudo-Riemannian metric} is a smooth field of symmetric bilinear forms admitting a
+  fundamental decomposition of each tangent space. Its \emph{index} at $x$ is the dimension of the
+  negative part of any such decomposition; it may be any cardinal.
+\end{definition}
+
+Index $0$ gives back weak Riemannian metrics; finite index corresponds to tangent spaces of
+Pontryagin type, infinite index to tangent spaces of Krein type. We keep the infinite index in the
+theory on purpose: Krein spaces appear naturally in operator theory.
+
+\begin{proposition}
+  \label{prop:mt-riemannian-index}
+  \lean{LCManifolds.FundamentalDecomposition.ofPosDef, LCManifolds.WeakRiemannianMetric.toWeakPseudoRiemannianMetric, LCManifolds.WeakRiemannianMetric.index_eq_zero}
+  \leanok
+  \uses{def:weak-riemannian, def:weak-pseudo-riemannian}
+  A weak Riemannian metric is a weak pseudo-Riemannian metric of index $0$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Take $E_+ = E$, $E_- = 0$ and the identity as projection.
+\end{proof}
+
+\begin{definition}[Weak Lorentzian metric]
+  \label{def:weak-lorentzian}
+  \lean{LCManifolds.WeakLorentzianMetric}
+  \leanok
+  \uses{def:weak-pseudo-riemannian}
+  A \emph{weak Lorentzian metric} is a weak pseudo-Riemannian metric of index $1$ at every point.
+\end{definition}
+
+\begin{theorem}[Lorentzian metrics from timelike vectors]
+  \label{thm:mt-timelike}
+  \lean{LCManifolds.FundamentalDecomposition.ofTimelike, LCManifolds.FundamentalDecomposition.rank_neg_ofTimelike, LCManifolds.SymmBilinField.toWeakLorentzianMetric}
+  \leanok
+  \uses{def:weak-lorentzian, def:fundamental-decomposition}
+  Let $g$ be a smooth field of symmetric bilinear forms such that each $\T_x M$ contains a vector $v$
+  with $g_x(v,v) < 0$ whose $g_x$-orthogonal is positive definite. Then $\T_x M = v^\perp \oplus \R v$
+  is a fundamental decomposition, and $g$ is a weak Lorentzian metric.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The projection onto $v^\perp$ is $w \mapsto w - \frac{g_x(w, v)}{g_x(v, v)}\, v$, which is
+  continuous because $g_x(v, \cdot)$ is. The remaining conditions are direct computations, and
+  $\R v$ has dimension $1$.
+\end{proof}
+
+So the decomposition of a Lorentzian tangent space is automatically topological: no closedness or
+complementation has to be assumed.
+
+\begin{remark}[Lorentzian metrics are not Finsler metrics]
+  Since $g_x(v,v)$ takes negative values, $\sqrt{g_x(v,v)}$ is not defined, and $\sqrt{|g_x(v,v)|}$
+  is not subadditive. The theory of lengths of a Lorentzian metric (timelike curves, the reverse
+  triangle inequality) is different and is not developed here.
+\end{remark}
+
+\begin{remark}[What is not formalized]
+  We do not prove that the index is locally constant, nor that fundamental decompositions can be
+  chosen continuously in $x$. These are genuine infinite-dimensional questions when the topology
+  of $g_x$ is weaker than that of the model. The Krein-space conditions (completeness of
+  $(E_+, g)$ and $(E_-, -g)$, and the topology of the majorant $g(P_+\cdot, P_+\cdot) - g(P_-\cdot,
+  P_-\cdot)$) are not formalized either.
+\end{remark}

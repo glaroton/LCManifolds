@@ -1,0 +1,80 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+This blueprint describes the mathematics formalized in the Lean library
+\href{https://github.com/glaroton/LCManifolds}{LCManifolds}: manifolds modeled on locally convex
+spaces, their tangent bundles, submanifolds and immersions, connections, metrics, and a collection
+of examples from functional analysis and from groups of diffeomorphisms. Every definition and
+theorem below is linked to its Lean counterpart, and the dependency graph shows how the results
+build on each other. All the statements are proved in Lean, with no \texttt{sorry}, and the main
+theorems depend only on the standard axioms of Lean.
+
+\section*{The setting}
+
+The differential calculus is the one of Michal and Bastiani, formalized in the companion library
+LCAnalysis \cite{LCA}: a map between open subsets of locally convex spaces is $\Ck{1}$ if its
+directional derivatives exist and depend continuously on the point and on the direction, jointly.
+This is the calculus of infinite-dimensional Lie theory, as presented by Neeb \cite{Nee06} and by
+Glöckner and Neeb \cite{GN26}, which we follow for the foundations. For the geometry of Banach
+manifolds (sprays, connections, Riemannian metrics) we follow Lang \cite{Lan99} and the book
+\cite{Lar22}, and for metric geometry \cite{Lar19}.
+
+A manifold modeled on $E$ is a charted space whose transition maps are smooth diffeomorphisms
+between open subsets of $E$. Mathlib \cite{mC20} accepts an arbitrary topological model space in
+its notion of charted space, so we do not need a separate theory of manifolds: we only add the
+groupoid of Michal--Bastiani diffeomorphisms.
+
+\section*{Conventions}
+
+Three conventions are used throughout, and we state them once and for all.
+
+\begin{itemize}
+  \item \textbf{Model spaces need not be complete.} The model space $E$ is a real locally convex
+  Hausdorff space, with no completeness assumption, following Glöckner and Neeb \cite{GN26}. We
+  call a manifold \emph{Banach}, \emph{Hilbert} or \emph{Fréchet} only when its model is complete;
+  a manifold modeled on a normed space that is not complete is not a Banach manifold. Whenever a
+  result needs completeness, it is part of the statement.
+
+  \item \textbf{No inverse function theorem.} Outside Banach spaces there is no inverse function
+  theorem, and there are no existence theorems for ordinary differential equations. We avoid both:
+  submanifolds are given by slice charts, examples are built with explicit charts, and geodesics
+  are characterized, not constructed. Where the Banach case behaves better, a remark says so.
+
+  \item \textbf{Infinite-dimensional subtleties are flagged.} Notions that coincide in finite
+  dimensions often split apart here: immersions and weak immersions, embedded and initial
+  submanifolds, strong and weak metrics, continuity on the tangent bundle and continuity along
+  curves. We keep a separate name for each notion, and each splitting is illustrated by a
+  formalized counterexample whenever we have one.
+\end{itemize}
+
+\section*{Metrics: two questions, two words}
+
+Chapter~\ref{chap:metrics} uses two pairs of words that should not be confused. For a field of
+Finsler seminorms $\mu$, the question is how $\mu_p$ depends on $p$. A \emph{Finsler metric} is
+continuous on the tangent bundle; this is what the term means without further qualification. A
+\emph{Finsler length structure} is only continuous along $\Ck{1}$ curves: it is what one needs to
+measure lengths, and quotient metrics on homogeneous spaces are of this kind. Every Finsler metric
+is a Finsler length structure, and the converse fails already on $\R^2$. For a field of bilinear
+forms $g$, the question is which topology $g_x$ induces on the tangent space: a \emph{strong}
+metric induces the topology of the model, a \emph{weak} one may induce a coarser topology. Weak
+Riemannian metrics are Finsler metrics; Lorentzian and pseudo-Riemannian metrics, of any index, are
+not.
+
+\section*{Organization}
+
+Chapter~\ref{chap:manifolds} covers manifolds, smooth maps, the tangent bundle, tangent maps,
+vector fields and velocities of curves. Chapter~\ref{chap:submanifolds} compares the notions of
+submanifold and immersion. Chapter~\ref{chap:connections} treats sprays, connections, covariant
+derivatives along curves, geodesics, and connections defined by fields of projectors.
+Chapter~\ref{chap:metrics} treats Finsler, Riemannian, Lorentzian and pseudo-Riemannian metrics.
+Chapter~\ref{chap:examples} collects the examples: subspaces, spheres, unitary groups, the Fréchet
+space of periodic functions and the group of diffeomorphisms of the circle, and the
+counterexamples that separate the notions of Chapter~\ref{chap:submanifolds}.
+
+\section*{How the library was written}
+
+Gabriel Larotonda set the mathematical program, chose the framework and the references, fixed
+the design constraints and reviewed the results. The Lean proofs were written by the AI assistant
+Claude (Anthropic), working under his direction. Correctness does not rest on trusting either of
+them: Lean's kernel \cite{dMU21} checks every proof, and the statements are kept close to the
+literature so that they can be compared with it directly.
