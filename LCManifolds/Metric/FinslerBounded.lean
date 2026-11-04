@@ -29,13 +29,16 @@ topology of `E` would be a norm topology. So the "strong" Finsler manifolds of
 
 * `norm_chart_sub_le`: if `μ` is bounded below on a chart `φ` with constant `C`, a `C¹` curve
   that stays in the domain of `φ` satisfies `‖φ(γ t) − φ(γ s)‖ ≤ C L_b(γ|[s, t])`. This is the
-  integrated form of the bound (*Estructuras*, (9.2)); the model is assumed complete (Banach),
-as in *Estructuras*, since the proof integrates the derivative of `φ ∘ γ` in `E`.
+  integrated form of the bound (*Estructuras*, (9.2)). It needs no completeness of the model: it is
+the mean value inequality with a boundary function, valid in any normed space.
 * `arc_exit`, `reach_exit`: **leaving a chart costs length.** If `B̄(φ x₀, r) ⊆ φ(U)` and a chain
   of `C¹` arcs starts at `x₀`, then either `C L ≥ r` or the chain ends in `U`, at a point `y` with
   `‖φ y − φ x₀‖ ≤ C L`. This uses that `E` is **complete** and `M` is **Hausdorff**: a curve that
   leaves `U` before its image leaves the ball would have, by completeness, a limit point inside
-  the ball, hence (by Hausdorff) inside `U`.
+  the ball, hence (by Hausdorff) inside `U`. **Open question:** whether completeness is really
+  needed here. Without it the limit of `φ(γ t)` may lie in the completion of `E` only, and the
+  argument breaks; the length `d_b` itself does not depend on completeness, but its comparison
+  with the topology of `M` (Lema 9.1.8) is only proved for complete models.
 * `norm_chart_sub_le_dist` (**Lema 9.1.8**): near `x₀`, `‖φ y − φ x₀‖ ≤ C d_b(x₀, y)`, and the
   points at small `d_b`-distance from `x₀` lie in `U`;
 * `eq_of_dist_eq_zero`: if `μ` is bounded below, `d_b(x, y) = 0` forces `x = y`;
@@ -113,42 +116,36 @@ variable (μ : FinslerLengthStructure E M)
 /-- **The integrated bound** (*Estructuras*, (9.2)): if `μ` is bounded below on the chart `i`
 with constant `C`, a `C¹` curve which stays in the domain of `i` on `[s, t]` satisfies
 `‖φ(γ t) − φ(γ s)‖ ≤ C L_b(γ|[s, t])`. -/
-theorem norm_chart_sub_le [CompleteSpace E] {i : atlas E M} {U : Set M} {C : ℝ}
+theorem norm_chart_sub_le {i : atlas E M} {U : Set M} {C : ℝ}
     (hC : μ.toFinslerSeminormField.IsBoundedBelowOn i U C) (hU : U ⊆ i.1.source)
     {γ : ℝ → M} (hγ : IsCkCurve E 1 γ)
     {s t : ℝ} (hst : s ≤ t) (hin : ∀ τ ∈ Icc s t, γ τ ∈ U) :
     ‖i.1 (γ t) - i.1 (γ s)‖ ≤ C * μ.length γ s t := by
   set c : ℝ → E := i.1 ∘ γ
-  have hO : IsOpen (γ ⁻¹' i.1.source) := i.1.open_source.preimage hγ.1
   have hcO : ContDiffMBOn 1 c (γ ⁻¹' i.1.source) := hγ.2 i
   have hder : ∀ τ ∈ γ ⁻¹' i.1.source, HasDerivAt c (dMB c (τ, 1)) τ := by
     intro τ hτ
     have hd := hcO.hasDirDerivAt hτ (1 : ℝ)
     rw [hasDerivAt_iff_tendsto_slope_zero]
     simpa [HasDirDerivAt] using hd
-  have hlift : ∀ τ ∈ γ ⁻¹' i.1.source, dMB c (τ, 1) = liftCoord i (velocity E γ) τ :=
-    fun τ hτ ↦ (liftCoord_velocity hγ i hτ).symm
-  have hcont : ContinuousOn (fun τ ↦ dMB c (τ, 1)) (γ ⁻¹' i.1.source) := by
-    have h0 : ContinuousOn (liftCoord i (velocity E γ)) (γ ⁻¹' i.1.source) :=
-      ((isCkLift_velocity (k := 0) hγ).2 i).continuousOn
-    exact h0.congr hlift
   have hIcc : Icc s t ⊆ γ ⁻¹' i.1.source := fun τ hτ ↦ hU (hin τ hτ)
-  have hint : IntervalIntegrable (fun τ ↦ dMB c (τ, 1)) volume s t :=
-    (hcont.mono (by rwa [uIcc_of_le hst])).intervalIntegrable
-  have hftc : ∫ τ in s..t, dMB c (τ, 1) = c t - c s :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt
-      (fun τ hτ ↦ hder τ (hIcc (by rwa [uIcc_of_le hst] at hτ))) hint
   have hbound : ∀ τ ∈ Icc s t, ‖dMB c (τ, 1)‖ ≤ C * μ.toFun (velocity E γ τ) := by
     intro τ hτ
-    rw [hlift τ (hIcc hτ)]
+    rw [← liftCoord_velocity hγ i (hIcc hτ)]
     exact hC (γ τ) (hin τ hτ) _
   have hμ : Continuous fun τ ↦ μ.toFun (velocity E γ τ) := μ.continuous_velocity hγ
-  calc ‖i.1 (γ t) - i.1 (γ s)‖ = ‖∫ τ in s..t, dMB c (τ, 1)‖ := by rw [hftc]; rfl
-    _ ≤ ∫ τ in s..t, ‖dMB c (τ, 1)‖ := intervalIntegral.norm_integral_le_integral_norm hst
-    _ ≤ ∫ τ in s..t, C * μ.toFun (velocity E γ τ) :=
-        intervalIntegral.integral_mono_on hst hint.norm
-          ((hμ.const_smul C).intervalIntegrable s t) hbound
-    _ = C * μ.length γ s t := intervalIntegral.integral_const_mul _ _
+  -- the boundary function `B τ = C L_b(γ|[s, τ])`
+  have hB : ∀ τ, HasDerivAt (fun τ ↦ C * μ.length γ s τ) (C * μ.toFun (velocity E γ τ)) τ :=
+    fun τ ↦ (intervalIntegral.integral_hasDerivAt_right (hμ.intervalIntegrable _ _)
+      hμ.aestronglyMeasurable.stronglyMeasurableAtFilter hμ.continuousAt).const_mul C
+  have hcont : ContinuousOn (fun τ ↦ c τ - c s) (Icc s t) :=
+    (fun τ hτ ↦ (hder τ (hIcc hτ)).continuousAt.continuousWithinAt.sub continuousWithinAt_const)
+  have key := image_norm_le_of_norm_deriv_right_le_deriv_boundary (f := fun τ ↦ c τ - c s)
+    (f' := fun τ ↦ dMB c (τ, 1)) hcont
+    (fun τ hτ ↦ ((hder τ (hIcc (Ico_subset_Icc_self hτ))).sub_const (c s)).hasDerivWithinAt)
+    (B := fun τ ↦ C * μ.length γ s τ) (by simp [length]) hB
+    (fun τ hτ ↦ hbound τ (Ico_subset_Icc_self hτ)) (right_mem_Icc.2 hst)
+  exact key
 
 /-! ### Leaving a chart costs length -/
 
