@@ -150,7 +150,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   submanifolds of a space with a continuous symmetric form `β` of any signature (inner product,
   Krein, Pontryagin). If the field of projectors is `β`-orthogonal, its connection is metric for
   the induced form (`ProjectorField.isMetric_symb`, Gauss) and is the Levi-Civita connection
-  (`ProjectorField.symb_eq_of_isMetric`). Orthogonal projectors only exist onto nondegenerate
+  (`ProjectorField.symb_eq_of_isMetric`). The induced forms glue to a metric on `X`
+  (`ProjectorField.inducedMetric`, weak Riemannian when `β` is positive definite), and globally
+  every symmetric metric connection of it is the projector connection
+  (`ProjectorField.covDeriv_eq_connection`). Orthogonal projectors only exist onto nondegenerate
   subspaces (`nondegenerate_of_orthogonal`), which is what fails for lightlike submanifolds; in
   Krein spaces the exact condition is Bognár, Theorem V.3.4 (not formalized).
 * [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two

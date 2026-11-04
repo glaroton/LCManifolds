@@ -684,6 +684,44 @@ No sign condition on $\beta$ is used: the computation is the one of the Riemanni
   (Theorem~\ref{thm:mt-lc-unique}) apply.
 \end{proof}
 
+\begin{theorem}[The induced metric]
+  \label{thm:mt-induced-metric}
+  \lean{LCManifolds.ProjectorField.bilinAt, LCManifolds.ProjectorField.smoothMBOn_inducedForm, LCManifolds.ProjectorField.dMB_param_transition, LCManifolds.ProjectorField.inducedFun, LCManifolds.ProjectorField.bilinLocalRep_inducedFun, LCManifolds.ProjectorField.inducedMetric, LCManifolds.ProjectorField.inducedRiemannian}
+  \leanok
+  \uses{def:mt-bilin, thm:mt-gauss}
+  The induced forms of the slice charts define a smooth field of symmetric bilinear forms on $X$,
+  the \emph{induced metric}, whose local representative in each slice chart is
+  $\beta(\dd\psi_y a, \dd\psi_y b)$. If $\beta$ is positive definite, it is a weak Riemannian
+  metric.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Define the form at $x$ in the preferred slice chart. If $\tau$ is the change from a slice chart
+  $\varphi$ to the preferred chart $\varphi'$, then $\psi' \circ \tau = \psi$ near $y$, and the
+  chain rule gives $\dd\psi'_{\tau y}(\dd\tau_y v) = \dd\psi_y v$. So the local representative
+  in the chart of $\varphi$ is $\beta(\dd\psi_y a, \dd\psi_y b)$, which is smooth by the product
+  rule. Positivity follows from the injectivity of $\dd\psi_y$.
+\end{proof}
+
+\begin{theorem}[Levi-Civita connection of a submanifold, any signature]
+  \label{thm:mt-submanifold-levi-civita}
+  \lean{LCManifolds.ProjectorField.connection_isMetric, LCManifolds.ProjectorField.inducedMetric_isWeaklyNondegenerate, LCManifolds.ProjectorField.covDeriv_eq_connection}
+  \leanok
+  \uses{thm:mt-induced-metric, thm:mt-projector-levi-civita, thm:mt-lc-unique}
+  If $P$ is $\beta$-orthogonal, the connection of $P$ is metric for the induced metric. If
+  moreover $\beta$ is weakly nondegenerate, the induced metric is weakly nondegenerate, and every
+  symmetric connection which is metric for it has the covariant derivative of $P$: the
+  Levi-Civita connection of $X$ is obtained by deriving in $F$ and projecting.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In each chart of the atlas of $X$ the local representative is the induced form, so
+  Theorem~\ref{thm:mt-gauss} gives the compatibility. Uniqueness is
+  Theorem~\ref{thm:mt-lc-unique}.
+\end{proof}
+
 \begin{remark}[The indefinite case]
   For an inner product on a Hilbert space every closed subspace has an orthogonal projector. For
   an indefinite $\beta$ this fails, and Lemma~\ref{lem:mt-orth-nondegenerate} shows the first

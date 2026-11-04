@@ -39,6 +39,21 @@ embedded submanifold with a field of projectors `P` onto its tangent spaces
   symbols of `P` are **the Levi-Civita symbols** of the induced metric: any symmetric symbols
   compatible with `G` coincide with them (Koszul, `LCManifolds.eq_of_koszul`).
 
+## The induced metric on `X`
+
+The induced forms of the slice charts glue: by the chain rule `dψ'_{τ y}(dτ_y v) = dψ_y v` for
+the change of slice charts `τ` (`dMB_param_transition`), the local representative of the field
+`x ↦ β(dψ ·, dψ ·)` (computed in the preferred chart at `x`) in any chart is the induced form of
+that chart (`bilinLocalRep_inducedFun`). This gives:
+
+* `inducedMetric`: the induced metric, a smooth field of symmetric bilinear forms on `X`;
+  `inducedRiemannian`: a weak Riemannian metric when `β` is positive definite;
+* `connection_isMetric`: the connection of a `β`-orthogonal `P` is metric for it
+  (`Connection.IsMetric`, in every chart of the atlas of `X`);
+* `inducedMetric_isWeaklyNondegenerate` and `covDeriv_eq_connection`: if `β` is weakly
+  nondegenerate, **every symmetric metric connection of the induced metric has the covariant
+  derivative of `P`**: the Levi-Civita connection of `X` is "derive and project".
+
 ## The indefinite case
 
 For an inner product every closed subspace of a Hilbert space has an orthogonal projector, and
@@ -230,6 +245,241 @@ theorem symb_eq_of_isMetric (hβ : Continuous fun q : F × F ↦ β q.1 q.2)
   eq_of_koszul (fun _ _ ↦ hsymm _ _) (inducedForm_sub hφ hy)
     (P.inducedForm_nondegenerate hφ p₀ hnd hsymm horth hy) hΓ hm
     (fun u a ↦ P.symb_symm hφ p₀ y u a) (P.isMetric_symb hφ p₀ hβ hsymm horth hy) u a
+
+/-! ### The induced metric on `X` -/
+
+section Global
+
+variable (β)
+
+include hφ in
+theorem inducedForm_add_left {y : S} (hy : (y : F) ∈ φ.target) (a a' b : S) :
+    inducedForm β φ y (a + a') b = inducedForm β φ y a b + inducedForm β φ y a' b := by
+  simp only [inducedForm, ((smoothMBOn_param hφ) 1).dMB_add (isOpen_dom φ)
+    (show y ∈ (Subtype.val ⁻¹' φ.target : Set S) from hy), LinearMap.map_add₂]
+
+include hφ in
+theorem inducedForm_smul_left {y : S} (hy : (y : F) ∈ φ.target) (c : ℝ) (a b : S) :
+    inducedForm β φ y (c • a) b = c * inducedForm β φ y a b := by
+  simp only [inducedForm, ((smoothMBOn_param hφ) 1).dMB_smul
+    (show y ∈ (Subtype.val ⁻¹' φ.target : Set S) from hy), LinearMap.map_smul₂, smul_eq_mul]
+
+include hφ in
+theorem inducedForm_add_right {y : S} (hy : (y : F) ∈ φ.target) (a b b' : S) :
+    inducedForm β φ y a (b + b') = inducedForm β φ y a b + inducedForm β φ y a b' := by
+  simp only [inducedForm, ((smoothMBOn_param hφ) 1).dMB_add (isOpen_dom φ)
+    (show y ∈ (Subtype.val ⁻¹' φ.target : Set S) from hy)]
+  exact (β _).map_add _ _
+
+include hφ in
+theorem inducedForm_smul_right {y : S} (hy : (y : F) ∈ φ.target) (c : ℝ) (a b : S) :
+    inducedForm β φ y a (c • b) = c * inducedForm β φ y a b := by
+  simp only [inducedForm, ((smoothMBOn_param hφ) 1).dMB_smul
+    (show y ∈ (Subtype.val ⁻¹' φ.target : Set S) from hy)]
+  rw [(β _).map_smul, smul_eq_mul]
+
+/-- The induced form at a point of a slice chart, as a bilinear form on `S`. -/
+def bilinAt {y : S} (hy : (y : F) ∈ φ.target) : LinearMap.BilinForm ℝ S :=
+  LinearMap.mk₂ ℝ (inducedForm β φ y) (inducedForm_add_left β hφ hy)
+    (inducedForm_smul_left β hφ hy) (inducedForm_add_right β hφ hy)
+    (inducedForm_smul_right β hφ hy)
+
+theorem bilinAt_apply {y : S} (hy : (y : F) ∈ φ.target) (a b : S) :
+    bilinAt β hφ hy a b = inducedForm β φ y a b := rfl
+
+variable {β}
+
+include hφ in
+/-- The induced form is smooth in `(y, a, b)`. -/
+theorem smoothMBOn_inducedForm (hβ : Continuous fun q : F × F ↦ β q.1 q.2) :
+    SmoothMBOn (fun q : S × S × S ↦ inducedForm β φ q.1 q.2.1 q.2.2)
+      ((Subtype.val ⁻¹' φ.target : Set S) ×ˢ univ) := fun k ↦ by
+  have hd : ContDiffMBOn k (dMB (param φ)) ((Subtype.val ⁻¹' φ.target : Set S) ×ˢ univ) :=
+    ((smoothMBOn_param hφ) (k + 1)).2.2
+  have hopen : IsOpen ((Subtype.val ⁻¹' φ.target : Set S) ×ˢ (univ : Set S)) :=
+    (isOpen_dom φ).prod isOpen_univ
+  let L₁ : S × S × S →L[ℝ] S × S :=
+    (ContinuousLinearMap.fst ℝ S (S × S)).prod
+      ((ContinuousLinearMap.fst ℝ S S).comp (ContinuousLinearMap.snd ℝ S (S × S)))
+  let L₂ : S × S × S →L[ℝ] S × S :=
+    (ContinuousLinearMap.fst ℝ S (S × S)).prod
+      ((ContinuousLinearMap.snd ℝ S S).comp (ContinuousLinearMap.snd ℝ S (S × S)))
+  have hsub₁ : (Subtype.val ⁻¹' φ.target : Set S) ×ˢ (univ : Set (S × S)) ⊆
+      L₁ ⁻¹' ((Subtype.val ⁻¹' φ.target : Set S) ×ˢ univ) := fun q hq ↦ ⟨hq.1, mem_univ _⟩
+  have hsub₂ : (Subtype.val ⁻¹' φ.target : Set S) ×ˢ (univ : Set (S × S)) ⊆
+      L₂ ⁻¹' ((Subtype.val ⁻¹' φ.target : Set S) ×ˢ univ) := fun q hq ↦ ⟨hq.1, mem_univ _⟩
+  have h₁ := (ContDiffMBOn.comp_clm L₁ hopen hd).mono hsub₁
+  have h₂ := (ContDiffMBOn.comp_clm L₂ hopen hd).mono hsub₂
+  exact ContDiffMBOn.bilin β hβ ((isOpen_dom φ).prod isOpen_univ) h₁ h₂
+
+/-- **The chain rule for parametrizations**: if `τ` is the change of slice charts from `φ` to
+`φ'`, then `dψ'_{τ y}(dτ_y v) = dψ_y v`, since `ψ' ∘ τ = ψ` near `y`. -/
+theorem dMB_param_transition (hS : IsClosed (S : Set F)) {φ' : OpenPartialHomeomorph F F}
+    (hφ' : IsSliceChart X S φ')
+    (p₁ : X) {y : S} (hy : y ∈ (sliceChart hφ p₀).target ∩
+      (sliceChart hφ p₀).symm ⁻¹' (sliceChart hφ' p₁).source) (v : S) :
+    dMB (param φ') ((sliceChart hφ' p₁ ∘ (sliceChart hφ p₀).symm) y,
+        dMB (sliceChart hφ' p₁ ∘ (sliceChart hφ p₀).symm) (y, v)) = dMB (param φ) (y, v) := by
+  set e := sliceChart hφ p₀
+  set e' := sliceChart hφ' p₁
+  set τ : S → S := e' ∘ e.symm
+  set W := e.target ∩ e.symm ⁻¹' e'.source
+  have hW : IsOpen W := e.isOpen_inter_preimage_symm e'.open_source
+  have hτ : SmoothMBOn τ W := by
+    have := smoothMBOn_sliceChart_transition hS hφ hφ' p₀ p₁
+    rwa [OpenPartialHomeomorph.trans_source, OpenPartialHomeomorph.symm_source,
+      OpenPartialHomeomorph.coe_trans] at this
+  have hψψ' : ∀ z ∈ W, (param φ' ∘ τ) z = param φ z := by
+    intro z hz
+    change φ'.symm ((e' (e.symm z) : S) : F) = φ.symm z
+    rw [sliceChart_apply_coe hφ' p₁ hz.2, φ'.left_inv hz.2, sliceChart_symm_apply_coe hφ p₀ hz.1]
+  have hmapsτ : MapsTo τ W (Subtype.val ⁻¹' φ'.target) := fun z hz ↦ e'.map_source hz.2
+  have hc := ContDiffMBOn.dMB_comp (isOpen_dom φ') ((smoothMBOn_param hφ') 1) (hτ 1) hmapsτ hy v
+  have hev : param φ' ∘ τ =ᶠ[𝓝 y] param φ :=
+    Filter.eventuallyEq_of_mem (hW.mem_nhds hy) hψψ'
+  rw [← hc, dMB_congr_of_eventuallyEq hev]
+
+end Global
+
+variable (β) in
+/-- The induced metric on `X`: at `x`, the induced form in the preferred slice chart. -/
+def inducedFun (x : X) : LinearMap.BilinForm ℝ S :=
+  bilinAt β (h.exists_sliceChart x x.2).choose_spec.1
+    ((sliceChart (h.exists_sliceChart x x.2).choose_spec.1 x).map_source
+      (h.exists_sliceChart x x.2).choose_spec.2)
+
+theorem inducedFun_apply (x : X) (a b : S) :
+    inducedFun (h := h) β x a b =
+      inducedForm β (h.exists_sliceChart x x.2).choose
+        (sliceChart (h.exists_sliceChart x x.2).choose_spec.1 x x) a b := rfl
+
+/-- **The local representative of the induced metric** in a chart `i = sliceChart φ p₀` of `X`
+is the induced form `β(dψ a, dψ b)` of that chart. -/
+theorem bilinLocalRep_inducedFun :
+    letI := h.chartedSpace; haveI := h.mbManifold
+    ∀ (i : atlas S X), (i : OpenPartialHomeomorph X S) = sliceChart hφ p₀ → ∀ {y : S},
+      y ∈ (i : OpenPartialHomeomorph X S).target → ∀ a b : S,
+      bilinLocalRep (inducedFun (h := h) β) i (y, a, b) = inducedForm β φ y a b := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  intro i hi y hy a b
+  obtain ⟨e, he⟩ := i
+  change e = sliceChart hφ p₀ at hi
+  subst hi
+  set x : X := (sliceChart hφ p₀).symm y
+  have hφx := (h.exists_sliceChart x x.2).choose_spec.1
+  have hxi : sliceChart hφ p₀ x = y := (sliceChart hφ p₀).right_inv hy
+  have hW : y ∈ (sliceChart hφ p₀).target ∩
+      (sliceChart hφ p₀).symm ⁻¹' (sliceChart hφx x).source :=
+    ⟨hy, mem_chart_source S x⟩
+  have ea := dMB_param_transition hφ p₀ h.isClosed hφx x hW a
+  have eb := dMB_param_transition hφ p₀ h.isClosed hφx x hW b
+  simp only [bilinLocalRep, inducedFun_apply, inducedForm, tangentCoordChange]
+  rw [← ea, ← eb]
+  have hxi' : sliceChart hφ p₀ ((sliceChart hφ p₀).symm y) = y := hxi
+  rw [hxi']
+  rfl
+
+/-- **The induced metric** of `β` on `X`, a smooth field of symmetric bilinear forms of the same
+signature type as `β`. -/
+def inducedMetric (hβ : Continuous fun q : F × F ↦ β q.1 q.2) (hsymm : ∀ v w, β v w = β w v) :
+    letI := h.chartedSpace; haveI := h.mbManifold; SymmBilinField S X := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  exact
+  { toFun := inducedFun (h := h) β
+    symm' := fun x v w ↦ hsymm _ _
+    smooth' := fun i ↦ by
+      have hi := i.2.choose_spec.choose_spec.choose_spec
+      have hsm := smoothMBOn_inducedForm i.2.choose_spec.choose hβ
+      refine fun k ↦ ContDiffMBOn.congr_of_isOpen ?_ ?_ ((hsm k).mono ?_)
+      · exact (i : OpenPartialHomeomorph X S).open_target.prod isOpen_univ
+      · intro q hq
+        exact (bilinLocalRep_inducedFun i.2.choose_spec.choose i.2.choose_spec.choose_spec.choose
+          i hi hq.1 q.2.1 q.2.2).symm
+      · intro q hq
+        rw [hi] at hq
+        exact hq }
+
+/-- **The connection of a `β`-orthogonal field of projectors is metric** for the induced
+metric, with any signature of `β`. -/
+theorem connection_isMetric (hβ : Continuous fun q : F × F ↦ β q.1 q.2)
+    (hsymm : ∀ v w, β v w = β w v) (horth : P.IsOrthogonal β) :
+    letI := h.chartedSpace; haveI := h.mbManifold
+    P.connection.IsMetric (inducedMetric (h := h) hβ hsymm) := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  intro i y hy u a b
+  have hi := i.2.choose_spec.choose_spec.choose_spec
+  set hφ := i.2.choose_spec.choose
+  set p₀ := i.2.choose_spec.choose_spec.choose
+  set φ := i.2.choose
+  have hyT : (y : F) ∈ φ.target := by rw [hi] at hy; exact hy
+  have hF : ∀ c d, (inducedMetric (h := h) hβ hsymm).localForm i y c d = inducedForm β φ y c d :=
+    fun c d ↦ bilinLocalRep_inducedFun hφ p₀ i hi hy c d
+  have hD : (inducedMetric (h := h) hβ hsymm).localDeriv i y u a b = inducedDeriv β φ y u a b := by
+    have hopen : IsOpen ((i : OpenPartialHomeomorph X S).target ×ˢ (univ : Set (S × S))) :=
+      (i : OpenPartialHomeomorph X S).open_target.prod isOpen_univ
+    have hev : bilinLocalRep (inducedFun (h := h) β) i =ᶠ[𝓝 (y, a, b)]
+        fun q : S × S × S ↦ inducedForm β φ q.1 q.2.1 q.2.2 :=
+      Filter.eventuallyEq_of_mem (hopen.mem_nhds ⟨hy, mem_univ _⟩) fun q hq ↦
+        bilinLocalRep_inducedFun hφ p₀ i hi hq.1 q.2.1 q.2.2
+    change dMB (bilinLocalRep (inducedFun (h := h) β) i) ((y, a, b), (u, 0, 0)) = _
+    rw [dMB_congr_of_eventuallyEq hev]
+    simp only [inducedDeriv, dMB]
+    congr 1
+    funext t
+    simp only [Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero]
+  rw [hD, hF, hF]
+  exact P.isMetric_symb hφ p₀ hβ hsymm horth hyT u a b
+
+/-- The induced metric is weakly nondegenerate when `β` is and `P` is `β`-orthogonal. -/
+theorem inducedMetric_isWeaklyNondegenerate (hβ : Continuous fun q : F × F ↦ β q.1 q.2)
+    (hnd : ∀ t, (∀ w, β w t = 0) → t = 0) (hsymm : ∀ v w, β v w = β w v)
+    (horth : P.IsOrthogonal β) :
+    letI := h.chartedSpace; haveI := h.mbManifold
+    (inducedMetric (h := h) hβ hsymm).IsWeaklyNondegenerate := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  intro x v hv
+  exact P.inducedForm_nondegenerate (h.exists_sliceChart x x.2).choose_spec.1 x hnd hsymm horth
+    ((sliceChart (h.exists_sliceChart x x.2).choose_spec.1 x).map_source
+      (h.exists_sliceChart x x.2).choose_spec.2) v hv
+
+/-- **The projector connection is the Levi-Civita connection of the induced metric**, for `β`
+of any signature: if `β` is weakly nondegenerate and `P` is `β`-orthogonal, every symmetric
+connection which is metric for the induced metric has the covariant derivative of `P`. -/
+theorem covDeriv_eq_connection (hβ : Continuous fun q : F × F ↦ β q.1 q.2)
+    (hnd : ∀ t, (∀ w, β w t = 0) → t = 0) (hsymm : ∀ v w, β v w = β w v)
+    (horth : P.IsOrthogonal β) :
+    letI := h.chartedSpace; haveI := h.mbManifold
+    ∀ C : Connection S X, C.IsSymmetric → C.IsMetric (inducedMetric (h := h) hβ hsymm) →
+      ∀ Y Z : X → Bundle.TotalSpace S (fun x : X ↦ (tangentBundleCore S X).Fiber x),
+        C.covDeriv Y Z = P.connection.covDeriv Y Z := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  intro C hC hm Y Z
+  exact Connection.covDeriv_eq_of_isMetric
+    (P.inducedMetric_isWeaklyNondegenerate hβ hnd hsymm horth) hC hm P.connection_isSymmetric
+    (P.connection_isMetric hβ hsymm horth) Y Z
+
+/-- When `β` is positive definite (an inner product, not necessarily complete), the induced
+metric is a **weak Riemannian metric** on `X`. -/
+def inducedRiemannian (hβ : Continuous fun q : F × F ↦ β q.1 q.2) (hsymm : ∀ v w, β v w = β w v)
+    (hpos : ∀ w, w ≠ 0 → 0 < β w w) :
+    letI := h.chartedSpace; haveI := h.mbManifold; WeakRiemannianMetric S X := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  exact
+  { toSymmBilinField := inducedMetric (h := h) hβ hsymm
+    pos_def' := fun x a ha ↦ by
+      have hφx := (h.exists_sliceChart x x.2).choose_spec.1
+      have hy := (sliceChart hφx x).map_source (h.exists_sliceChart x x.2).choose_spec.2
+      refine hpos _ fun h0 ↦ ha ?_
+      apply dMB_param_injective hφx hy
+      change dMB (param _) (_, a) = dMB (param _) (_, 0)
+      rw [dMB_param_zero hφx hy]
+      exact h0 }
 
 end ProjectorField
 
