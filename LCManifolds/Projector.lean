@@ -6,6 +6,7 @@ Authors: Gabriel Larotonda
 import LCManifolds.SubmanifoldNotions
 import LCManifolds.Spray
 import LCAnalysis.Rules
+import LCManifolds.CovariantCurve
 
 /-!
 # Derive and project: connections given by a field of projectors
@@ -24,6 +25,16 @@ subspace `S`. Its tangent space at `p` is a subspace `T_p X ⊆ F`: in any slice
 
 so that the covariant derivative is "derive in the ambient space and project":
 `∇_X Y = E (dY · X)`.
+
+Main results:
+
+* `ProjectorField.connection`: the connection, with symmetric symbols
+  (`connection_isSymmetric`); the change of charts law `symb_transition` follows from the
+  second-order chain rule `LCAnalysis.dMB_dMB_comp`;
+* `ProjectorField.dMB_param_localCovDeriv`: in a slice chart, `dψ (∇_A B) = E (d(dψ · B) · A)`,
+  i.e. the covariant derivative is the projection of the ambient derivative;
+* `ProjectorField.connection_isGeodesic_iff` (Teorema *esproyectar*): a `C²` curve `α` in `X` is
+  a geodesic iff its acceleration in `F` is normal, `E_α (α̈) = 0`.
 
 **Subtleties.**
 
@@ -421,6 +432,91 @@ theorem symb_transition {φ' : OpenPartialHomeomorph F F} (hφ' : IsSliceChart X
     hLφ' (dMB (param φ') (τ y, s)), hn']
   abel
 
+/-! ### Derive and project -/
+
+include hφ in
+/-- `dψ` is `dφ⁻¹` on `S`. -/
+theorem dMB_param {y : S} (hy : (y : F) ∈ φ.target) (s : S) :
+    dMB (param φ) (y, s) = dMB φ.symm ((y : F), (s : F)) := by
+  have hφsymm : ContDiffMBOn 1 φ.symm φ.target := (smoothMBOn_symm_of_mem_maximalAtlas hφ.1) 1
+  rw [param, ContDiffMBOn.dMB_comp φ.open_target hφsymm
+    (S.subtypeL.contDiffMBOn 1 (Subtype.val ⁻¹' φ.target)) (fun z hz ↦ hz)
+    (show y ∈ (Subtype.val ⁻¹' φ.target : Set S) from hy) s,
+    (S.subtypeL.hasDirDerivAt _ _).dMB_eq]
+  rfl
+
+/-- The image of `dψ` is tangent, so the projector fixes it. -/
+theorem E_dMB_param {y : S} (hy : (y : F) ∈ φ.target) (s : S) :
+    P.E ((sliceChart hφ p₀).symm y) (dMB (param φ) (y, s)) = dMB (param φ) (y, s) := by
+  rw [dMB_param hφ hy]
+  exact P.E_eq_self (h.dMB_symm_mem_tangentSpace hφ _ hy (sliceChart_symm_apply_coe hφ p₀ hy) s.2)
+
+/-- `dψ (Γ_y(a, b)) = - E (d²ψ_y(a, b))`. -/
+theorem dMB_param_symb {y : S} (hy : (y : F) ∈ φ.target) (a b : S) :
+    dMB (param φ) (y, P.symb hφ p₀ y a b) =
+      -P.E ((sliceChart hφ p₀).symm y) (dMB (dMB (param φ)) ((y, b), (a, 0))) := by
+  have hφsymm : ContDiffMBOn 1 φ.symm φ.target := (smoothMBOn_symm_of_mem_maximalAtlas hφ.1) 1
+  obtain ⟨L, hL⟩ := hφsymm.exists_clm φ.open_target hy
+  rw [dMB_param hφ hy, coe_symb P hφ p₀ hy, ← hL, map_neg, hL]
+  have := dMB_symm_dMB_chart hφ.1 (φ.map_target hy)
+    (P.E ((sliceChart hφ p₀).symm y) (dMB (dMB (param φ)) ((y, b), (a, 0))))
+  rw [φ.right_inv hy] at this
+  rw [this]
+
+include hφ in
+/-- `dψ_y` is injective on `S`. -/
+theorem dMB_param_injective {y : S} (hy : (y : F) ∈ φ.target) :
+    Function.Injective fun s : S ↦ dMB (param φ) (y, s) := by
+  intro s s' hss'
+  have hss : dMB (param φ) (y, s) = dMB (param φ) (y, s') := hss'
+  rw [dMB_param hφ hy, dMB_param hφ hy] at hss
+  have h1 := dMB_chart_dMB_symm hφ.1 hy s
+  rw [hss, dMB_chart_dMB_symm hφ.1 hy] at h1
+  exact Subtype.ext h1.symm
+
+/-- **Derive in the ambient space and project** (Remark after Teorema *esproyectar*): in a slice
+chart, the covariant derivative of `B` along `A`, pushed to `F` by `dψ`, is the projection of
+the ambient derivative of the field `y ↦ dψ_y (B y)`. -/
+theorem dMB_param_localCovDeriv {A B : S → S} {U : Set S} (hU : IsOpen U)
+    (hUd : U ⊆ (Subtype.val ⁻¹' φ.target : Set S)) (hB : ContDiffMBOn 1 B U) {y : S}
+    (hy : y ∈ U) :
+    dMB (param φ) (y, localCovDeriv (P.symb hφ p₀) A B y) =
+      P.E ((sliceChart hφ p₀).symm y) (dMB (fun y' ↦ dMB (param φ) (y', B y')) (y, A y)) := by
+  have hyd : (y : F) ∈ φ.target := hUd hy
+  rw [dMB_dMB_comp_apply (isOpen_dom φ) hU hUd ((smoothMBOn_param hφ) 2) hB hy (A y),
+    P.map_add, E_dMB_param P hφ p₀ hyd, localCovDeriv]
+  obtain ⟨L, hL⟩ := ((smoothMBOn_param hφ) 1).exists_clm (isOpen_dom φ) hyd
+  rw [← hL, _root_.map_sub, hL, hL, dMB_param_symb P hφ p₀ hyd]
+  abel
+
+/-- **Geodesics have normal acceleration**, in a slice chart: for a curve `c` in the chart
+domain, with `α = ψ ∘ c`, `E (α̈) = dψ (c̈ - Γ(ċ, ċ))`. -/
+theorem E_accel_eq {c : ℝ → S} {O : Set ℝ} (hO : IsOpen O) (hc : ContDiffMBOn 2 c O)
+    (hcd : MapsTo c O (Subtype.val ⁻¹' φ.target)) {t : ℝ} (ht : t ∈ O) :
+    P.E ((sliceChart hφ p₀).symm (c t)) (dMB (fun s ↦ dMB (param φ ∘ c) (s, 1)) (t, 1)) =
+      dMB (param φ) (c t, dMB (fun s ↦ dMB c (s, 1)) (t, 1) -
+        P.symb hφ p₀ (c t) (dMB c (t, 1)) (dMB c (t, 1))) := by
+  have hyd : ((c t : S) : F) ∈ φ.target := hcd ht
+  have hψ := smoothMBOn_param hφ
+  have hc1 : ContDiffMBOn 1 c O := hc.of_le (by norm_num)
+  -- the velocity of `ψ ∘ c`
+  have hev : (fun s ↦ dMB (param φ ∘ c) (s, 1)) =ᶠ[𝓝 t]
+      fun s ↦ dMB (param φ) (c s, dMB c (s, 1)) :=
+    Filter.eventuallyEq_of_mem (hO.mem_nhds ht) fun s hs ↦
+      ContDiffMBOn.dMB_comp (isOpen_dom φ) (hψ 1) hc1 hcd hs 1
+  have hdc : ContDiffMBOn 1 (fun s ↦ dMB c (s, 1)) O := by
+    have h2 : ContDiffMBOn 1 (dMB c) (O ×ˢ univ) := hc.2.2
+    have hpair : ContDiffMBOn 1 (fun s : ℝ ↦ (s, (1 : ℝ))) O :=
+      ((ContinuousLinearMap.id ℝ ℝ).contDiffMBOn 1 _).prodMk hO (contDiffMBOn_const 1 1 _)
+    exact ContDiffMBOn.comp (g := dMB c) (f := fun s : ℝ ↦ (s, (1 : ℝ))) hO
+      (hO.prod isOpen_univ) h2 hpair fun s hs ↦ ⟨hs, mem_univ _⟩
+  rw [dMB_congr_of_eventuallyEq hev,
+    dMB_dMB_curve (isOpen_dom φ) hO (hψ 2) hc1 hdc hcd ht, P.map_add, E_dMB_param P hφ p₀ hyd]
+  obtain ⟨L, hL⟩ := (hψ 1).exists_clm (isOpen_dom φ) hyd
+  simp only [← hL, _root_.map_sub]
+  rw [hL (P.symb hφ p₀ (c t) _ _), dMB_param_symb P hφ p₀ hyd]
+  abel
+
 /-- **The connection defined by a field of projectors** (Teorema *esproyectar*): in the slice
 chart `φ`, its symbols are `Γ_y(a, b) = - dφ (E (d²ψ_y(a, b)))`, `ψ = φ⁻¹|_S`. -/
 def connection : letI := h.chartedSpace; haveI := h.mbManifold; Connection S X := by
@@ -458,6 +554,93 @@ theorem connection_isSymmetric :
   have := h.mbManifold
   intro i x a b
   exact P.symb_symm _ _ x a b
+
+include hφ in
+theorem dMB_param_zero {y : S} (hy : (y : F) ∈ φ.target) : dMB (param φ) (y, 0) = 0 := by
+  obtain ⟨L, hL⟩ := ((smoothMBOn_param hφ) 1).exists_clm (isOpen_dom φ) hy
+  rw [← hL, map_zero]
+
+/-- Facts about a chart of `X` given as a slice chart. -/
+theorem sliceChart_facts {e : OpenPartialHomeomorph X S} (he : e = sliceChart hφ p₀) {q : X}
+    (hq : q ∈ e.source) :
+    ((e q : S) : F) = φ q ∧ (q : F) ∈ φ.source ∧ (sliceChart hφ p₀).symm (e q) = q ∧
+      ((e q : S) : F) ∈ φ.target := by
+  subst he
+  exact ⟨sliceChart_apply_coe hφ p₀ hq, hq, (sliceChart hφ p₀).left_inv hq,
+    (sliceChart hφ p₀).map_source hq⟩
+
+/-- **Teorema *esproyectar***: the geodesics of the connection defined by a field of projectors
+are the curves with normal acceleration, `E_α (α̈) = 0`, where `α̈` is the acceleration in `F`. -/
+theorem connection_isGeodesic_iff {α : ℝ → X} (hα : letI := h.chartedSpace; IsCkCurve S 2 α) :
+    letI := h.chartedSpace; haveI := h.mbManifold
+    P.connection.IsGeodesic α ↔
+      ∀ t, P.E (α t) (dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1)) = 0 := by
+  let := h.chartedSpace
+  have := h.mbManifold
+  rw [P.connection.isGeodesic_iff hα]
+  -- in a chart `j`, `E (α̈) = dψ (c̈ - Γ(ċ, ċ))`, with `c = j ∘ α`
+  have key : ∀ (j : atlas S X) (t : ℝ), α t ∈ j.1.source →
+      P.E (α t) (dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1)) =
+        dMB (param j.2.choose) (j.1 (α t), dMB (fun s ↦ dMB (j.1 ∘ α) (s, 1)) (t, 1) -
+          P.connection.Γ j (j.1 (α t)) (dMB (j.1 ∘ α) (t, 1)) (dMB (j.1 ∘ α) (t, 1))) := by
+    intro j t ht
+    have hj : (j : OpenPartialHomeomorph X S) =
+        sliceChart j.2.choose_spec.choose j.2.choose_spec.choose_spec.choose :=
+      j.2.choose_spec.choose_spec.choose_spec
+    set φj := j.2.choose
+    set hφj := j.2.choose_spec.choose
+    set pj := j.2.choose_spec.choose_spec.choose
+    set O := α ⁻¹' (j : OpenPartialHomeomorph X S).source
+    have hO : IsOpen O := (j : OpenPartialHomeomorph X S).open_source.preimage hα.1
+    have hc : ContDiffMBOn 2 ((j : OpenPartialHomeomorph X S) ∘ α) O := hα.2 j
+    -- values of the chart
+    have hval : ∀ q ∈ (j : OpenPartialHomeomorph X S).source,
+        (((j : OpenPartialHomeomorph X S) q : S) : F) = φj q ∧ (q : F) ∈ φj.source :=
+      fun q hq ↦ ⟨(sliceChart_facts hφj pj hj hq).1, (sliceChart_facts hφj pj hj hq).2.1⟩
+    have hcd : MapsTo ((j : OpenPartialHomeomorph X S) ∘ α) O
+        (Subtype.val ⁻¹' φj.target) := by
+      intro s hs
+      change (((j : OpenPartialHomeomorph X S) (α s) : S) : F) ∈ φj.target
+      rw [(hval _ hs).1]
+      exact φj.map_source (hval _ hs).2
+    -- `val ∘ α = ψ ∘ c` on `O`
+    have hamb : ∀ s ∈ O, (Subtype.val ∘ α) s =
+        (param φj ∘ ((j : OpenPartialHomeomorph X S) ∘ α)) s := by
+      intro s hs
+      change ((α s : X) : F) = φj.symm (((j : OpenPartialHomeomorph X S) (α s) : S) : F)
+      rw [(hval _ hs).1, φj.left_inv (hval _ hs).2]
+    have hev : (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) =ᶠ[𝓝 t]
+        fun s ↦ dMB (param φj ∘ ((j : OpenPartialHomeomorph X S) ∘ α)) (s, 1) :=
+      Filter.eventuallyEq_of_mem (hO.mem_nhds ht) fun s hs ↦
+        dMB_congr_of_eventuallyEq (Filter.eventuallyEq_of_mem (hO.mem_nhds hs) hamb) 1
+    have hpt : (sliceChart hφj pj).symm ((j : OpenPartialHomeomorph X S) (α t)) = α t :=
+      (sliceChart_facts hφj pj hj ht).2.2.1
+    have hacc := P.E_accel_eq hφj pj hO hc hcd ht
+    simp only [Function.comp_apply] at hacc
+    rw [hpt] at hacc
+    rw [dMB_congr_of_eventuallyEq hev, hacc]
+    rfl
+  -- conclude
+  constructor
+  · intro hgeo t
+    set j : atlas S X := ⟨chartAt S (α t), chart_mem_atlas S (α t)⟩
+    have ht : α t ∈ j.1.source := mem_chart_source S (α t)
+    have hj : (j : OpenPartialHomeomorph X S) =
+        sliceChart j.2.choose_spec.choose j.2.choose_spec.choose_spec.choose :=
+      j.2.choose_spec.choose_spec.choose_spec
+    have hyT : (((j : OpenPartialHomeomorph X S) (α t) : S) : F) ∈ j.2.choose.target :=
+      (sliceChart_facts j.2.choose_spec.choose _ hj ht).2.2.2
+    rw [key j t ht, hgeo j t ht, sub_self,
+      dMB_param_zero j.2.choose_spec.choose hyT]
+  · intro hE j t ht
+    have hj : (j : OpenPartialHomeomorph X S) =
+        sliceChart j.2.choose_spec.choose j.2.choose_spec.choose_spec.choose :=
+      j.2.choose_spec.choose_spec.choose_spec
+    have hyT : (((j : OpenPartialHomeomorph X S) (α t) : S) : F) ∈ j.2.choose.target :=
+      (sliceChart_facts j.2.choose_spec.choose _ hj ht).2.2.2
+    have h0 := key j t ht
+    rw [hE t, ← dMB_param_zero j.2.choose_spec.choose hyT] at h0
+    exact sub_eq_zero.mp (dMB_param_injective j.2.choose_spec.choose hyT h0).symm
 
 end ProjectorField
 

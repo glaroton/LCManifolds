@@ -36,13 +36,16 @@ universe u
 
 section Calculus
 
-variable {E : Type u}
+variable {E F : Type u}
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
+  [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
 
+omit [LocallyConvexSpace ℝ E] in
 /-- The derivative of a curve `t ↦ dτ(a t)(μ t)`:
 `d²τ(a t)(ȧ t, μ t) + dτ(a t)(μ̇ t)`. -/
-theorem dMB_dMB_curve {τ : E → E} {a μ : ℝ → E} {T : Set E} {O : Set ℝ} (hT : IsOpen T)
+theorem dMB_dMB_curve {τ : E → F} {a μ : ℝ → E} {T : Set E} {O : Set ℝ} (hT : IsOpen T)
     (hO : IsOpen O) (hτ : ContDiffMBOn 2 τ T) (ha : ContDiffMBOn 1 a O)
     (hμ : ContDiffMBOn 1 μ O) (haT : MapsTo a O T) {t : ℝ} (ht : t ∈ O) :
     dMB (fun s ↦ dMB τ (a s, μ s)) (t, 1) =
