@@ -159,6 +159,54 @@ theorem ContMDiffMBOn.contDiffMBOn_chart {k : ℕ} {f : M → N} {U : Set M} (hU
   rintro z ⟨-, ⟨-, hzc⟩, hzc', -⟩
   simp only [Function.comp_apply, c.left_inv hzc, c'.left_inv hzc']
 
+/-- The local representatives of a `C^k` map in charts of the maximal atlases (charts
+compatible with the atlases) are `C^k`. -/
+theorem ContMDiffMBOn.contDiffMBOn_chart_of_mem_maximalAtlas {k : ℕ} {f : M → N} {U : Set M}
+    (hU : IsOpen U) (hf : ContMDiffMBOn (E := E) (F := F) k f U) {e : OpenPartialHomeomorph M E}
+    (he : e ∈ (mbGroupoid E).maximalAtlas M) {e' : OpenPartialHomeomorph N F}
+    (he' : e' ∈ (mbGroupoid F).maximalAtlas N) :
+    ContDiffMBOn k (e' ∘ f ∘ e.symm) (chartDomain f U e e') := by
+  have hD := isOpen_chartDomain hU hf.1 e e'
+  refine ContDiffMBOn.of_local hD fun y hy ↦ ?_
+  obtain ⟨hye, hyU, hyf⟩ := hy
+  set p := e.symm y
+  set c := chartAt E p
+  set c' := chartAt F (f p)
+  have hc : c ∈ (mbGroupoid E).maximalAtlas M := (mbGroupoid E).chart_mem_maximalAtlas p
+  have hc' : c' ∈ (mbGroupoid F).maximalAtlas N := (mbGroupoid F).chart_mem_maximalAtlas (f p)
+  -- near `y`, `e' ∘ f ∘ e⁻¹ = (e' ∘ c'⁻¹) ∘ (c' ∘ f ∘ c⁻¹) ∘ (c ∘ e⁻¹)`
+  have hUf : ∀ {s : Set M} {t : Set N}, IsOpen s → IsOpen t → IsOpen (U ∩ s ∩ f ⁻¹' t) :=
+    fun hs ht ↦ (hf.1.mono inter_subset_left).isOpen_inter_preimage (hU.inter hs) ht
+  set W := e.target ∩ e.symm ⁻¹' (U ∩ c.source ∩ f ⁻¹' (c'.source ∩ e'.source))
+  have hW : IsOpen W :=
+    e.isOpen_inter_preimage_symm (hUf c.open_source (c'.open_source.inter e'.open_source))
+  have hyW : y ∈ W :=
+    ⟨hye, ⟨hyU, mem_chart_source E p⟩, mem_chart_source F (f p), hyf⟩
+  set V := c.target ∩ c.symm ⁻¹' (U ∩ univ ∩ f ⁻¹' (c'.source ∩ e'.source))
+  have hV : IsOpen V :=
+    c.isOpen_inter_preimage_symm (hUf isOpen_univ (c'.open_source.inter e'.open_source))
+  set T := c'.target ∩ c'.symm ⁻¹' e'.source
+  have hT : IsOpen T := c'.isOpen_inter_preimage_symm e'.open_source
+  have hτ : ContDiffMBOn k (c ∘ e.symm) W :=
+    (smoothMBOn_transition_of_mem_maximalAtlas he hc k).mono fun z hz ↦ ⟨hz.1, hz.2.1.2⟩
+  have hμ : ContDiffMBOn k (c' ∘ f ∘ c.symm) V :=
+    (hf.2 p hyU).mono fun z hz ↦ ⟨hz.1, hz.2.1.1, hz.2.2.1⟩
+  have hτ' : ContDiffMBOn k (e' ∘ c'.symm) T := smoothMBOn_transition_of_mem_maximalAtlas hc' he' k
+  have h1 : MapsTo (c ∘ e.symm) W V := by
+    rintro z ⟨-, ⟨hzU, hzc⟩, hzf⟩
+    refine ⟨c.map_source hzc, ?_⟩
+    simp only [Function.comp_apply, mem_preimage, c.left_inv hzc]
+    exact ⟨⟨hzU, mem_univ _⟩, hzf⟩
+  have h2 : MapsTo (c' ∘ f ∘ c.symm) V T := by
+    rintro z ⟨-, -, hzc', hze'⟩
+    refine ⟨c'.map_source hzc', ?_⟩
+    simp only [Function.comp_apply, mem_preimage, c'.left_inv hzc']
+    exact hze'
+  have hcomp := (hτ'.comp hV hT hμ h2).comp hW hV hτ h1
+  refine ⟨W, hW, hyW, (ContDiffMBOn.congr_of_isOpen hW ?_ hcomp).mono inter_subset_right⟩
+  rintro z ⟨-, ⟨-, hzc⟩, hzc', -⟩
+  simp only [Function.comp_apply, c.left_inv hzc, c'.left_inv hzc']
+
 /-- Compositions of `C^k` maps are `C^k`. -/
 theorem ContMDiffMBOn.comp {k : ℕ} {f : M → N} {g : N → P} {U : Set M} {V : Set N}
     (hU : IsOpen U) (hV : IsOpen V) (hg : ContMDiffMBOn (E := F) (F := G) k g V)
