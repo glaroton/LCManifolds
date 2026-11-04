@@ -50,12 +50,32 @@ jobs:
           # the kernel refuses the fork (ENOMEM) even when memory is free.
           sudo sysctl -w vm.overcommit_memory=1
           free -h
-      - uses: leanprover-community/docgen-action@v1
-        continue-on-error: true
+      # The API documentation is built with the script of the doc-gen action, but not with the
+      # action itself: the action always deploys to GitHub Pages, and a second deployment of the
+      # same commit (with the blueprint and the home page) would then be ignored by Pages.
+      - name: Get the doc-gen action
+        uses: actions/checkout@v7
         with:
-          # The action also deploys the API documentation on its own; the blueprint and the
-          # home page are added below and deployed again.
-          homepage: site
+          repository: leanprover-community/docgen-action
+          ref: v1
+          path: .docgen-action
+      - name: Parse the project metadata for the documentation
+        id: docmeta
+        run: node .docgen-action/dist/index.js
+      - name: Cache Mathlib docs
+        if: steps.docmeta.outputs.cached_docbuild_dependencies != ''
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.docmeta.outputs.cached_docbuild_dependencies }}
+          key: Docs-${{ hashFiles('lake-manifest.json') }}
+      - name: Build the API documentation
+        if: github.event_name == 'push'
+        continue-on-error: true
+        run: bash .docgen-action/scripts/build_docs.sh
+        env:
+          NAME: ${{ steps.docmeta.outputs.name }}
+          DOCS_FACETS: ${{ steps.docmeta.outputs.docs_facets }}
+          HOMEPAGE: site
       - name: Build the blueprint
         id: blueprint
         continue-on-error: true
@@ -99,7 +119,6 @@ jobs:
         if: github.event_name == 'push'
         with:
           path: site/
-          # The doc-gen action already uploads an artifact named `github-pages`.
           name: site-with-home-page
       - uses: actions/deploy-pages@v4
         continue-on-error: true
