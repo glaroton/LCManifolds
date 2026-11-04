@@ -120,6 +120,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   counterexamples to the implications between submanifold notions. The inclusion `ℓ¹ → ℓ²`
   (continuous by the closed graph theorem) is a weak immersion but not an immersion
   (`isWeakImmersion_lpInclusion`, `not_isImmersion_lpInclusion`).
+* [`LCManifolds/Examples/Lemniscate.lean`](LCManifolds/Examples/Lemniscate.lean): the figure
+  eight `t ↦ (sin θ, sin 2θ)`, `θ = 2 arctan t`, is an injectively immersed submanifold of `ℝ²`
+  (`isImmersedSubmanifold_lemniscate`) that is not initial (`not_isInitialSubmanifold_lemniscate`):
+  a smooth curve crossing the origin along the other branch has a lift that jumps.
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:
