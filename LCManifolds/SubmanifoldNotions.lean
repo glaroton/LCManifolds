@@ -82,6 +82,29 @@ differential `T_x f` (read in charts):
     `s ↦ exp(s ξ) · A`, every derivative is bounded by a constant times `‖[ξ, A]‖`. Bump
     curves along directions with `‖[ξ, A]‖` tiny are smooth in `B(H)`, and their lifts to
     `U(H)/K` are continuous but not `C¹`.
+* *Initial does not imply immersion.* Let `A` be a compact injective diagonal operator on `ℓ²`
+  and `j : ℓ² → ℓ² × (ℓ² ⊗ ℓ²) × (ℓ² ⊗ ℓ² ⊗ ℓ²)`, `j x = (A x, x ⊗ x, x ⊗ x ⊗ x)` (Hilbert tensor
+  products). Then `j` is injective, its differential `v ↦ (A v, x ⊗ v + v ⊗ x, …)` is injective,
+  and at `0` its range `A(ℓ²) × 0 × 0` is not closed. Nevertheless `j` is initial with respect to
+  all test manifolds modeled on Fréchet spaces, it is a homeomorphism onto its image, and the
+  image is closed. Let `f : P → ℓ²` be such that `j ∘ f` is smooth.
+  - Along a smooth curve `c`, each `⟨f ∘ c, e⟩` has smooth square and cube, which are
+    `⟪(f ∘ c) ⊗ (f ∘ c), e ⊗ e⟫` and its cubic analogue. So it is smooth by Joris' theorem.
+    A curve in a Banach space all of whose scalar components are smooth is smooth, by uniform
+    boundedness and Taylor's formula.
+  - Smoothness along curves gives smoothness in the Michal–Bastiani sense when `P` is modeled
+    on a Fréchet space. First, the directional derivatives `dᵏ f(p)(v, …, v)` are locally
+    bounded. If not, there are `pₘ → p₀` and small `wₘ` with `‖dᵏ f(pₘ)(wₘ, …, wₘ)‖ > m`.
+    Take `tₘ = 2⁻ᵐ`, `rₘ = 2⁻ᵐ⁻²` (so the intervals `[tₘ - rₘ, tₘ + rₘ]` are disjoint) and a
+    bump `β` supported in `[-1, 1]`, equal to `1` on `[-1/2, 1/2]`. Then
+    `c t = p₀ + ∑ₘ β ((t - tₘ) / rₘ) (pₘ - p₀ + (t - tₘ) wₘ)` is smooth if `pₘ - p₀` and `wₘ`
+    decay fast enough in every seminorm. Near `tₘ`, `c` is affine, `c t = pₘ + (t - tₘ) wₘ`. So
+    `(f ∘ c)⁽ᵏ⁾(tₘ) = dᵏ f(pₘ)(wₘ, …, wₘ)` is unbounded, a contradiction. Local bounds then give
+    multilinearity (Boman's theorem on finite-dimensional subspaces) and joint continuity of
+    the derivatives (mean value inequality).
+  So for this `j` the closed-range condition fails at `0` although `j` is initial. Whether `j`
+  is initial with respect to test manifolds modeled on non-metrizable spaces is open: the
+  argument above uses sequences.
 * *Initial Lie subgroups.* Glöckner–Neeb (Def. 9.1.5) call an initial Lie subgroup *strictly
   initial* when `L(ι)` is injective, a condition that Neeb (2006) includes in the definition.
   Not every subgroup carries an initial Lie subgroup structure: `ℓ^∞ ⊆ ℝ^ℕ` does not
