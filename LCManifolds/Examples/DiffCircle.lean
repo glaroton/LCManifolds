@@ -28,8 +28,9 @@ the lifts.
 
 * *Existence and uniqueness of lifts.* Since `ℝ` is simply connected, every continuous
   `f : S¹ → S¹` has a continuous lift `φ : ℝ → ℝ`, `π ∘ φ = f ∘ π`, by the lifting criterion
-  (Hatcher, Prop. 1.33), and two lifts differ by an integer constant: integer translations are deck transformations,
-  and a lift is determined by its value at one point (Hatcher, Prop. 1.34).
+  (Hatcher, Prop. 1.33), and two lifts differ by an integer constant: integer translations are
+  deck transformations, and a lift is determined by its value at one point (Hatcher,
+  Prop. 1.34).
 * *Degree.* `φ (x + 1) - φ x` is a continuous integer valued function, hence a constant `d`, the
   degree of `f` (Katok–Hasselblatt). A homeomorphism has degree `±1`, and it preserves
   the orientation exactly when `d = 1`, i.e. `φ (x + 1) = φ x + 1`; then `φ = id + u` with `u`
@@ -40,8 +41,8 @@ the lifts.
 
 So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. I, 1.7, where
 `D^r(T¹) = {id + φ}` is called the universal cover of `Diff^r_+(T¹)`; Hamilton, Example 4.2.6,
-who parametrizes `Diff⁺(S¹)` by `S¹ × {f' > 0, ∫ f' = 2π}`). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
-`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Herman, Introduction).
+who parametrizes `Diff⁺(S¹)` by `S¹ × {f' > 0, ∫ f' = 2π}`). The set `Ω` below is convex
+(`DiffCircle.convex_domain`), hence contractible, and `Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Herman, Introduction).
 
 ## The lifts
 
@@ -53,8 +54,8 @@ the universal cover of `Diff⁺(S¹)` with the set
 
 Main results:
 
-* `DiffCircle.isOpen_domain`, `DiffCircle.convex_domain`: `Ω` is open and convex in the Fréchet space `C^∞_per`. Hence `Ω` is a
-  manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an `Opens`, with its induced charted space and
+* `DiffCircle.isOpen_domain`, `DiffCircle.convex_domain`: `Ω` is open and convex in the
+  Fréchet space `C^∞_per`. Hence `Ω` is a manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an `Opens`, with its induced charted space and
   `MBManifold` structure). It is a **Fréchet manifold**: the model is complete
   (`CInfPer.instCompleteSpace`), but not normable, so it is not a Banach manifold.
 * For `u ∈ Ω`, the lift `φ = id + u` is an increasing homeomorphism of `ℝ`, smooth with smooth

@@ -102,6 +102,14 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   (`LCAnalysis.dMB_dMB_comp`). The covariant derivative is the projection of the ambient
   derivative (`dMB_param_localCovDeriv`), and the geodesics are the curves with normal
   acceleration, `E_α (α̈) = 0` (`connection_isGeodesic_iff`).
+* [`LCManifolds/Metric/Finsler.lean`](LCManifolds/Metric/Finsler.lean): Finsler seminorms
+  (continuous, subadditive, positively homogeneous; not necessarily symmetric nor definite) and
+  two notions on a manifold, kept apart by name. A **Finsler metric** is continuous on the
+  tangent bundle; a **Finsler length structure** is only continuous along `C¹` curves, which is
+  what lengths need and what quotient metrics on homogeneous spaces satisfy (Larotonda, Forum
+  Math. 2019, Lemma 3.19). Every Finsler metric is a Finsler length structure, because velocities
+  of `C¹` curves are continuous in `TM` (`continuous_velocity`). Length of curves and the Finsler
+  (quasi-)distance are defined for Finsler length structures.
 * [`LCManifolds/Examples/Subspace.lean`](LCManifolds/Examples/Subspace.lean): example. A closed
   subspace is an embedded submanifold (split if complemented), with tangent space itself; a
   continuous projection onto it is a constant field of projectors, whose connection is flat and

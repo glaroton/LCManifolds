@@ -27,3 +27,4 @@ import LCManifolds.Examples.Lemniscate
 import LCManifolds.Examples.Unitary
 import LCManifolds.Examples.PeriodicSmooth
 import LCManifolds.Examples.DiffCircle
+import LCManifolds.Metric.Finsler
