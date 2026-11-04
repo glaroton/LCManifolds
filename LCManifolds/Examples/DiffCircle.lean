@@ -12,11 +12,11 @@ import LCManifolds.Examples.OpenAndGraph
 References: A. Hatcher, *Algebraic Topology*, Cambridge University Press (2002), §1.3
 (Prop. 1.30, homotopy lifting; Prop. 1.33, lifting criterion; Prop. 1.34, uniqueness of lifts);
 A. Katok, B. Hasselblatt, *Introduction to the Modern Theory of Dynamical Systems*, Cambridge
-University Press (1995), §11.1 (lifts and degree of circle maps); M. R. Herman, *Sur la
+University Press (1995) (lifts and degree of circle maps); M. R. Herman, *Sur la
 conjugaison différentiable des difféomorphismes du cercle à des rotations*, Publ. Math. IHÉS 49
-(1979), Ch. II; R. S. Hamilton, *The inverse function theorem of Nash and Moser*, Bull. Amer.
-Math. Soc. 7 (1982), Part I, §4.6; B. Khesin, R. Wendt, *The Geometry of Infinite-Dimensional
-Groups*, Springer (2009), Ch. II; H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*
+(1979), Introduction (Remarque importante) and Ch. I, 1.7; R. S. Hamilton, *The inverse function theorem of Nash and Moser*, Bull. Amer.
+Math. Soc. 7 (1982), Part I; B. Khesin, R. Wendt, *The Geometry of Infinite-Dimensional
+Groups*, Springer (2009); H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*
 (arXiv:2602.12362). In Mathlib, the monotone lifts `φ (x + 1) = φ x + 1` of circle maps are
 `CircleDeg1Lift` (`Mathlib.Dynamics.Circle.RotationNumber.TranslationNumber`).
 
@@ -28,18 +28,19 @@ the lifts.
 
 * *Existence and uniqueness of lifts.* Since `ℝ` is simply connected, every continuous
   `f : S¹ → S¹` has a continuous lift `φ : ℝ → ℝ`, `π ∘ φ = f ∘ π`, by the lifting criterion
-  (Hatcher, Prop. 1.33), and two lifts differ by an integer constant (Hatcher, Prop. 1.34).
+  (Hatcher, Prop. 1.33), and two lifts differ by an integer constant: integer translations are deck transformations,
+  and a lift is determined by its value at one point (Hatcher, Prop. 1.34).
 * *Degree.* `φ (x + 1) - φ x` is a continuous integer valued function, hence a constant `d`, the
-  degree of `f` (Katok–Hasselblatt, §11.1). A homeomorphism has degree `±1`, and it preserves
+  degree of `f` (Katok–Hasselblatt). A homeomorphism has degree `±1`, and it preserves
   the orientation exactly when `d = 1`, i.e. `φ (x + 1) = φ x + 1`; then `φ = id + u` with `u`
   `1`-periodic.
 * *Smoothness.* Since `π` is a local diffeomorphism, `φ` is smooth if and only if `f` is, and
   `φ` is a diffeomorphism of `ℝ` exactly when `f` is a diffeomorphism of `S¹` (the inverse of
   `f` lifts to the inverse of `φ`).
 
-So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. II; Hamilton,
-I.4.6). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
-`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Khesin–Wendt, Ch. II).
+So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. I, 1.7, where
+`D^r(T¹) = {id + φ}` is called the universal cover of `Diff^r_+(T¹)`; Hamilton, Part I). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
+`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Khesin–Wendt).
 
 ## The lifts
 
