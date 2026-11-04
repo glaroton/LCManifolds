@@ -140,6 +140,33 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
   lower semicontinuity of the length.
 \end{proof}
 
+\begin{definition}[Short geodesics, geodesic spaces]
+  \label{def:ms-geodesic}
+  \lean{LCManifolds.IsShortGeodesic, LCManifolds.IsShortGeodesic.continuousOn, LCManifolds.IsShortGeodesic.eVariationOn_eq, LCManifolds.IsGeodesicSpace}
+  \leanok
+  \uses{def:ms-interior}
+  $\gamma \colon [0, 1] \to X$ is a short geodesic of length $L$ if
+  $d(\gamma(s), \gamma(t)) = L |s - t|$; its length is $L$. $X$ is geodesic if it is interior and
+  any two points are joined by a short geodesic \cite[Def.~8.1.11]{Lar22}.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:ms-subarcs}
+  \lean{LCManifolds.RectPath.edist_eq_of_length_eq, LCManifolds.RectPath.exists_isShortGeodesic, LCManifolds.IsInterior.isGeodesicSpace}
+  \leanok
+  \uses{def:ms-geodesic, thm:ms-hopf-rinow, lem:ms-reparam}
+  The sub-arcs of a curve realizing the distance realize the distance \cite[Obs.~8.1.13]{Lar22};
+  normalized by arc length such a curve is a short geodesic. Hence a complete, locally compact
+  interior metric space is geodesic \cite[Teorema~8.2.3]{Lar22}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Additivity of the length and the triangle inequality; for the normalization, the bounds
+  $d(\eta(s), \eta(t)) \leq L|s - t|$ and the triangle inequality through $\eta(s), \eta(t)$ give the
+  reverse inequality.
+\end{proof}
+
 \begin{remark}
   \label{rem:ms-proper}
   \lean{LCManifolds.completeSpace_of_isCompact_closedBall}

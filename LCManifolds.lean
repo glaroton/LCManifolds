@@ -35,6 +35,7 @@ import LCManifolds.Examples.NoLeviCivita
 import LCManifolds.Metric.ProjectorMetric
 import LCManifolds.MetricGeometry.LengthMetric
 import LCManifolds.MetricGeometry.HopfRinow
+import LCManifolds.MetricGeometry.ShortCurves
 import LCManifolds.MetricGeometry.AsymmDist
 import LCManifolds.MetricGeometry.ForwardLength
 import LCManifolds.MetricGeometry.ForwardHopfRinow
