@@ -49,8 +49,8 @@ point, in the direction `u`. With the convention `∇_X Y = dỸ · X̃ − Γ(X
 
 For a strong Riemannian metric on a Hilbert manifold, the Koszul functional is always
 represented (Riesz), and the Levi-Civita connection exists (Lang, Ch. VIII, Theorem 4.1).
-For **weak** metrics, in particular on Fréchet manifolds, where every metric is weak, the representation may
-fail: Schmeding's Example 4.3.7 is a weak Riemannian metric on `ℓ²` whose Koszul functional is
+For **weak** metrics, in particular on Fréchet manifolds, where every metric is weak, the
+representation may fail: Schmeding's Example 4.3.7 is a weak Riemannian metric on `ℓ²` whose Koszul functional is
 not represented, so that there is no metric spray. Even when the functional is represented at
 every point, the symbols so obtained still have to be smooth and to satisfy the change of charts
 law of a connection, and neither follows from the pointwise statement. We therefore do not state
