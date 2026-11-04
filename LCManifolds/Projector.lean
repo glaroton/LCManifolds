@@ -35,6 +35,8 @@ Main results:
   i.e. the covariant derivative is the projection of the ambient derivative;
 * `ProjectorField.connection_isGeodesic_iff` (Teorema *esproyectar*): a `C²` curve `α` in `X` is
   a geodesic iff its acceleration in `F` is normal, `E_α (α̈) = 0`.
+* `ProjectorField.dMB_localE_param`: the identity of the book, `E_{*p,v} w = (1 - E) d²ψ(a, b)`
+  for `v = dψ a`, `w = dψ b`; hence `E_{*p,v} w = E_{*p,w} v` (`dMB_localE_param_symm`).
 
 **Subtleties.**
 
@@ -516,6 +518,72 @@ theorem E_accel_eq {c : ℝ → S} {O : Set ℝ} (hO : IsOpen O) (hc : ContDiffM
   simp only [← hL, _root_.map_sub]
   rw [hL (P.symb hφ p₀ (c t) _ _), dMB_param_symb P hφ p₀ hyd]
   abel
+
+/-- The projector field read in the slice chart: `Ê(y, w) = E_{e⁻¹ y} w`. -/
+def localE (y : S) (w : F) : F := P.E ((sliceChart hφ p₀).symm y) w
+
+/-- **The identity of the book**: the derivative of `E` along `v = dψ a`, applied to
+`w = dψ b`, is the normal part of the second derivative,
+`E_{*p,v} w = (1 - E) d²ψ_y(a, b)`. -/
+theorem dMB_localE_param {y : S} (hy : (y : F) ∈ φ.target) (a b : S) :
+    dMB (fun q : S × F ↦ P.localE hφ p₀ q.1 q.2) ((y, dMB (param φ) (y, b)), (a, 0)) =
+      dMB (dMB (param φ)) ((y, b), (a, 0)) -
+        P.E ((sliceChart hφ p₀).symm y) (dMB (dMB (param φ)) ((y, b), (a, 0))) := by
+  set D : Set S := Subtype.val ⁻¹' φ.target
+  have hD : IsOpen D := isOpen_dom φ
+  have hψ := smoothMBOn_param hφ
+  set Ê : S × F → F := fun q ↦ P.localE hφ p₀ q.1 q.2
+  have hÊ : ContDiffMBOn 1 Ê (D ×ˢ univ) := P.smooth hφ p₀ 1
+  -- `Φ y' = (y', dψ_{y'} b)`
+  have hdψ : ContDiffMBOn 1 (dMB (param φ)) (D ×ˢ univ) := (hψ 2).2.2
+  have hpair : ContDiffMBOn 1 (fun y' : S ↦ (y', b)) D :=
+    ((ContinuousLinearMap.id ℝ S).contDiffMBOn 1 D).prodMk hD (contDiffMBOn_const 1 b D)
+  have hdb : ContDiffMBOn 1 (fun y' : S ↦ dMB (param φ) (y', b)) D :=
+    ContDiffMBOn.comp (g := dMB (param φ)) (f := fun y' : S ↦ (y', b)) hD
+      (hD.prod isOpen_univ) hdψ hpair fun y' hy' ↦ ⟨hy', mem_univ _⟩
+  have hΦ : ContDiffMBOn 1 (fun y' : S ↦ (y', dMB (param φ) (y', b))) D :=
+    ((ContinuousLinearMap.id ℝ S).contDiffMBOn 1 D).prodMk hD hdb
+  have hΦmaps : MapsTo (fun y' : S ↦ (y', dMB (param φ) (y', b))) D (D ×ˢ univ) :=
+    fun y' hy' ↦ ⟨hy', mem_univ _⟩
+  -- `Ê ∘ Φ = dψ(·) b` on `D`, since `dψ b` is tangent
+  have hev : Ê ∘ (fun y' : S ↦ (y', dMB (param φ) (y', b))) =ᶠ[𝓝 y]
+      fun y' ↦ dMB (param φ) (y', b) :=
+    Filter.eventuallyEq_of_mem (hD.mem_nhds hy) fun y' hy' ↦ P.E_dMB_param hφ p₀ hy' b
+  have hcomp := ContDiffMBOn.dMB_comp (hD.prod isOpen_univ) hÊ hΦ hΦmaps hy a
+  rw [dMB_congr_of_eventuallyEq hev] at hcomp
+  -- the derivative of `Φ`
+  have hdΦ : dMB (fun y' : S ↦ (y', dMB (param φ) (y', b))) (y, a) =
+      (a, dMB (dMB (param φ)) ((y, b), (a, 0))) := by
+    change dMB (fun w ↦ ((ContinuousLinearMap.id ℝ S) w, dMB (param φ) (w, b))) (y, a) = _
+    rw [(((ContinuousLinearMap.id ℝ S).hasDirDerivAt y a).prodMk
+      (hdb.hasDirDerivAt hy a)).dMB_eq, dMB_slice]
+    rfl
+  -- `Ê` is linear in the second variable: its derivative in `(0, d)` is `E d`
+  set x := (sliceChart hφ p₀).symm y
+  have hcont : Continuous fun w : F ↦ P.E x w :=
+    hÊ.continuousOn.comp_continuous (by fun_prop : Continuous fun w : F ↦ (y, w))
+      fun w ↦ (⟨hy, mem_univ w⟩ : (y, w) ∈ D ×ˢ (univ : Set F))
+  let L : F →L[ℝ] F :=
+    { toFun := P.E x
+      map_add' := P.map_add x
+      map_smul' := P.map_smul x
+      cont := hcont }
+  have hsplit : (a, dMB (dMB (param φ)) ((y, b), (a, 0))) =
+      (a, (0 : F)) + (0, dMB (dMB (param φ)) ((y, b), (a, 0))) := by simp
+  have hmem : (y, dMB (param φ) (y, b)) ∈ D ×ˢ (univ : Set F) := ⟨hy, mem_univ _⟩
+  rw [hdΦ, hsplit, hÊ.dMB_add (hD.prod isOpen_univ) hmem, dMB_slice₂] at hcomp
+  have hlin : (fun w ↦ Ê (y, w)) = ⇑L := rfl
+  rw [hlin, (L.hasDirDerivAt _ _).dMB_eq] at hcomp
+  rw [← dMB_slice (dMB (param φ)) y a b] at hcomp
+  exact eq_sub_of_add_eq hcomp.symm
+
+/-- **The symmetry of the book**: `E_{*p,v} w = E_{*p,w} v` for tangent vectors `v = dψ a`,
+`w = dψ b`. -/
+theorem dMB_localE_param_symm {y : S} (hy : (y : F) ∈ φ.target) (a b : S) :
+    dMB (fun q : S × F ↦ P.localE hφ p₀ q.1 q.2) ((y, dMB (param φ) (y, b)), (a, 0)) =
+      dMB (fun q : S × F ↦ P.localE hφ p₀ q.1 q.2) ((y, dMB (param φ) (y, a)), (b, 0)) := by
+  rw [P.dMB_localE_param hφ p₀ hy, P.dMB_localE_param hφ p₀ hy,
+    ((smoothMBOn_param hφ) 2).dMB_dMB_symm (isOpen_dom φ) hy b a]
 
 /-- **The connection defined by a field of projectors** (Teorema *esproyectar*): in the slice
 chart `φ`, its symbols are `Γ_y(a, b) = - dφ (E (d²ψ_y(a, b)))`, `ψ = φ⁻¹|_S`. -/
