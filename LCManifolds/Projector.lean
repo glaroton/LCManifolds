@@ -168,6 +168,24 @@ theorem IsEmbeddedSubmanifold.dMB_symm_mem_tangentSpace (h : IsEmbeddedSubmanifo
   rw [h.mem_tangentSpace_iff p hφ hp, hpy, dMB_chart_dMB_symm hφ.1 hy]
   exact hs
 
+/-- A curve in `X` whose ambient curve is smooth is a `C^k` curve of the manifold `X`, for every
+`k`: in a slice chart `φ`, its local representative is the corestriction to `S` of `φ ∘ β`. -/
+theorem IsEmbeddedSubmanifold.isCkCurve_of_smooth (h : IsEmbeddedSubmanifold X S) {β : ℝ → X}
+    (hβ : SmoothMBOn (Subtype.val ∘ β) univ) (k : ℕ) :
+    letI := h.chartedSpace; IsCkCurve S k β := by
+  let := h.chartedSpace
+  have hc : Continuous β :=
+    Topology.IsInducing.subtypeVal.continuous_iff.mpr (continuousOn_univ.mp (hβ 0))
+  refine ⟨hc, ?_⟩
+  rintro ⟨_, φ, hφ, p₀, rfl⟩
+  have hO : IsOpen (β ⁻¹' (sliceChart hφ p₀).source) :=
+    (sliceChart hφ p₀).open_source.preimage hc
+  have hφs : ContDiffMBOn k φ φ.source := (smoothMBOn_of_mem_maximalAtlas hφ.1) k
+  have hcomp : ContDiffMBOn k (φ ∘ (Subtype.val ∘ β)) (β ⁻¹' (sliceChart hφ p₀).source) :=
+    hφs.comp hO φ.open_source ((hβ k).mono (subset_univ _)) fun t ht ↦ ht
+  exact ContDiffMBOn.codRestrict h.isClosed hO hcomp fun t ht ↦
+    sliceChart_apply_coe hφ p₀ ht
+
 /-! ### Fields of projectors -/
 
 /-- A field of projectors onto the tangent spaces of `X`: a map `E : X × F → F`, linear in the

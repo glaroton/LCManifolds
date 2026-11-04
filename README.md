@@ -110,6 +110,12 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   Open subsets are embedded submanifolds (smooth charts can be restricted to open sets). The
   graph of a smooth map is a split submanifold, with the explicit slice chart
   `(x, y) ↦ (x, y - g x)`: no inverse function theorem is needed.
+* [`LCManifolds/Examples/Sphere.lean`](LCManifolds/Examples/Sphere.lean): example. The unit
+  sphere of a real inner product space is an embedded submanifold, with explicit slice charts on
+  hemispheres moved by Householder reflections (no inverse function theorem); `T_p S = p^⊥`;
+  the orthogonal projections form a field of projectors, whose geodesics are the curves with
+  normal acceleration, among them the great circles. It is a Hilbert manifold exactly when the
+  inner product space is complete.
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:

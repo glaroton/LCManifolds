@@ -25,6 +25,17 @@ theorem: on the hemisphere `⟪q, e⟫ > 0`,
 
 and `q` lies on the sphere iff `φ_e(q) ∈ e^⊥` (Pythagoras). Charts at other points are obtained
 by composing with Householder reflections.
+
+Main results:
+
+* `isEmbeddedSubmanifold_sphere`: the sphere is an embedded submanifold modeled on `e^⊥`;
+* `tangentSpace_sphere`: `T_p S = p^⊥`;
+* `projectorField_sphere`: the orthogonal projections `w ↦ w - ⟪w, p⟫ p` form a field of
+  projectors;
+* `isGeodesic_sphere_iff`: for the connection they define, a curve is a geodesic iff its
+  acceleration is normal, `α̈ = ⟪α̈, α⟫ α`;
+* `isGeodesic_greatCircle`: great circles `t ↦ cos t • p + sin t • v` (`v ⊥ p` unit) are
+  geodesics.
 -/
 
 open Set Filter
@@ -273,8 +284,123 @@ theorem tangentSpace_sphere {e : H} (he : ‖e‖ = 1) (p : Metric.sphere (0 : H
       _ = ⟪(p : H), w⟫ := (refl e p).inner_map_map _ _
   rw [this]
 
-namespace Sphere
+/-- The orthogonal projection onto `p^⊥`: `w ↦ w - ⟪w, p⟫ p`. -/
+def sphereProj (p w : H) : H := w - ⟪w, p⟫ • p
 
-end Sphere
+/-- **The orthogonal projections onto the tangent spaces form a field of projectors.** -/
+def projectorField_sphere {e : H} (he : ‖e‖ = 1) :
+    ProjectorField (isEmbeddedSubmanifold_sphere he) where
+  E p w := sphereProj p w
+  map_add p w w' := by simp only [sphereProj, inner_add_left, add_smul]; abel
+  map_smul p c w := by simp only [sphereProj, inner_smul_left, smul_sub, mul_smul]; simp
+  idem p w := by
+    have hp : ⟪(p : H), (p : H)⟫ = 1 := by
+      rw [real_inner_self_eq_norm_sq, mem_sphere_zero_iff_norm.mp p.2, one_pow]
+    simp only [sphereProj, inner_sub_left, inner_smul_left, hp]
+    simp
+  range_eq p := by
+    have hp : ⟪(p : H), (p : H)⟫ = 1 := by
+      rw [real_inner_self_eq_norm_sq, mem_sphere_zero_iff_norm.mp p.2, one_pow]
+    rw [tangentSpace_sphere he p]
+    ext w
+    constructor
+    · rintro ⟨v, rfl⟩
+      change ⟪(p : H), v - ⟪v, (p : H)⟫ • (p : H)⟫ = 0
+      rw [inner_sub_right, inner_smul_right, hp, real_inner_comm]
+      ring
+    · intro hw
+      refine ⟨w, ?_⟩
+      change w - ⟪w, (p : H)⟫ • (p : H) = w
+      rw [real_inner_comm, hw.out, zero_smul, sub_zero]
+  smooth {φ} hφ p₀ := by
+    set D : Set ((ℝ ∙ e)ᗮ) := Subtype.val ⁻¹' φ.target
+    have hD : IsOpen D := ProjectorField.isOpen_dom φ
+    have hDD : IsOpen (D ×ˢ (univ : Set H)) := hD.prod isOpen_univ
+    -- the parametrization `ψ = φ⁻¹|_S` is Fréchet smooth
+    have hψ : ContDiffOn ℝ ∞ (ProjectorField.param φ) D :=
+      (smoothMBOn_iff_contDiffOn hD).mp (ProjectorField.smoothMBOn_param hφ)
+    have hψ1 : ContDiffOn ℝ ∞ (fun q : (ℝ ∙ e)ᗮ × H ↦ ProjectorField.param φ q.1)
+        (D ×ˢ univ) := hψ.comp contDiffOn_fst fun q hq ↦ hq.1
+    have hG : ContDiffOn ℝ ∞ (fun q : (ℝ ∙ e)ᗮ × H ↦
+        q.2 - ⟪q.2, ProjectorField.param φ q.1⟫ • ProjectorField.param φ q.1) (D ×ˢ univ) :=
+      contDiffOn_snd.sub ((contDiffOn_snd.inner ℝ hψ1).smul hψ1)
+    refine (smoothMBOn_iff_contDiffOn hDD).mpr (hG.congr fun q hq ↦ ?_)
+    have hx : (((sliceChart hφ p₀).symm q.1 : Metric.sphere (0 : H) 1) : H) = φ.symm q.1 :=
+      sliceChart_symm_apply_coe hφ p₀ hq.1
+    change sphereProj (((sliceChart hφ p₀).symm q.1 : Metric.sphere (0 : H) 1) : H) q.2 = _
+    rw [hx]
+    rfl
+
+/-- **Geodesics of the sphere**: a curve with smooth ambient curve is a geodesic iff its
+acceleration is normal, `α̈ = ⟪α̈, α⟫ α`. -/
+theorem isGeodesic_sphere_iff {e : H} (he : ‖e‖ = 1) {α : ℝ → Metric.sphere (0 : H) 1}
+    (hα : SmoothMBOn (Subtype.val ∘ α) univ) :
+    letI := (isEmbeddedSubmanifold_sphere he).chartedSpace
+    haveI := (isEmbeddedSubmanifold_sphere he).mbManifold
+    (projectorField_sphere he).connection.IsGeodesic α ↔
+      ∀ t, dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1) =
+        ⟪dMB (fun s ↦ dMB (Subtype.val ∘ α) (s, 1)) (t, 1), (α t : H)⟫ • (α t : H) := by
+  let := (isEmbeddedSubmanifold_sphere he).chartedSpace
+  have := (isEmbeddedSubmanifold_sphere he).mbManifold
+  rw [ProjectorField.connection_isGeodesic_iff _
+    ((isEmbeddedSubmanifold_sphere he).isCkCurve_of_smooth hα 2)]
+  refine forall_congr' fun t ↦ ?_
+  change sphereProj _ _ = 0 ↔ _
+  rw [sphereProj, sub_eq_zero]
+
+/-- The derivative of a Fréchet differentiable curve. -/
+theorem dMB_eq_of_hasDerivAt {f : ℝ → H} {f' : H} {t : ℝ} (hf : HasDerivAt f f' t) :
+    dMB f (t, 1) = f' := by
+  rw [(hf.hasFDerivAt.hasDirDerivAt 1).dMB_eq]
+  simp
+
+theorem norm_greatCircle {p v : H} (hp : ‖p‖ = 1) (hv : ‖v‖ = 1) (hpv : ⟪p, v⟫ = 0) (t : ℝ) :
+    ‖Real.cos t • p + Real.sin t • v‖ = 1 := by
+  have hvp : ⟪v, p⟫ = 0 := by rw [real_inner_comm]; exact hpv
+  have h2 : ‖Real.cos t • p + Real.sin t • v‖ ^ 2 = 1 := by
+    rw [← real_inner_self_eq_norm_sq]
+    simp only [inner_add_left, inner_add_right, inner_smul_left, inner_smul_right,
+      real_inner_self_eq_norm_sq, hp, hv, hpv, hvp, RCLike.conj_to_real]
+    nlinarith [Real.sin_sq_add_cos_sq t]
+  exact (pow_left_inj₀ (norm_nonneg _) zero_le_one two_ne_zero).mp (h2.trans (one_pow 2).symm)
+
+/-- The great circle through `p` with unit velocity `v ⊥ p`. -/
+def greatCircle {p v : H} (hp : ‖p‖ = 1) (hv : ‖v‖ = 1) (hpv : ⟪p, v⟫ = 0) :
+    ℝ → Metric.sphere (0 : H) 1 :=
+  fun t ↦ ⟨Real.cos t • p + Real.sin t • v,
+    mem_sphere_zero_iff_norm.mpr (norm_greatCircle hp hv hpv t)⟩
+
+/-- **Great circles are geodesics of the sphere.** -/
+theorem isGeodesic_greatCircle {e : H} (he : ‖e‖ = 1) {p v : H} (hp : ‖p‖ = 1) (hv : ‖v‖ = 1)
+    (hpv : ⟪p, v⟫ = 0) :
+    letI := (isEmbeddedSubmanifold_sphere he).chartedSpace
+    haveI := (isEmbeddedSubmanifold_sphere he).mbManifold
+    (projectorField_sphere he).connection.IsGeodesic (greatCircle hp hv hpv) := by
+  have hval : Subtype.val ∘ greatCircle hp hv hpv =
+      fun t ↦ Real.cos t • p + Real.sin t • v := rfl
+  have hsmooth : SmoothMBOn (Subtype.val ∘ greatCircle hp hv hpv) univ := by
+    rw [hval, smoothMBOn_iff_contDiffOn isOpen_univ]
+    exact ((Real.contDiff_cos.smul contDiff_const).add
+      (Real.contDiff_sin.smul contDiff_const)).contDiffOn
+  rw [isGeodesic_sphere_iff he hsmooth]
+  intro t
+  have h1 : (fun s ↦ dMB (Subtype.val ∘ greatCircle hp hv hpv) (s, 1)) =
+      fun s ↦ -Real.sin s • p + Real.cos s • v := by
+    funext s
+    rw [hval]
+    exact dMB_eq_of_hasDerivAt (((Real.hasDerivAt_cos s).smul_const p).add
+      ((Real.hasDerivAt_sin s).smul_const v))
+  have h2 : dMB (fun s ↦ -Real.sin s • p + Real.cos s • v) (t, 1) =
+      -(Real.cos t • p + Real.sin t • v) := by
+    have hd := (((Real.hasDerivAt_sin t).neg).smul_const p).add
+      ((Real.hasDerivAt_cos t).smul_const v)
+    have hfun : (fun s ↦ -Real.sin s • p + Real.cos s • v) =
+        ((fun y ↦ (-Real.sin) y • p) + fun y ↦ Real.cos y • v) := rfl
+    rw [hfun, dMB_eq_of_hasDerivAt hd, neg_smul, neg_smul, neg_add]
+  rw [h1, h2]
+  change _ = ⟪-(Real.cos t • p + Real.sin t • v), Real.cos t • p + Real.sin t • v⟫ •
+    (Real.cos t • p + Real.sin t • v)
+  rw [inner_neg_left, real_inner_self_eq_norm_sq, norm_greatCircle hp hv hpv t]
+  simp only [one_pow, neg_smul, one_smul]
 
 end LCManifolds
