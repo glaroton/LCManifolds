@@ -82,6 +82,25 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
   intermediate value theorem it has a point at half its length.
 \end{proof}
 
+\begin{theorem}[\texorpdfstring{\cite[Lema~8.1.10, Problemas~8.III--8.IV]{Lar22}}{Lema 8.1.10}]
+  \label{thm:ms-midpoints-iff}
+  \lean{LCManifolds.HasApproxMidpoints, LCManifolds.HasBallCondition, LCManifolds.IsInterior.exists_dist_le_sub_sub, LCManifolds.IsInterior.hasBallCondition, LCManifolds.HasBallCondition.hasApproxMidpoints, LCManifolds.HasApproxMidpoints.hasBallCondition, LCManifolds.hasApproxMidpoints_iff_hasBallCondition, LCManifolds.HasApproxMidpoints.exists_rectPath_length_le, LCManifolds.isInterior_of_approx_midpoint, LCManifolds.isInterior_iff_hasApproxMidpoints, LCManifolds.isInterior_iff_hasBallCondition}
+  \leanok
+  \uses{prop:ms-midpoints}
+  An interior metric space satisfies the ball condition: for $r_1 + r_2 \leq d(x, y)$, the closed
+  balls $\bar B_{r_1}(x)$ and $\bar B_{r_2}(y)$ are at distance at most $d(x, y) - r_1 - r_2$. The
+  ball condition is equivalent to having approximate midpoints, and a complete space with
+  approximate midpoints is interior. So for complete spaces the three properties are equivalent.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The converse direction builds dyadic chains of approximate midpoints with steps at most
+  $(d(x, y) + \varepsilon)/2^n$, and the curve as the uniform limit of the corresponding step
+  functions, which exists by completeness and is $(d(x, y) + \varepsilon)$-Lipschitz. This replaces
+  the extension from dyadic rationals of \cite[Lema~8.1.9]{Lar22}.
+\end{proof}
+
 \section{The metric Hopf--Rinow theorem}
 \label{sec:ms-hopf-rinow}
 
