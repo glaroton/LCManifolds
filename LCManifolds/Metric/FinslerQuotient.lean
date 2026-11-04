@@ -29,13 +29,13 @@ quotient metric
 
 **Submersions.** For Banach manifolds, a submersion (surjective differential with complemented
 kernel) has local smooth sections through every point, by the inverse function theorem. Then
-`Tπ` is open, hence a quotient map, and curves lift; both conditions hold and the two notions
-agree for quotient metrics. On locally convex manifolds there is no inverse function theorem:
-curves may lift (for instance through the exponential map of a Lie group, or by solving a
-differential equation along the curve) while neighborhoods do not. This is the situation of
-homogeneous spaces `G/K` of infinite dimensional Lie groups, where the quotient metric is a
-Finsler length structure, and it is a Finsler metric when `π_*` is a quotient map (Larotonda,
-Lemma 3.19; there the continuity of `μ ∘ Tπ` comes from the uniformity of the metric of `G`).
+`Tπ` is open, hence a quotient map, and `C¹` curves lift locally (compose them with a local
+section), so the hypotheses on `π` of both statements hold. On locally convex manifolds there is
+no inverse function theorem and neither property is automatic: a curve may have `C¹` lifts while
+`Tπ` is not a quotient map. This is the situation of homogeneous spaces `G/K` of infinite
+dimensional Lie groups in Larotonda, Lemma 3.19: under a uniformity assumption on the metric of
+`G`, the quotient metric is continuous along paths that have piecewise smooth lifts, and
+continuous on the tangent bundle when `π_*` is a quotient map.
 
 The difference between the two notions is not specific to infinite dimensions: on `ℝ²` there is a
 Finsler length structure that is not a Finsler metric (`LCManifolds.Examples.FinslerCusp`).
