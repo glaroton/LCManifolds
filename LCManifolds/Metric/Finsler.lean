@@ -64,7 +64,9 @@ as chains of `C¹` arcs (`FinslerLengthStructure.Reach`): an arc `γ|[a, b]` fol
 from `γ b`. Concatenation of chains is then immediate (`Reach.trans`), and so is the **triangle
 inequality** (`FinslerLengthStructure.dist_triangle`); no smoothing at the junctions is needed.
 Reversing a curve (`isCkCurve_reverse`, `velocity_reverse`) preserves lengths when `μ` is
-reversible, and then the distance is symmetric (`FinslerLengthStructure.dist_comm`).
+reversible, and then the distance is symmetric (`FinslerLengthStructure.dist_comm`). With a
+reversibility constant, `μ_x(-v) ≤ λ μ_x(v)`, the asymmetry of the distance is bounded,
+`d_b(y, x) ≤ λ d_b(x, y)` (`FinslerLengthStructure.dist_comm_le`).
 -/
 
 open Set Filter Bundle MeasureTheory
@@ -401,6 +403,59 @@ theorem dist_comm (hrev : μ.IsReversible) (x y : M) : μ.dist x y = μ.dist y x
   refine le_antisymm ?_ ?_
   · exact le_iInf fun p ↦ μ.dist_le_of_reach (p.2.symm hrev)
   · exact le_iInf fun p ↦ μ.dist_le_of_reach (p.2.symm hrev)
+
+/-! ### Bounded reversibility -/
+
+/-- **Bounded reversibility.** If `μ_x(-v) ≤ λ μ_x(v)` for all `x, v` (a *reversibility
+constant* `λ ≥ 0`), reversing a `C¹` arc multiplies its length by at most `λ`. -/
+theorem length_reverse_le {lam : ℝ} (hlam : ∀ x (v : E), μ.toFun ⟨x, -v⟩ ≤ lam * μ.toFun ⟨x, v⟩)
+    {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : ℝ} (hab : a ≤ b) :
+    μ.length (fun s ↦ γ (-s)) (-b) (-a) ≤ lam * μ.length γ a b := by
+  have hpt : ∀ t, μ.toFun (velocity E (fun s ↦ γ (-s)) t) ≤ lam * μ.toFun (velocity E γ (-t)) := by
+    intro t
+    rw [velocity_reverse hγ t]
+    exact hlam (γ (-t)) _
+  have hcont := μ.continuous_velocity hγ
+  calc μ.length (fun s ↦ γ (-s)) (-b) (-a)
+      ≤ ∫ t in (-b)..(-a), lam * μ.toFun (velocity E γ (-t)) :=
+        intervalIntegral.integral_mono_on (neg_le_neg hab)
+          ((μ.continuous_velocity (isCkCurve_reverse hγ)).intervalIntegrable _ _)
+          (((hcont.comp continuous_neg).const_smul lam).intervalIntegrable _ _)
+          fun t _ ↦ hpt t
+    _ = lam * μ.length γ a b := by
+        rw [intervalIntegral.integral_const_mul,
+          intervalIntegral.integral_comp_neg (fun t ↦ μ.toFun (velocity E γ t))]
+        simp [length]
+
+variable {μ}
+
+/-- With a reversibility constant `λ`, a chain of length `L` can be run backwards with length at
+most `λ L`. -/
+theorem Reach.reverse_le {lam : ℝ}
+    (hlam : ∀ x (v : E), μ.toFun ⟨x, -v⟩ ≤ lam * μ.toFun ⟨x, v⟩) {x y : M} {L : ℝ}
+    (h : μ.Reach x y L) : ∃ L' ≤ lam * L, μ.Reach y x L' := by
+  induction h with
+  | refl x => exact ⟨0, by simp, Reach.refl x⟩
+  | @cons γ a b y L hγ hab _ ih =>
+    obtain ⟨L', hL', hrest⟩ := ih
+    have hback := Reach.single (μ := μ) (isCkCurve_reverse hγ) (neg_le_neg hab)
+    simp only [neg_neg] at hback
+    refine ⟨L' + μ.length (fun s ↦ γ (-s)) (-b) (-a), ?_, hrest.trans hback⟩
+    have := μ.length_reverse_le hlam hγ hab
+    nlinarith
+
+variable (μ)
+
+/-- **With a reversibility constant `λ > 0`, `d_b(y, x) ≤ λ d_b(x, y)`.** -/
+theorem dist_comm_le {lam : ℝ} (hlam0 : 0 < lam)
+    (hlam : ∀ x (v : E), μ.toFun ⟨x, -v⟩ ≤ lam * μ.toFun ⟨x, v⟩) (x y : M) :
+    μ.dist y x ≤ ENNReal.ofReal lam * μ.dist x y := by
+  rw [dist, dist, ENNReal.mul_iInf_of_ne (by simpa using hlam0) (by simp)]
+  refine le_iInf fun p ↦ ?_
+  obtain ⟨L', hL', hL'reach⟩ := p.2.reverse_le hlam
+  refine (μ.dist_le_of_reach hL'reach).trans ?_
+  rw [← ENNReal.ofReal_mul hlam0.le]
+  exact ENNReal.ofReal_le_ofReal hL'
 
 end FinslerLengthStructure
 
