@@ -42,7 +42,8 @@ the lifts.
 So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. I, 1.7, where
 `D^r(T¹) = {id + φ}` is called the universal cover of `Diff^r_+(T¹)`; Hamilton, Example 4.2.6,
 who parametrizes `Diff⁺(S¹)` by `S¹ × {f' > 0, ∫ f' = 2π}`). The set `Ω` below is convex
-(`DiffCircle.convex_domain`), hence contractible, and `Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Herman, Introduction).
+(`DiffCircle.convex_domain`), hence contractible, and `Ω → Diff⁺(S¹)` is the universal cover
+`\widetilde{Diff}⁺(S¹)` (Herman, Introduction).
 
 ## The lifts
 
@@ -55,8 +56,8 @@ the universal cover of `Diff⁺(S¹)` with the set
 Main results:
 
 * `DiffCircle.isOpen_domain`, `DiffCircle.convex_domain`: `Ω` is open and convex in the
-  Fréchet space `C^∞_per`. Hence `Ω` is a manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an `Opens`, with its induced charted space and
-  `MBManifold` structure). It is a **Fréchet manifold**: the model is complete
+  Fréchet space `C^∞_per`. Hence `Ω` is a manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an
+  `Opens`, with its induced charted space and `MBManifold` structure). It is a **Fréchet manifold**: the model is complete
   (`CInfPer.instCompleteSpace`), but not normable, so it is not a Banach manifold.
 * For `u ∈ Ω`, the lift `φ = id + u` is an increasing homeomorphism of `ℝ`, smooth with smooth
   inverse, commuting with the translation by `1` (`DiffCircle.liftHomeomorph`,
