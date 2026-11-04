@@ -51,10 +51,13 @@ variable (μ : FinslerMetric E M) [Fact μ.toFinslerLengthStructure.IsReversible
 def metricSpace : MetricSpace μ.toFinslerLengthStructure.FinslerSpace :=
   letI : EMetricSpace μ.toFinslerLengthStructure.FinslerSpace :=
     { (inferInstance : PseudoEMetricSpace μ.toFinslerLengthStructure.FinslerSpace) with
-      eq_of_edist_eq_zero := fun h ↦
+      eq_of_edist_eq_zero := fun {x y} h ↦
         μ.toFinslerLengthStructure.eq_of_dist_eq_zero
-          (μ.isBounded_of_finiteDimensional hnd).isBoundedBelow h }
-  EMetricSpace.toMetricSpace fun _ _ ↦ hfin _ _
+          (μ.isBounded_of_finiteDimensional hnd).isBoundedBelow
+          (le_antisymm ((bdist_le_edist x y).trans h.le) bot_le) }
+  EMetricSpace.toMetricSpace fun x y ↦ by
+    rw [show edist x y = _ from μ.toFinslerLengthStructure.edist_toFinsler x y]
+    exact hfin _ _
 
 include hnd in
 /-- `(M, d_b)` is locally compact: it is homeomorphic to `M` (Corolario 9.1.9). -/
@@ -77,7 +80,10 @@ theorem exists_rectPath_length_eq
   have : CompleteSpace μ.toFinslerLengthStructure.FinslerSpace := hc
   have hint : IsInterior μ.toFinslerLengthStructure.FinslerSpace :=
     μ.toFinslerLengthStructure.isInterior
-  exact hint.exists_rectPath_length_eq _ _
+  obtain ⟨p, hp⟩ := hint.exists_rectPath_length_eq (μ.toFinslerLengthStructure.toFinsler x)
+    (μ.toFinslerLengthStructure.toFinsler y)
+  refine ⟨p, hp.trans ?_⟩
+  exact μ.toFinslerLengthStructure.edist_toFinsler x y
 
 end FinslerMetric
 

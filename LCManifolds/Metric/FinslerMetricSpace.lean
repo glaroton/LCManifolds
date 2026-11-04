@@ -5,6 +5,7 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Metric.Finsler
 import LCManifolds.MetricGeometry.LengthMetric
+import LCManifolds.MetricGeometry.AsymmDist
 
 /-!
 # Finsler manifolds as metric spaces
@@ -48,7 +49,8 @@ namespace FinslerLengthStructure
 
 variable (μ : FinslerLengthStructure E M)
 
-/-- A copy of `M` with the Finsler distance `d_b` (for a reversible `μ`). -/
+/-- A copy of `M` with the Finsler distance `d_b`, an asymmetric distance; its topology is that of
+the symmetrized distance `max (d_b(x, y), d_b(y, x))` (Mennucci, §3.1). -/
 def FinslerSpace (_μ : FinslerLengthStructure E M) : Type _ := M
 
 /-- The identity `M → FinslerSpace μ`. -/
@@ -57,21 +59,23 @@ def toFinsler : M → FinslerSpace μ := id
 /-- The identity `FinslerSpace μ → M`. -/
 def ofFinsler : FinslerSpace μ → M := id
 
-instance [hrev : Fact μ.IsReversible] : PseudoEMetricSpace (FinslerSpace μ) where
-  edist x y := μ.dist (μ.ofFinsler x) (μ.ofFinsler y)
-  edist_self x := μ.dist_self _
-  edist_comm x y := μ.dist_comm hrev.out _ _
-  edist_triangle x y z := μ.dist_triangle _ _ _
+instance : AsymmPseudoEMetricSpace (FinslerSpace μ) :=
+  AsymmPseudoEMetricSpace.ofBDist (fun x y ↦ μ.dist (μ.ofFinsler x) (μ.ofFinsler y))
+    (fun _ ↦ μ.dist_self _) (fun _ _ _ ↦ μ.dist_triangle _ _ _)
+
+theorem bdist_toFinsler (x y : M) : bdist (μ.toFinsler x) (μ.toFinsler y) = μ.dist x y := rfl
 
 variable [hrev : Fact μ.IsReversible]
 
-theorem edist_toFinsler (x y : M) : edist (μ.toFinsler x) (μ.toFinsler y) = μ.dist x y := rfl
+/-- For a reversible `μ`, the symmetrized distance is `d_b` itself. -/
+theorem edist_toFinsler (x y : M) : edist (μ.toFinsler x) (μ.toFinsler y) = μ.dist x y := by
+  rw [edist_eq_max_bdist, bdist_toFinsler, bdist_toFinsler, μ.dist_comm hrev.out y x, max_self]
 
 /-- **`d_b(γ s, γ t) ≤ |L_b(γ|[s, t])|`** for a `C¹` curve. -/
 theorem edist_le_abs_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) (s t : ℝ) :
     edist (μ.toFinsler (γ s)) (μ.toFinsler (γ t)) ≤ ENNReal.ofReal |μ.length γ s t| := by
   rcases le_total s t with hst | hts
-  · rw [abs_of_nonneg (μ.length_nonneg γ hst)]
+  · rw [abs_of_nonneg (μ.length_nonneg γ hst), edist_toFinsler]
     exact μ.dist_le hγ hst
   · rw [edist_comm, edist_toFinsler]
     have h := μ.dist_le hγ hts
@@ -115,7 +119,7 @@ theorem eVariationOn_le_length {γ : ℝ → M} (hγ : IsCkCurve E 1 γ) {a b : 
   calc ∑ i ∈ Finset.range n, edist (μ.toFinsler (γ (u (i + 1)))) (μ.toFinsler (γ (u i)))
       ≤ ∑ i ∈ Finset.range n, ENNReal.ofReal (μ.length γ (u i) (u (i + 1))) := by
         refine Finset.sum_le_sum fun i _ ↦ ?_
-        rw [edist_comm]
+        rw [edist_comm, edist_toFinsler]
         exact μ.dist_le hγ (hu (Nat.le_succ i))
     _ = ENNReal.ofReal (∑ i ∈ Finset.range n, μ.length γ (u i) (u (i + 1))) :=
         (ENNReal.ofReal_sum_of_nonneg fun i _ ↦ μ.length_nonneg γ (hu (Nat.le_succ i))).symm
@@ -158,6 +162,8 @@ theorem lengthDist_le_of_reach {x y : M} {L : ℝ} (h : μ.Reach x y L) :
 theorem isInterior : IsInterior (FinslerSpace μ) := by
   intro x y
   refine le_antisymm ?_ (edist_le_lengthDist x y)
+  change lengthDist x y ≤ edist (μ.toFinsler (μ.ofFinsler x)) (μ.toFinsler (μ.ofFinsler y))
+  rw [edist_toFinsler]
   exact le_iInf fun p ↦ μ.lengthDist_le_of_reach (x := μ.ofFinsler x) (y := μ.ofFinsler y) p.2
 
 end FinslerLengthStructure

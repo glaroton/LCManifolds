@@ -382,7 +382,7 @@ theorem continuous_ofFinsler (hb : μ.toFinslerSeminormField.IsBoundedBelow)
     (lt_min (div_pos hr hC) (div_pos hε hC)), fun q hq ↦ ?_⟩
   set y : M := μ.ofFinsler q
   have hd : μ.dist x₀ y < ENNReal.ofReal (min (r / C) (ε / C)) := by
-    have : edist q p = μ.dist y x₀ := rfl
+    have : edist q p = μ.dist y x₀ := μ.edist_toFinsler y x₀
     rw [Metric.mem_eball, this, μ.dist_comm hrev.out] at hq
     exact hq
   have hdr : μ.dist x₀ y < ENNReal.ofReal (r / C) :=
@@ -518,7 +518,7 @@ theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.I
           gcongr; linarith [hs.1]
       _ < r := by rw [one_mul]; exact hyn.trans_le (min_le_left _ _)
   have hd := μ.dist_le_norm_chart hm hmpos hy hx₀ hseg
-  change μ.dist y x₀ < ε
+  rw [μ.edist_toFinsler]
   refine hd.trans_lt (lt_of_lt_of_le ?_ hρε.le)
   rw [ENNReal.ofReal_lt_ofReal_iff hρ, div_lt_iff₀ hmpos, norm_sub_rev]
   linarith [hyn.trans_le (min_le_right _ _)]
