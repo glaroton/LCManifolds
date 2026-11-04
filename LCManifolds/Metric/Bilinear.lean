@@ -11,7 +11,8 @@ import LCManifolds.Metric.Finsler
 References: A. Schmeding, *An Introduction to Infinite-Dimensional Differential Geometry*,
 Cambridge University Press (2023), §4.1, Def. 4.1.1 (weak and strong Riemannian metrics);
 S. Lang, *Fundamentals of Differential Geometry*, Ch. VII; J. Bognár, *Indefinite Inner Product
-Spaces*, Springer (1974) (fundamental decompositions, Krein and Pontryagin spaces).
+Spaces*, Springer (1974): §I.11 (fundamental decompositions), Lemma II.10.2 (rank of positivity
+and negativity), Corollary IV.7.4 (intrinsic dimension), §V.1 (Krein spaces).
 
 All the metrics of this file are fields of **symmetric bilinear forms** `g_x` on the tangent
 spaces, smooth in charts (`SymmBilinField`). They are organized by their signature.
@@ -41,9 +42,11 @@ definite on `E₊` and negative definite on `E₋`. The **index** is the dimensi
 * The index does not depend on the decomposition (`FundamentalDecomposition.rank_neg_eq`). This
   holds for the *algebraic* dimension and in complete generality: a negative definite subspace
   meets `E₊` only at `0`, so the projection onto `E₋` along `E₊` is injective on it.
-* For a Krein space one usually measures `E₋` by its *Hilbert* dimension. For infinite index the
-  two dimensions differ, and the invariance of the Hilbert dimension uses the completeness of
-  `(E₊, B)` and `(E₋, -B)` (Bognár); it is not formalized here.
+* For finite index this is Bognár, Lemma II.10.2, where `dim E₋` is called the *rank of
+  negativity*. For infinite index, Bognár measures `E₋` instead by its *intrinsic* dimension, the
+  dimension in the topology of a Hilbert majorant, and proves its invariance (Corollary IV.7.4);
+  that version needs the majorant and is not formalized here. The two dimensions differ in
+  general (the algebraic dimension of an infinite-dimensional Banach space is uncountable).
 
 ## Lorentzian and pseudo-Riemannian metrics
 
