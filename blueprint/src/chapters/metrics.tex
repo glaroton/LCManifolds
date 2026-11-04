@@ -618,3 +618,79 @@ When $T$ is invertible, $g$ is a strong metric and the Levi-Civita connection ex
 example needs a metric $\langle T\cdot, \cdot\rangle$ whose topology is strictly coarser than
 that of $H$. Schmeding's original example \cite[Example 4.3.7]{Sch23} uses the weight $n^{-3}$
 and the factor $e^{-\|p\|^2}$; the obstruction is the same.
+
+\section{Submanifolds: orthogonal projectors in any signature}
+\label{sec:mt-projector-metric}
+
+Let $\beta$ be a continuous symmetric bilinear form on $F$, of any signature: an inner product,
+or the indefinite form of a Krein or a Pontryagin space. Let $X \subseteq F$ be an embedded
+submanifold with a field of projectors $P$ onto its tangent spaces
+(Section~\ref{sec:conn-projectors}). In a slice chart, with $\psi = \varphi^{-1}|_S$, the
+\emph{induced form} is $G(y)(a, b) = \beta(\dd\psi_y a, \dd\psi_y b)$. We say that $P$ is
+\emph{$\beta$-orthogonal} if $\beta(P_p w, t) = \beta(w, t)$ for every $w \in F$ and every
+$t \in \T_p X$.
+
+\begin{lemma}[Orthogonal projectors need nondegenerate ranges]
+  \label{lem:mt-orth-nondegenerate}
+  \lean{LCManifolds.nondegenerate_of_orthogonal}
+  \leanok
+  If $\beta$ is weakly nondegenerate and $Q$ is a $\beta$-orthogonal projector, no nonzero vector
+  of the range of $Q$ is $\beta$-orthogonal to the whole range.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  If $t \in \operatorname{ran} Q$ is orthogonal to $\operatorname{ran} Q$, then
+  $\beta(w, t) = \beta(Qw, t) = 0$ for every $w \in F$, so $t = 0$.
+\end{proof}
+
+\begin{theorem}[Gauss: the projector connection is metric]
+  \label{thm:mt-gauss}
+  \lean{LCManifolds.ProjectorField.IsOrthogonal, LCManifolds.ProjectorField.inducedForm, LCManifolds.ProjectorField.inducedDeriv, LCManifolds.ProjectorField.inducedDeriv_eq, LCManifolds.ProjectorField.dMB_param_mem_tangentSpace, LCManifolds.ProjectorField.isMetric_symb}
+  \leanok
+  \uses{thm:projector-connection, def:mt-metric-connection}
+  If $P$ is $\beta$-orthogonal, the connection of $P$ is metric for the induced form in every
+  slice chart:
+  $\partial G(y)(u)(a, b) = -G(y)(\Gamma(u, a), b) - G(y)(a, \Gamma(u, b))$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By the product rule,
+  $\partial G(y)(u)(a, b) = \beta(\dd\psi\, a, \dd^2\psi(u, b)) + \beta(\dd^2\psi(u, a), \dd\psi\, b)$.
+  On the other hand $\dd\psi\,\Gamma(u, a) = -P(\dd^2\psi(u, a))$, and since $\dd\psi\, b$ is
+  tangent, $\beta(P \dd^2\psi(u, a), \dd\psi\, b) = \beta(\dd^2\psi(u, a), \dd\psi\, b)$. The same
+  holds with $a$ and $b$ exchanged.
+\end{proof}
+
+No sign condition on $\beta$ is used: the computation is the one of the Riemannian case
+\cite[\S10.1.1]{Lar22}.
+
+\begin{theorem}[The projector connection is the Levi-Civita connection]
+  \label{thm:mt-projector-levi-civita}
+  \lean{LCManifolds.ProjectorField.inducedForm_sub, LCManifolds.ProjectorField.inducedForm_nondegenerate, LCManifolds.ProjectorField.symb_eq_of_isMetric}
+  \leanok
+  \uses{thm:mt-gauss, lem:mt-orth-nondegenerate, thm:mt-lc-unique}
+  If $\beta$ is weakly nondegenerate and $P$ is $\beta$-orthogonal, then in every slice chart the
+  induced form is weakly nondegenerate, and every symmetric family of symbols compatible with it
+  coincides with the symbols of $P$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:mt-orth-nondegenerate} the tangent spaces are nondegenerate, and
+  $\dd\psi_y$ maps $S$ injectively onto $\T_p X$; so $G(y)$ is weakly nondegenerate. Then
+  Theorem~\ref{thm:mt-gauss} and the uniqueness given by the Koszul formula
+  (Theorem~\ref{thm:mt-lc-unique}) apply.
+\end{proof}
+
+\begin{remark}[The indefinite case]
+  For an inner product on a Hilbert space every closed subspace has an orthogonal projector. For
+  an indefinite $\beta$ this fails, and Lemma~\ref{lem:mt-orth-nondegenerate} shows the first
+  obstruction: a degenerate tangent space, such as that of a lightlike hypersurface of a
+  Lorentzian space, admits no $\beta$-orthogonal projector, and the description of the
+  Levi-Civita connection by ``derive and project'' is lost. In a Krein space a closed subspace
+  has a $\beta$-orthogonal projector exactly when it is itself a Krein space with the induced form
+  \cite[Theorem~V.3.4]{Bog74}; being closed, nondegenerate and decomposable is not enough
+  \cite[Example~V.3.3]{Bog74}. This characterization uses completeness and is not formalized.
+\end{remark}

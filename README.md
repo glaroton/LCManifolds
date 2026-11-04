@@ -146,6 +146,13 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   (`NoLeviCivita.not_exists_isMetric`); on `ℓ²`, `T x = (x_n / (n + 1))_n` and
   `v = (1 / (n + 1))_n` do it (`NoLeviCivita.L2.not_exists_isMetric`, after Schmeding,
   Example 4.3.7).
+* [`LCManifolds/Metric/ProjectorMetric.lean`](LCManifolds/Metric/ProjectorMetric.lean):
+  submanifolds of a space with a continuous symmetric form `β` of any signature (inner product,
+  Krein, Pontryagin). If the field of projectors is `β`-orthogonal, its connection is metric for
+  the induced form (`ProjectorField.isMetric_symb`, Gauss) and is the Levi-Civita connection
+  (`ProjectorField.symb_eq_of_isMetric`). Orthogonal projectors only exist onto nondegenerate
+  subspaces (`nondegenerate_of_orthogonal`), which is what fails for lightlike submanifolds; in
+  Krein spaces the exact condition is Bognár, Theorem V.3.4 (not formalized).
 * [`LCManifolds/Examples/FinslerCusp.lean`](LCManifolds/Examples/FinslerCusp.lean): the two
   notions differ already on `ℝ²`. With `β(x, y) = max(0, x² - |y|) / (x² + |y|)`, the Finsler
   norms `μ_p(v) = ‖v‖ + β(p) |v₂|` are continuous along every `C¹` curve (a curve through the
