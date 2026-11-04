@@ -5,6 +5,7 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Metric.FinslerMetricSpace
 import LCManifolds.Metric.Bilinear
+import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 
 /-!
 # Bounded Finsler structures: the distance and the topology of the manifold
@@ -381,6 +382,136 @@ theorem continuous_ofFinsler (hb : μ.toFinslerSeminormField.IsBoundedBelow)
       _ = ε := by field_simp
   have := hεU hyU
   rwa [mem_preimage, i.1.left_inv hy] at this
+
+/-! ### Upper bounds: segments in a chart (Estructuras, (9.3)) -/
+
+section Upper
+
+variable {i : atlas E M} {m : ℝ}
+
+omit [CompleteSpace E] [T2Space M] in
+/-- **The distance is bounded by the chart distance** (*Estructuras*, (9.3)): if `μ` is bounded
+above on the chart `i` with constant `m > 0`, and the segment from `φ x` to `φ y` lies in
+`φ(U)`, then `d_b(x, y) ≤ ‖φ y − φ x‖ / m`. The segment is reparametrized by
+`Real.smoothTransition`, so that it is a `C¹` curve defined on all of `ℝ`. -/
+theorem dist_le_norm_chart (hm : μ.toFinslerSeminormField.IsBoundedAboveOn i m) (hmpos : 0 < m)
+    {x y : M} (hx : x ∈ i.1.source) (hy : y ∈ i.1.source)
+    (hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 x + s • (i.1 y - i.1 x) ∈ i.1.target) :
+    μ.dist x y ≤ ENNReal.ofReal (‖i.1 y - i.1 x‖ / m) := by
+  set w := i.1 y - i.1 x
+  set σ := Real.smoothTransition
+  set c : ℝ → E := fun t ↦ i.1 x + σ t • w
+  have hσ01 : ∀ t, σ t ∈ Icc (0 : ℝ) 1 := fun t ↦
+    ⟨Real.smoothTransition.nonneg t, Real.smoothTransition.le_one t⟩
+  have hcT : ∀ t, c t ∈ i.1.target := fun t ↦ hseg _ (hσ01 t)
+  have hσd : ContDiff ℝ 1 σ := Real.smoothTransition.contDiff (n := 1)
+  have hcd : ContDiff ℝ 1 c :=
+    contDiff_const.add (ContDiff.smul (f := σ) (g := fun _ ↦ w) hσd contDiff_const)
+  have hcc : Continuous c := hcd.continuous
+  set γ : ℝ → M := fun t ↦ i.1.symm (c t)
+  have hγ : IsCkCurve E 1 γ := by
+    refine ⟨i.1.continuousOn_symm.comp_continuous hcc hcT, fun j ↦ ?_⟩
+    set T := i.1.target ∩ i.1.symm ⁻¹' j.1.source
+    have hT : IsOpen T := isOpen_transition_domain i j
+    have hpre : γ ⁻¹' j.1.source = c ⁻¹' T := by
+      ext t; simp [γ, T, hcT t]
+    rw [hpre]
+    have hc1 : ContDiffMBOn 1 c (c ⁻¹' T) :=
+      ContDiffOn.contDiffMBOn (hT.preimage hcc) hcd.contDiffOn
+    have := ContDiffMBOn.comp (g := j.1 ∘ i.1.symm) (f := c) (hT.preimage hcc) hT
+      (smoothMBOn_transition' i j 1) hc1 (fun t ht ↦ ht)
+    exact this
+  have hγ0 : γ 0 = x := by simp [γ, c, σ, Real.smoothTransition.zero, i.1.left_inv hx]
+  have hγ1 : γ 1 = y := by simp [γ, c, σ, Real.smoothTransition.one, w, i.1.left_inv hy]
+  have hdist := μ.dist_le hγ zero_le_one
+  rw [hγ0, hγ1] at hdist
+  refine hdist.trans (ENNReal.ofReal_le_ofReal ?_)
+  -- the velocity in the chart is `σ'(t) w`
+  have hderiv : ∀ t, HasDerivAt c (deriv σ t • w) t := fun t ↦
+    (((Real.smoothTransition.contDiff (n := 1)).differentiable one_ne_zero t).hasDerivAt.smul_const
+      w).const_add _
+  have hdMB : ∀ t, dMB (i.1 ∘ γ) (t, 1) = deriv σ t • w := by
+    intro t
+    have hfun : i.1 ∘ γ = c := funext fun t ↦ i.1.right_inv (hcT t)
+    rw [hfun]
+    have hd : HasDirDerivAt c t 1 (deriv σ t • w) := by
+      simpa [HasDirDerivAt] using (hderiv t).tendsto_slope_zero
+    exact hd.dMB_eq
+  have hσ'nonneg : ∀ t, 0 ≤ deriv σ t := fun t ↦ Real.smoothTransition.monotone.deriv_nonneg
+  have hσ'cont : Continuous (deriv σ) :=
+    (Real.smoothTransition.contDiff (n := 1)).continuous_deriv le_rfl
+  have hbound : ∀ t ∈ Icc (0 : ℝ) 1,
+      μ.toFun (velocity E γ t) ≤ deriv σ t * ‖w‖ / m := by
+    intro t _
+    have hγt : γ t ∈ i.1.source := i.1.map_target (hcT t)
+    have h1 := hm (γ t) hγt (velocity E γ t).2
+    have h2 : tangentCoordChange (prefAtlas E (γ t)) i (γ t) (velocity E γ t).2 =
+        dMB (i.1 ∘ γ) (t, 1) := liftCoord_velocity hγ i hγt
+    rw [h2, hdMB, norm_smul, Real.norm_of_nonneg (hσ'nonneg t)] at h1
+    have h1' : m * μ.toFun (velocity E γ t) ≤ deriv σ t * ‖w‖ := h1
+    rw [le_div_iff₀ hmpos]
+    linarith
+  calc μ.length γ 0 1 ≤ ∫ t in (0 : ℝ)..1, deriv σ t * ‖w‖ / m :=
+        intervalIntegral.integral_mono_on zero_le_one
+          ((μ.continuous_velocity hγ).intervalIntegrable _ _)
+          (((hσ'cont.mul continuous_const).div_const m).intervalIntegrable _ _) hbound
+    _ = (∫ t in (0 : ℝ)..1, deriv σ t) * ‖w‖ / m := by
+        rw [intervalIntegral.integral_div, intervalIntegral.integral_mul_const]
+    _ = ‖w‖ / m := by
+        rw [intervalIntegral.integral_deriv_eq_sub
+          (fun t _ ↦ (Real.smoothTransition.contDiff (n := 1)).differentiable one_ne_zero t)
+          (hσ'cont.intervalIntegrable _ _), Real.smoothTransition.one,
+          Real.smoothTransition.zero, sub_zero, one_mul]
+
+omit [CompleteSpace E] [T2Space M] in
+/-- **For a weak Finsler manifold the topology of `d_b` is coarser than that of `M`**
+(*Estructuras*, (9.3)): if `μ` is reversible and bounded above, the identity `M → (M, d_b)` is
+continuous. -/
+theorem continuous_toFinsler_of_isBoundedAbove (ha : μ.toFinslerSeminormField.IsBoundedAbove)
+    [hrev : Fact μ.IsReversible] : Continuous μ.toFinsler := by
+  rw [continuous_iff_continuousAt]
+  intro x₀
+  obtain ⟨i, hx₀, m, hmpos, hm⟩ := ha x₀
+  obtain ⟨r, hr, hrT⟩ := Metric.isOpen_iff.mp i.1.open_target (i.1 x₀) (i.1.map_source hx₀)
+  rw [ContinuousAt, EMetric.tendsto_nhds]
+  intro ε hε
+  obtain ⟨ρ, hρ0, hρpos, hρε⟩ := ENNReal.lt_iff_exists_real_btwn.mp hε
+  have hρ : 0 < ρ := ENNReal.ofReal_pos.mp hρpos
+  have hev : ∀ᶠ y in 𝓝 x₀, y ∈ i.1.source ∧ ‖i.1 y - i.1 x₀‖ < min r (m * ρ) := by
+    have h1 := i.1.open_source.mem_nhds hx₀
+    have h2 := (i.1.continuousAt hx₀).eventually
+      (Metric.ball_mem_nhds (i.1 x₀) (lt_min hr (mul_pos hmpos hρ)))
+    filter_upwards [h1, h2] with y hy hy2
+    exact ⟨hy, by simpa [dist_eq_norm] using hy2⟩
+  filter_upwards [hev] with y ⟨hy, hyn⟩
+  have hseg : ∀ s ∈ Icc (0 : ℝ) 1, i.1 y + s • (i.1 x₀ - i.1 y) ∈ i.1.target := by
+    intro s hs
+    apply hrT
+    rw [Metric.mem_ball, dist_eq_norm]
+    have : i.1 y + s • (i.1 x₀ - i.1 y) - i.1 x₀ = (1 - s) • (i.1 y - i.1 x₀) := by module
+    rw [this, norm_smul, Real.norm_of_nonneg (by linarith [hs.2])]
+    calc (1 - s) * ‖i.1 y - i.1 x₀‖ ≤ 1 * ‖i.1 y - i.1 x₀‖ := by
+          gcongr; linarith [hs.1]
+      _ < r := by rw [one_mul]; exact hyn.trans_le (min_le_left _ _)
+  have hd := μ.dist_le_norm_chart hm hmpos hy hx₀ hseg
+  change μ.dist y x₀ < ε
+  refine hd.trans_lt (lt_of_lt_of_le ?_ hρε.le)
+  rw [ENNReal.ofReal_lt_ofReal_iff hρ, div_lt_iff₀ hmpos, norm_sub_rev]
+  linarith [hyn.trans_le (min_le_right _ _)]
+
+end Upper
+
+/-- **Corolario 9.1.9: for a strong Finsler manifold the two topologies coincide.** If `μ` is
+reversible and bounded (above and below), with a complete model and a Hausdorff manifold, the
+identity of `M` is a homeomorphism between the manifold topology and the topology of `d_b`. -/
+def homeomorphFinsler (hb : μ.toFinslerSeminormField.IsBounded) [Fact μ.IsReversible] :
+    M ≃ₜ FinslerSpace μ where
+  toFun := μ.toFinsler
+  invFun := μ.ofFinsler
+  left_inv _ := rfl
+  right_inv _ := rfl
+  continuous_toFun := μ.continuous_toFinsler_of_isBoundedAbove hb.isBoundedAbove
+  continuous_invFun := μ.continuous_ofFinsler hb.isBoundedBelow
 
 end FinslerLengthStructure
 
