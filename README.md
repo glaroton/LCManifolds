@@ -132,6 +132,15 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   (`tangentSpace_unitary`). The projectors `E_p w = (w - p w* p) / 2` form a field of projectors
   (`projectorField_unitary`); its geodesics satisfy `α̈ = α α̈* α` (`isGeodesic_unitary_iff`), and
   the curves `t ↦ p exp(t X)` are geodesics (`isGeodesic_expCurve`).
+* [`LCManifolds/Examples/PeriodicSmooth.lean`](LCManifolds/Examples/PeriodicSmooth.lean): the
+  space `C^∞_per` of smooth `1`-periodic functions, with the topology of uniform convergence of
+  all derivatives (seminorms `sup |u^{(k)}|`), is a Fréchet space: locally convex, Hausdorff,
+  metrizable and complete (`CInfPer.tendsto_iff`, `CInfPer.isClosed_range_J`).
+* [`LCManifolds/Examples/DiffCircle.lean`](LCManifolds/Examples/DiffCircle.lean): `Diff⁺(S¹)`,
+  through its lifts `id + u`, as the open subset `Ω = {u | 1 + u' > 0}` of `C^∞_per`
+  (`DiffCircle.isOpen_domain`), hence a Fréchet (not Banach) manifold. For `u ∈ Ω`, `id + u` is a
+  diffeomorphism of `ℝ`, and `Ω` is closed under inversion and composition (`DiffCircle.inv_mem`,
+  `DiffCircle.comp_mem`). Smoothness of the group operations is left to the Lie group phase.
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:

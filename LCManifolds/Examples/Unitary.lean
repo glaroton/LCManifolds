@@ -5,7 +5,6 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Projector
 import LCAnalysis.MBFrechet
-import Mathlib.Analysis.SpecialFunctions.Exponential
 
 /-!
 # Example: the unitary group of a Banach `*`-algebra
