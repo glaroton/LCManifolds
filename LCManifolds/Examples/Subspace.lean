@@ -45,6 +45,45 @@ theorem isSplitSubmanifold_subspace (hS : S.ClosedComplemented) :
     IsSplitSubmanifold (S : Set F) S :=
   ⟨isEmbeddedSubmanifold_subspace (hS.isClosed), hS⟩
 
+omit [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] in
+/-- In the (identity) charts of the model spaces, the differential of the linear inclusion
+`S → F` is the inclusion. -/
+theorem dMB_chart_subtypeL (x : S) :
+    (fun v : S ↦ dMB (chartAt F (S.subtypeL x) ∘ S.subtypeL ∘ (chartAt S x).symm)
+      (chartAt S x x, v)) = ⇑S.subtypeL := by
+  funext v
+  change dMB (⇑S.subtypeL) (x, v) = S.subtypeL v
+  exact (S.subtypeL.hasDirDerivAt x v).dMB_eq
+
+/-- **The linear inclusion of a closed subspace is an immersion**: its differential is a
+topological isomorphism onto the closed subspace `S`. -/
+theorem isImmersion_subtypeL (hS : IsClosed (S : Set F)) : IsImmersion S F S.subtypeL := by
+  refine ⟨fun k ↦ (contMDiffMBOn_iff_contDiffMBOn isOpen_univ).mpr
+    (S.subtypeL.contDiffMBOn k univ), fun x ↦ ?_⟩
+  rw [dMB_chart_subtypeL]
+  refine ⟨?_, Topology.IsEmbedding.subtypeVal⟩
+  have : range (⇑S.subtypeL) = (S : Set F) := by
+    ext y
+    simp
+  rwa [this]
+
+/-- **The linear inclusion of a subspace is a split immersion if and only if the subspace is
+complemented.** -/
+theorem isSplitImmersion_subtypeL_iff : IsSplitImmersion S F S.subtypeL ↔ S.ClosedComplemented := by
+  constructor
+  · rintro ⟨-, h⟩
+    obtain ⟨r, hr⟩ := h 0
+    refine ⟨r, fun v ↦ ?_⟩
+    have hd := congrFun (dMB_chart_subtypeL (S := S) 0) v
+    have := hr v
+    rwa [hd] at this
+  · rintro ⟨r, hr⟩
+    refine ⟨fun k ↦ (contMDiffMBOn_iff_contDiffMBOn isOpen_univ).mpr
+      (S.subtypeL.contDiffMBOn k univ), fun x ↦ ⟨r, fun v ↦ ?_⟩⟩
+    have hd := congrFun (dMB_chart_subtypeL (S := S) x) v
+    rw [hd]
+    exact hr v
+
 /-- The tangent space of a closed subspace is the subspace itself. -/
 theorem tangentSpace_subspace (hS : IsClosed (S : Set F)) (p : (S : Set F)) :
     (isEmbeddedSubmanifold_subspace hS).tangentSpace p = S := by

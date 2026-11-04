@@ -22,6 +22,7 @@ import LCManifolds.Examples.Subspace
 import LCManifolds.Examples.OpenAndGraph
 import LCManifolds.Examples.Sphere
 import LCManifolds.Examples.Counterexamples
+import LCManifolds.Examples.Phillips
 import LCManifolds.Examples.Lemniscate
 import LCManifolds.Examples.Unitary
 import LCManifolds.Examples.PeriodicSmooth

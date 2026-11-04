@@ -28,6 +28,11 @@ Main results:
 * `Ω` is closed under the group operations: the inverse `φ⁻¹ = id + v` has `v ∈ Ω`
   (`DiffCircle.inv_mem`) and the composition `(id + u) ∘ (id + w) = id + (w + u ∘ (id + w))`
   lies in `Ω` (`DiffCircle.comp_mem`), with `1 + (w + u ∘ φ_w)' = (1 + u' ∘ φ_w)(1 + w')`.
+* Conversely, every diffeomorphism `φ` of `ℝ` with `φ (x + 1) = φ x + 1` is `id + u` for a unique
+  `u ∈ Ω` (`DiffCircle.existsUnique_mem_domain_lift_eq`). More precisely, `u ∈ Ω` if and only if
+  `id + u` has a differentiable left inverse (`DiffCircle.mem_domain_iff`); monotonicity is
+  automatic. So `Ω` is exactly the group of diffeomorphisms of `ℝ` commuting with the
+  translation by `1`.
 
 The smoothness of composition and inversion as maps `Ω × Ω → Ω`, `Ω → Ω` (which makes `Ω` a Lie
 group) is not proved here; it belongs to the theory of Lie groups.
@@ -180,6 +185,73 @@ theorem comp_mem {u w : CInfPer} (hu : u ∈ domain) (hw : w ∈ domain) : comp 
     exact (hasDerivAt_lift u (lift w x)).comp x (hasDerivAt_lift w x)
   rw [← (hasDerivAt_lift (comp u w) x).deriv, h.deriv]
   exact mul_pos (hu _) (hw x)
+
+/-! ### The converse: every lift of a diffeomorphism comes from `Ω` -/
+
+theorem lift_injective : Injective lift := by
+  intro u v h
+  ext x
+  have := congrFun h x
+  simp only [lift] at this
+  linarith
+
+/-- **Characterization of `Ω`.** For `u ∈ C^∞_per`, the following are equivalent:
+`1 + u' > 0` everywhere, and `id + u` has a differentiable left inverse. No monotonicity is
+assumed: a continuous injective map of `ℝ` is strictly monotone, and it cannot be decreasing
+since it commutes with the translation by `1`; so `(id + u)' ≥ 0`, and the chain rule
+`ψ'(φ x) φ'(x) = 1` excludes zeros. -/
+theorem mem_domain_iff (u : CInfPer) :
+    u ∈ domain ↔ ∃ ψ : ℝ → ℝ, Differentiable ℝ ψ ∧ LeftInverse ψ (lift u) := by
+  constructor
+  · intro hu
+    exact ⟨(liftHomeomorph hu).symm, (contDiff_liftHomeomorph_symm hu).differentiable (by simp),
+      (liftHomeomorph hu).symm_apply_apply⟩
+  rintro ⟨ψ, hψ, hinv⟩ x
+  have hd := hasDerivAt_lift u x
+  have hmono : StrictMono (lift u) := by
+    rcases (continuous_lift u).strictMono_of_inj hinv.injective with h | h
+    · exact h
+    · have := h (lt_add_one x)
+      rw [lift_add_one] at this
+      linarith
+  have hnonneg := hd.nonneg_of_monotone hmono.monotone
+  have hchain : HasDerivAt (ψ ∘ lift u) (deriv ψ (lift u x) * (1 + deriv u x)) x :=
+    (hψ (lift u x)).hasDerivAt.comp x hd
+  rw [show ψ ∘ lift u = id from funext hinv] at hchain
+  have h1 := (hasDerivAt_id x).unique hchain
+  have hne : 1 + deriv u x ≠ 0 := by
+    intro h
+    rw [h, mul_zero] at h1
+    exact one_ne_zero h1
+  exact lt_of_le_of_ne hnonneg (Ne.symm hne)
+
+/-- The periodic part `φ - id` of a smooth map commuting with the translation by `1`. -/
+def ofLift (φ : ℝ → ℝ) (hφ : ContDiff ℝ ∞ φ) (hper : ∀ x, φ (x + 1) = φ x + 1) : CInfPer :=
+  mk (fun x ↦ φ x - x) (hφ.sub contDiff_id) (fun x ↦ by
+    change φ (x + 1) - (x + 1) = φ x - x
+    rw [hper]
+    ring)
+
+theorem lift_ofLift {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (hper : ∀ x, φ (x + 1) = φ x + 1) :
+    lift (ofLift φ hφ hper) = φ := by
+  funext x
+  change x + (φ x - x) = φ x
+  ring
+
+/-- **Every diffeomorphism of `ℝ` commuting with the translation by `1` is the lift `id + u` of a
+unique `u ∈ Ω`.** The diffeomorphism `φ` is only asked to be smooth with a differentiable left
+inverse; it is then automatically increasing, i.e. it lifts an orientation preserving
+diffeomorphism of the circle (lifts of orientation reversing ones satisfy
+`φ (x + 1) = φ x - 1`). Together with `DiffCircle.liftHomeomorph` and
+`DiffCircle.contDiff_liftHomeomorph_symm`, this identifies `Ω` with the group of diffeomorphisms
+of `ℝ` that commute with the translation by `1`, i.e. with the universal cover of `Diff⁺(S¹)`. -/
+theorem existsUnique_mem_domain_lift_eq {φ ψ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ)
+    (hper : ∀ x, φ (x + 1) = φ x + 1) (hψ : Differentiable ℝ ψ) (hinv : LeftInverse ψ φ) :
+    ∃! u, u ∈ domain ∧ lift u = φ := by
+  refine ⟨ofLift φ hφ hper, ⟨?_, lift_ofLift hφ hper⟩, fun v hv ↦ ?_⟩
+  · rw [mem_domain_iff, lift_ofLift hφ hper]
+    exact ⟨ψ, hψ, hinv⟩
+  · exact lift_injective (hv.2.trans (lift_ofLift hφ hper).symm)
 
 end DiffCircle
 

@@ -56,6 +56,11 @@ comparable; see the subtleties below.
   range, already between Banach spaces: the inclusion `ℓ¹ → ℓ²` is continuous, linear,
   injective, and its range is dense and not closed. Formalized in
   `LCManifolds.Examples.Counterexamples` (`not_isImmersion_lpInclusion`).
+* *Immersions versus split immersions.* A closed subspace need not be complemented, already in
+  Banach spaces: by Phillips' lemma `c₀` has no complement in `ℓ^∞`. So `c₀ ⊆ ℓ^∞` is an
+  embedded submanifold that is not split, and the inclusion is an immersion that is not a split
+  immersion. Formalized, with Whitley's proof, in `LCManifolds.Examples.Phillips`
+  (`Phillips.not_isSplitImmersion_c0`).
 * *Immersions in the sense of Glöckner–Neeb.* Their Def. 3.3.25(b) asks for a local linear
   form with a continuous linear left inverse, which forces the range to be complemented. We do
   not use it as the definition of an immersion: it is much more restrictive than the notion

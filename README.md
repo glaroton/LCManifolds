@@ -105,7 +105,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
 * [`LCManifolds/Examples/Subspace.lean`](LCManifolds/Examples/Subspace.lean): example. A closed
   subspace is an embedded submanifold (split if complemented), with tangent space itself; a
   continuous projection onto it is a constant field of projectors, whose connection is flat and
-  whose geodesics are the curves with zero acceleration.
+  whose geodesics are the curves with zero acceleration. The linear inclusion of a closed
+  subspace is an immersion, and it is a split immersion exactly when the subspace is
+  complemented (`isImmersion_subtypeL`, `isSplitImmersion_subtypeL_iff`).
 * [`LCManifolds/Examples/OpenAndGraph.lean`](LCManifolds/Examples/OpenAndGraph.lean): examples.
   Open subsets are embedded submanifolds (smooth charts can be restricted to open sets). The
   graph of a smooth map is a split submanifold, with the explicit slice chart
@@ -120,6 +122,11 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   counterexamples to the implications between submanifold notions. The inclusion `ℓ¹ → ℓ²`
   (continuous by the closed graph theorem) is a weak immersion but not an immersion
   (`isWeakImmersion_lpInclusion`, `not_isImmersion_lpInclusion`).
+* [`LCManifolds/Examples/Phillips.lean`](LCManifolds/Examples/Phillips.lean): Phillips' lemma,
+  `c₀` is not complemented in `ℓ^∞` (`Phillips.not_closedComplemented_c0`), with Whitley's proof
+  through an uncountable almost disjoint family of subsets of `ℕ`. Hence `c₀ ⊆ ℓ^∞` is an
+  embedded submanifold that is not split, and the inclusion `c₀ → ℓ^∞` is an immersion that is
+  not a split immersion (`Phillips.isImmersion_c0`, `Phillips.not_isSplitImmersion_c0`).
 * [`LCManifolds/Examples/Lemniscate.lean`](LCManifolds/Examples/Lemniscate.lean): the figure
   eight `t ↦ (sin θ, sin 2θ)`, `θ = 2 arctan t`, is an injectively immersed submanifold of `ℝ²`
   (`isImmersedSubmanifold_lemniscate`) that is not initial (`not_isInitialSubmanifold_lemniscate`):
@@ -140,7 +147,11 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   through its lifts `id + u`, as the open subset `Ω = {u | 1 + u' > 0}` of `C^∞_per`
   (`DiffCircle.isOpen_domain`), hence a Fréchet (not Banach) manifold. For `u ∈ Ω`, `id + u` is a
   diffeomorphism of `ℝ`, and `Ω` is closed under inversion and composition (`DiffCircle.inv_mem`,
-  `DiffCircle.comp_mem`). Smoothness of the group operations is left to the Lie group phase.
+  `DiffCircle.comp_mem`). Conversely, every diffeomorphism of `ℝ` commuting with the translation
+  by `1` is `id + u` for a unique `u ∈ Ω` (`DiffCircle.existsUnique_mem_domain_lift_eq`); in
+  fact `u ∈ Ω` exactly when `id + u` has a differentiable left inverse
+  (`DiffCircle.mem_domain_iff`). Smoothness of the group operations is left to the Lie group
+  phase.
 * [`LCManifolds/ContMDiff.lean`](LCManifolds/ContMDiff.lean): `C^k` and smooth maps between
   manifolds (`ContMDiffMBOn`, `SmoothMBMOn`, `SmoothMBM`), defined through the local
   representatives in the preferred charts:
