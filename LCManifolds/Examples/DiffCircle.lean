@@ -12,13 +12,13 @@ import LCManifolds.Examples.OpenAndGraph
 References: A. Hatcher, *Algebraic Topology*, Cambridge University Press (2002), §1.3
 (Prop. 1.30, homotopy lifting; Prop. 1.33, lifting criterion; Prop. 1.34, uniqueness of lifts);
 A. Katok, B. Hasselblatt, *Introduction to the Modern Theory of Dynamical Systems*, Cambridge
-University Press (1995) (lifts and degree of circle maps); M. R. Herman, *Sur la
-conjugaison différentiable des difféomorphismes du cercle à des rotations*, Publ. Math. IHÉS 49
-(1979), Introduction (Remarque importante) and Ch. I, 1.7; R. S. Hamilton, *The inverse function theorem of Nash and Moser*, Bull. Amer.
-Math. Soc. 7 (1982), Part I; B. Khesin, R. Wendt, *The Geometry of Infinite-Dimensional
-Groups*, Springer (2009); H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*
-(arXiv:2602.12362). In Mathlib, the monotone lifts `φ (x + 1) = φ x + 1` of circle maps are
-`CircleDeg1Lift` (`Mathlib.Dynamics.Circle.RotationNumber.TranslationNumber`).
+University Press (1995) (lifts and degree of circle maps); M. R. Herman, *Sur la conjugaison
+différentiable des difféomorphismes du cercle à des rotations*, Publ. Math. IHÉS 49 (1979),
+Introduction (Remarque importante) and Ch. I, 1.7; R. S. Hamilton, *The inverse function theorem
+of Nash and Moser*, Bull. Amer. Math. Soc. 7 (1982), Part I, Example 4.2.6; H. Glöckner,
+K.-H. Neeb, *Infinite-Dimensional Lie Groups* (arXiv:2602.12362). In Mathlib, the monotone lifts
+`φ (x + 1) = φ x + 1` of circle maps are `CircleDeg1Lift`
+(`Mathlib.Dynamics.Circle.RotationNumber.TranslationNumber`).
 
 ## From the circle to its lifts (covering theory; not formalized here)
 
@@ -39,8 +39,9 @@ the lifts.
   `f` lifts to the inverse of `φ`).
 
 So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. I, 1.7, where
-`D^r(T¹) = {id + φ}` is called the universal cover of `Diff^r_+(T¹)`; Hamilton, Part I). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
-`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Khesin–Wendt).
+`D^r(T¹) = {id + φ}` is called the universal cover of `Diff^r_+(T¹)`; Hamilton, Example 4.2.6,
+who parametrizes `Diff⁺(S¹)` by `S¹ × {f' > 0, ∫ f' = 2π}`). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
+`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Herman, Introduction).
 
 ## The lifts
 
