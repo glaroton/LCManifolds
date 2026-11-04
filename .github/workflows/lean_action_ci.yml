@@ -16,11 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Free disk space on the runner
+        # The Mathlib cache and the documentation need more disk than the runner image leaves
+        # free; remove preinstalled toolchains that the build does not use.
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL \
+            /usr/local/share/boost /usr/local/.ghcup /usr/share/swift
+          sudo docker image prune --all --force || true
+          df -h / /mnt
       - uses: actions/checkout@v7
       - uses: leanprover/lean-action@v1
       - name: Prepare memory for the documentation build
         run: |
-          sudo fallocate -l 16G /mnt/docswap
+          # Swap file of up to 16G, leaving at least 4G free on the disk.
+          avail=$(df --output=avail -BG /mnt | tail -1 | tr -dc '0-9')
+          size=$(( avail > 20 ? 16 : avail - 4 ))
+          if [ "$size" -lt 2 ]; then echo "Not enough disk for swap (${avail}G free)"; exit 1; fi
+          echo "Creating a ${size}G swap file (${avail}G free)"
+          sudo fallocate -l ${size}G /mnt/docswap
           sudo chmod 600 /mnt/docswap
           sudo mkswap /mnt/docswap
           sudo swapon /mnt/docswap

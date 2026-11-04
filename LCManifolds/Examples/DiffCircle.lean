@@ -9,16 +9,49 @@ import LCManifolds.Examples.OpenAndGraph
 /-!
 # The group `Diff⁺(S¹)` as an open subset of `C^∞_per`
 
-An orientation preserving diffeomorphism of the circle `S¹ = ℝ / ℤ` lifts to a diffeomorphism
+References: A. Hatcher, *Algebraic Topology*, Cambridge University Press (2002), §1.3
+(Prop. 1.30, homotopy lifting; Prop. 1.33, lifting criterion; Prop. 1.34, uniqueness of lifts);
+A. Katok, B. Hasselblatt, *Introduction to the Modern Theory of Dynamical Systems*, Cambridge
+University Press (1995), §11.1 (lifts and degree of circle maps); M. R. Herman, *Sur la
+conjugaison différentiable des difféomorphismes du cercle à des rotations*, Publ. Math. IHÉS 49
+(1979), Ch. II; R. S. Hamilton, *The inverse function theorem of Nash and Moser*, Bull. Amer.
+Math. Soc. 7 (1982), Part I, §4.6; B. Khesin, R. Wendt, *The Geometry of Infinite-Dimensional
+Groups*, Springer (2009), Ch. II; H. Glöckner, K.-H. Neeb, *Infinite-Dimensional Lie Groups*
+(arXiv:2602.12362). In Mathlib, the monotone lifts `φ (x + 1) = φ x + 1` of circle maps are
+`CircleDeg1Lift` (`Mathlib.Dynamics.Circle.RotationNumber.TranslationNumber`).
+
+## From the circle to its lifts (covering theory; not formalized here)
+
+Let `π : ℝ → S¹ = ℝ / ℤ` be the projection, a covering map and a local diffeomorphism. The
+following facts are classical and are **not** formalized in this file; we work directly with
+the lifts.
+
+* *Existence and uniqueness of lifts.* Since `ℝ` is simply connected, every continuous
+  `f : S¹ → S¹` has a continuous lift `φ : ℝ → ℝ`, `π ∘ φ = f ∘ π`, by the lifting criterion
+  (Hatcher, Prop. 1.33), and two lifts differ by an integer constant (Hatcher, Prop. 1.34).
+* *Degree.* `φ (x + 1) - φ x` is a continuous integer valued function, hence a constant `d`, the
+  degree of `f` (Katok–Hasselblatt, §11.1). A homeomorphism has degree `±1`, and it preserves
+  the orientation exactly when `d = 1`, i.e. `φ (x + 1) = φ x + 1`; then `φ = id + u` with `u`
+  `1`-periodic.
+* *Smoothness.* Since `π` is a local diffeomorphism, `φ` is smooth if and only if `f` is, and
+  `φ` is a diffeomorphism of `ℝ` exactly when `f` is a diffeomorphism of `S¹` (the inverse of
+  `f` lifts to the inverse of `φ`).
+
+So `Diff⁺(S¹) ≅ Ω / ℤ`, where `n ∈ ℤ` acts by `u ↦ u + n` (Herman, Ch. II; Hamilton,
+I.4.6). The set `Ω` below is convex (`DiffCircle.convex_domain`), hence contractible, and
+`Ω → Diff⁺(S¹)` is the universal cover `\widetilde{Diff}⁺(S¹)` (Khesin–Wendt, Ch. II).
+
+## The lifts
+
+An orientation preserving diffeomorphism of the circle lifts to a diffeomorphism
 `φ = id + u` of `ℝ` with `u` smooth and `1`-periodic and `φ' = 1 + u' > 0`. We identify
-`Diff⁺(S¹)` (more precisely, its universal cover: the lifts are determined up to integer
-translations) with the set
+the universal cover of `Diff⁺(S¹)` with the set
 
   `Ω = {u ∈ C^∞_per | 1 + u'(x) > 0 for all x}`.
 
 Main results:
 
-* `DiffCircle.isOpen_domain`: `Ω` is open in the Fréchet space `C^∞_per`. Hence `Ω` is a
+* `DiffCircle.isOpen_domain`, `DiffCircle.convex_domain`: `Ω` is open and convex in the Fréchet space `C^∞_per`. Hence `Ω` is a
   manifold modeled on `C^∞_per` (`DiffCircle.Ω`, an `Opens`, with its induced charted space and
   `MBManifold` structure). It is a **Fréchet manifold**: the model is complete
   (`CInfPer.instCompleteSpace`), but not normable, so it is not a Banach manifold.
@@ -91,6 +124,22 @@ example : ChartedSpace CInfPer Ω := inferInstance
 example : MBManifold CInfPer Ω := inferInstance
 
 theorem zero_mem : (0 : CInfPer) ∈ domain := fun x ↦ by simp
+
+/-- `Ω` is convex: `1 + (a u + b v)' = a (1 + u') + b (1 + v')`. In particular it is
+contractible, so it is the universal cover of `Diff⁺(S¹)`. -/
+theorem convex_domain : Convex ℝ domain := by
+  intro u hu v hv a b ha hb hab x
+  have hd : deriv (⇑(a • u + b • v)) x = a * deriv u x + b * deriv v x := by
+    rw [coe_add, coe_smul, coe_smul]
+    exact (((differentiable u x).hasDerivAt.const_smul a).add
+      ((differentiable v x).hasDerivAt.const_smul b)).deriv
+  rw [hd]
+  rcases ha.eq_or_lt with rfl | ha'
+  · rw [zero_add] at hab
+    subst hab
+    simpa using hv x
+  · have := hu x
+    nlinarith [hv x]
 
 /-! ### The lifts `id + u` -/
 
