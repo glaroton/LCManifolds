@@ -12,8 +12,8 @@ import LCAnalysis.BoundedBelow
 Let `M` be a Banach manifold, i.e. modeled on a **complete** normed space `E` (`CompleteSpace E`),
 and `N` a manifold modeled on a normed space `F`, complete or not. An immersion `f : M → N` (the
 differential is a topological isomorphism onto a closed subspace, with no complement assumed)
-reflects smoothness of continuous maps: if `g : P → M` is continuous and `f ∘ g` is smooth, then `g` is smooth
-(`IsImmersion.smoothMBM_of_comp`). The test manifold `P` may be modeled on any locally convex
+reflects smoothness of continuous maps: if `g : P → M` is continuous and `f ∘ g` is smooth, then
+`g` is smooth (`IsImmersion.smoothMBM_of_comp`). The test manifold `P` may be modeled on any locally convex
 space. Consequently, an injective immersion which is a homeomorphism onto its image is an initial
 submanifold (`IsImmersedSubmanifold.isInitialSubmanifold`).
 
