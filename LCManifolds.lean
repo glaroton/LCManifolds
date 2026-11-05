@@ -47,4 +47,5 @@ import LCManifolds.Metric.FinslerMetricSpace
 import LCManifolds.Metric.FinslerSymmetrization
 import LCManifolds.Metric.FinslerBounded
 import LCManifolds.Metric.FinslerHopfRinow
+import LCManifolds.Metric.FinslerGeodesics
 import LCManifolds.Examples.FinslerCusp

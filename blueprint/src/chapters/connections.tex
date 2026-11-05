@@ -535,6 +535,34 @@ $\alpha(t)$.
   $(a, t_1 + \varepsilon)$, and $t_1 + \varepsilon > b$.
 \end{proof}
 
+\begin{theorem}[Complete Finsler manifolds: geodesics extend {\cite[Prop.~9.2.1]{Lar22}}]
+  \label{thm:finsler-geodesic-extension}
+  \lean{LCManifolds.Connection.IsGeodesicOn.exists_extend_of_complete}
+  \leanok
+  \uses{thm:geodesic-extension}
+  Let $M$ be Hausdorff, with a Finsler length structure $\mu$ bounded below, such that $M$ is
+  complete for the symmetrized distance $\max(d_b(x, y), d_b(y, x))$. If $\alpha$ is a geodesic on
+  $(a, b)$ with $\mu(\dot\alpha)$ and $\mu(-\dot\alpha)$ bounded, then $\alpha$ extends to a
+  geodesic on an interval $(a', b') \supsetneq (a, b)$ at both ends.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Reparametrizing arcs of $\alpha$ by a smooth ramp gives $\Ck{1}$ competitors for $d_b$, so
+  $d_b(\alpha(s), \alpha(t)) \le L(t - s)$ and the same backwards; thus $\alpha(t)$ is Cauchy as
+  $t \to b^-$. Its limit in $(M, d_b)$ is a limit in $M$ because $\mu$ is bounded below, and the
+  lower bound also bounds the velocity in a chart around the limit point.
+  Theorem~\ref{thm:geodesic-extension} applies; the end $a$ is treated by reversing time.
+\end{proof}
+
+\begin{remark}
+  In \cite{Lar22} the metric is invariant under the parallel transport of the spray, so geodesics
+  have constant speed; we only use bounded speed. Since $\mu$ need not be reversible, both
+  $\mu(\dot\alpha)$ and $\mu(-\dot\alpha)$ have to be bounded. Maximal geodesics are not
+  constructed, so the statement ``every geodesic is defined on $\mathbb{R}$'' appears as the
+  extension property above.
+\end{remark}
+
 \section{Fields of projectors: derive and project}
 \label{sec:conn-projectors}
 
