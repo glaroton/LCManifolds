@@ -443,8 +443,97 @@ the classical definition of the geodesics of a spray.
   the exponential map and parallel transport along curves are not part of the theory developed
   here; they would have to be proved case by case, or under additional hypotheses on $E$.
   What we can do in general is to recognize geodesics, as in Theorem~\ref{thm:projector-geodesics}
-  below.
+  below. When the model space is a Banach space, existence and uniqueness are proved in the next
+  section.
 \end{remark}
+
+\section{Geodesics on Banach manifolds}
+
+In this section $E$ is a Banach space. Then Michal--Bastiani and Fr\'echet derivatives agree, and
+in a chart $i$ the geodesic equation is the second order equation
+\[
+  c'' = \Gamma_i(c)(c', c')
+\]
+on the open set $\varphi_i(U_i) \subseteq E$, with $\Gamma_i$ smooth and bilinear in the last two
+variables. We say that $\alpha$ is a \emph{geodesic on an open set} $I \subseteq \mathbb{R}$ if it is
+continuous on $I$ and satisfies this equation at every $t \in I$ in the preferred chart at
+$\alpha(t)$.
+
+\begin{theorem}[The geodesic equation does not depend on the chart]
+  \label{thm:geodesic-eq-chart}
+  \lean{LCManifolds.geodesicEq_comp, LCManifolds.Connection.geodesicEqAt_of_chart}
+  \leanok
+  If $\alpha$ is continuous at $t$ and satisfies the geodesic equation at $t$ in a chart around
+  $\alpha(t)$, it satisfies it in every chart around $\alpha(t)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  With $\tau = \varphi_j \circ \varphi_i^{-1}$ and $c = \varphi_i \circ \alpha$,
+  $(\tau \circ c)'' = D^2\tau(c', c') + D\tau(c'')$, and the change of charts law of the symbols
+  reads $\Gamma_j(\tau y)(D\tau\, a, D\tau\, b) = D\tau\, \Gamma_i(y)(a, b) + D^2\tau(a, b)$.
+\end{proof}
+
+\begin{theorem}[Local existence of geodesics, with uniform time]
+  \label{thm:geodesic-existence}
+  \lean{LCManifolds.Connection.exists_isGeodesicOn_uniform, LCManifolds.Connection.exists_isGeodesicOn}
+  \leanok
+  \uses{thm:geodesic-eq-chart}
+  Let $y_0$ be a point of the chart $i$. There is $r > 0$ such that for every $K \ge 0$ there is
+  $\varepsilon > 0$ with the following property: for every $y$ with $\|y - y_0\| \le r$ and every
+  $w$ with $\|w\| \le K$ there is a geodesic $\alpha$ on $(-\varepsilon, \varepsilon)$, staying in
+  the domain of $i$, with $\varphi_i(\alpha(0)) = y$ and $(\varphi_i \circ \alpha)'(0) = w$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Picard--Lindel\"of for the first order system $(c, v)' = (v, \Gamma_i(c)(v, v))$, whose right
+  hand side is $\Ck{1}$, hence locally Lipschitz; the time is uniform for small velocities, and the
+  homogeneity of the equation ($t \mapsto c(st)$ is a solution with initial velocity $s\, c'(0)$)
+  makes it uniform for velocities bounded by $K$.
+\end{proof}
+
+\begin{theorem}[Uniqueness of geodesics]
+  \label{thm:geodesic-uniqueness}
+  \lean{LCManifolds.Connection.IsGeodesicOn.eqOn}
+  \leanok
+  \uses{thm:geodesic-eq-chart}
+  If $M$ is Hausdorff, two geodesics on $(a, b)$ with the same position and velocity at some
+  $t_0 \in (a, b)$ agree on $(a, b)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The set of $t$ near which the two geodesics agree is open. It is also closed in $(a, b)$: at a
+  limit point $t$ the two curves meet, because $M$ is Hausdorff; in a chart around this common
+  point both solve the same equation, which has unique solutions since its right hand side is
+  locally Lipschitz. By connectedness it is all of $(a, b)$.
+\end{proof}
+
+\begin{remark}
+  The Hausdorff hypothesis cannot be dropped: on the line with two origins, the two copies of a
+  line through the origins are geodesics of the flat connection with the same data at $t = 1$, and
+  they differ at $t = 0$.
+\end{remark}
+
+\begin{theorem}[Extension of geodesics]
+  \label{thm:geodesic-extension}
+  \lean{LCManifolds.Connection.IsGeodesicOn.exists_extend}
+  \leanok
+  \uses{thm:geodesic-existence, thm:geodesic-uniqueness}
+  Let $M$ be Hausdorff, and let $\alpha$ be a geodesic on $(a, b)$ such that $\alpha(t) \to q$ as
+  $t \to b^-$ and the velocity of $\alpha$, read in a chart around $q$, stays bounded as
+  $t \to b^-$. Then $\alpha$ extends to a geodesic on $(a, b')$ for some $b' > b$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Let $\varepsilon$ be the uniform time of Theorem~\ref{thm:geodesic-existence} around
+  $\varphi_i(q)$. Take $t_1 > b - \varepsilon/2$ with $\alpha(t_1)$ close to $q$, and the geodesic
+  $\mu$ with the position and velocity of $\alpha$ at $t_1$. By uniqueness
+  $\mu(t - t_1) = \alpha(t)$ where both are defined, so the two curves glue to a geodesic on
+  $(a, t_1 + \varepsilon)$, and $t_1 + \varepsilon > b$.
+\end{proof}
 
 \section{Fields of projectors: derive and project}
 \label{sec:conn-projectors}
