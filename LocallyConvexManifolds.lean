@@ -12,6 +12,9 @@ import LocallyConvexManifolds.VectorField
 import LocallyConvexManifolds.Derivation
 import LocallyConvexManifolds.LocalForm
 import LocallyConvexManifolds.DifferentialForm
+import LocallyConvexManifolds.Wedge
+import LocallyConvexManifolds.LieDerivative
+import LocallyConvexManifolds.DeRham
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold
 import LocallyConvexManifolds.Connection

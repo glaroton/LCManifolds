@@ -334,6 +334,26 @@ theorem dLoc_apply (ω : E × (Fin n → E) → F) (y : E) (v : Fin (n + 1) → 
       ∑ i : Fin (n + 1), (-1 : ℝ) ^ (i : ℕ) • dMB (fun z ↦ ω (z, i.removeNth v)) (y, v i) :=
   rfl
 
+/-! ### Linearity of the local exterior derivative -/
+
+theorem dLoc_add {η : E × (Fin n → E) → F} (hω : IsLocalForm n ω U) (hη : IsLocalForm n η U)
+    (hU : IsOpen U) {y : E} (hy : y ∈ U) (v : Fin (n + 1) → E) :
+    LocallyConvex.Manifolds.dLoc (fun p ↦ ω p + η p) (y, v) =
+      LocallyConvex.Manifolds.dLoc ω (y, v) + LocallyConvex.Manifolds.dLoc η (y, v) := by
+  simp only [dLoc_apply, ← Finset.sum_add_distrib, ← smul_add]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  rw [(((hω.smooth_slice hU (i.removeNth v) 1).2.1 y hy (v i)).add
+    ((hη.smooth_slice hU (i.removeNth v) 1).2.1 y hy (v i))).dMB_eq]
+
+theorem dLoc_smul (hω : IsLocalForm n ω U) (hU : IsOpen U) {y : E} (hy : y ∈ U) (c : ℝ)
+    (v : Fin (n + 1) → E) :
+    LocallyConvex.Manifolds.dLoc (fun p ↦ c • ω p) (y, v) =
+      c • LocallyConvex.Manifolds.dLoc ω (y, v) := by
+  simp only [dLoc_apply, Finset.smul_sum]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  rw [(((hω.smooth_slice hU (i.removeNth v) 1).2.1 y hy (v i)).const_smul c).dMB_eq,
+    smul_comm]
+
 /-! ### `d ∘ d = 0` -/
 
 theorem hasDirDerivAt_dMB_slice (hω : IsLocalForm n ω U) (hU : IsOpen U) {y : E} (hy : y ∈ U)

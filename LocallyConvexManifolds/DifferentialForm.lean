@@ -33,7 +33,13 @@ A tangent vector at `x` is given by its coordinates in the preferred chart `char
   (`localRep_d`), because the local exterior derivative commutes with changes of variables
   (`IsLocalForm.dLoc_pullbackLoc`); this is what makes `dω` a smooth form (Glöckner–Neeb,
   Proposition 3.6.7);
-* `DifferentialForm.d_d`: `d ∘ d = 0` (Glöckner–Neeb, Proposition 3.6.9).
+* `DifferentialForm.d_d`: `d ∘ d = 0` (Glöckner–Neeb, Proposition 3.6.9);
+* the vector space structure of `Ωⁿ(M, F)`, with `d` linear (`dLinear`);
+* `DifferentialForm.pullback`, `d_pullback`: pullbacks and the naturality of `d`
+  (Glöckner–Neeb, Lemma 3.6.13), with `pullback_id` and `pullback_pullback` (Glöckner–Neeb,
+  (3.27));
+* `DifferentialForm.compCLM`, `d_compCLM`: composition with a continuous linear map commutes with
+  `d` (Glöckner–Neeb, Exercise 3.6.4).
 
 Glöckner–Neeb define `dω` through the Lie algebra differential on vector fields, (3.29), and
 show that it is given in charts by (3.33). We take (3.33) as the definition and prove directly
@@ -232,6 +238,177 @@ theorem d_d (ω : DifferentialForm E M F n) (x : M) (v : Fin (n + 2) → E) : ω
   rw [d_apply, dLoc_congr hW (fun p hp ↦ ω.localRep_d (prefChart x) hp.1 p.2) hy]
   exact (ω.isLocalForm_localRep _).dLoc_dLoc hW hy v
 
+/-! ### The vector space structure -/
+
+section Linear
+
+omit [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
+  [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  [MBManifold E M] in
+theorem coe_injective : Injective (fun ω : DifferentialForm E M F n ↦ (ω : M → (Fin n → E) → F)) :=
+  fun _ _ h ↦ ext fun x v ↦ congrFun (congrFun h x) v
+
+instance : Zero (DifferentialForm E M F n) :=
+  ⟨⟨0, fun _ ↦ ⟨0, fun _ ↦ rfl⟩, fun _ k ↦ contDiffMBOn_const k (0 : F) _⟩⟩
+
+instance : Add (DifferentialForm E M F n) where
+  add ω η :=
+    ⟨ω + η, fun x ↦ by
+      obtain ⟨A, hA⟩ := ω.alternating' x
+      obtain ⟨B, hB⟩ := η.alternating' x
+      exact ⟨A + B, fun v ↦ by simp [hA, hB]⟩,
+    fun i k ↦ (ω.smooth' i k).add (i.1.open_target.prod isOpen_univ) (η.smooth' i k)⟩
+
+instance : SMul ℝ (DifferentialForm E M F n) where
+  smul c ω :=
+    ⟨c • ω, fun x ↦ by
+      obtain ⟨A, hA⟩ := ω.alternating' x
+      exact ⟨c • A, fun v ↦ by simp [hA]⟩,
+    fun i k ↦ ContDiffMBOn.const_smul (i.1.open_target.prod isOpen_univ) (ω.smooth' i k) c⟩
+
+instance : Neg (DifferentialForm E M F n) where
+  neg ω :=
+    ⟨-ω, fun x ↦ by
+      obtain ⟨A, hA⟩ := ω.alternating' x
+      exact ⟨-A, fun v ↦ by simp [hA]⟩,
+    fun i k ↦ by
+      have h := ContDiffMBOn.const_smul (i.1.open_target.prod isOpen_univ) (ω.smooth' i k) (-1)
+      simp only [neg_one_smul] at h
+      exact h⟩
+
+instance : Sub (DifferentialForm E M F n) where
+  sub ω η :=
+    ⟨ω - η, fun x ↦ by
+      obtain ⟨A, hA⟩ := ω.alternating' x
+      obtain ⟨B, hB⟩ := η.alternating' x
+      exact ⟨A - B, fun v ↦ by simp [hA, hB]⟩,
+    fun i k ↦ by
+      have h := (ω + -η).smooth' i k
+      simp only [sub_eq_add_neg]
+      exact h⟩
+
+instance : SMul ℕ (DifferentialForm E M F n) := ⟨fun m ω ↦ (m : ℝ) • ω⟩
+
+instance : SMul ℤ (DifferentialForm E M F n) := ⟨fun m ω ↦ (m : ℝ) • ω⟩
+
+omit [MBManifold E M] [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] in
+@[simp] theorem zero_apply (x : M) (v : Fin n → E) : (0 : DifferentialForm E M F n) x v = 0 :=
+  rfl
+
+omit [MBManifold E M] in
+@[simp] theorem add_apply (ω η : DifferentialForm E M F n) (x : M) (v : Fin n → E) :
+    (ω + η) x v = ω x v + η x v :=
+  rfl
+
+omit [MBManifold E M] in
+@[simp] theorem smul_apply (c : ℝ) (ω : DifferentialForm E M F n) (x : M) (v : Fin n → E) :
+    (c • ω) x v = c • ω x v :=
+  rfl
+
+omit [MBManifold E M] in
+@[simp] theorem neg_apply (ω : DifferentialForm E M F n) (x : M) (v : Fin n → E) :
+    (-ω) x v = -ω x v :=
+  rfl
+
+omit [MBManifold E M] in
+@[simp] theorem sub_apply (ω η : DifferentialForm E M F n) (x : M) (v : Fin n → E) :
+    (ω - η) x v = ω x v - η x v :=
+  rfl
+
+instance : AddCommGroup (DifferentialForm E M F n) :=
+  coe_injective.addCommGroup _ rfl (fun _ _ ↦ rfl) (fun _ ↦ rfl) (fun _ _ ↦ rfl)
+    (fun ω m ↦ by funext x v; exact Nat.cast_smul_eq_nsmul ℝ m (ω x v))
+    (fun ω m ↦ by funext x v; exact Int.cast_smul_eq_zsmul ℝ m (ω x v))
+
+/-- The coercion to functions, as an additive homomorphism. -/
+def coeAddHom : DifferentialForm E M F n →+ (M → (Fin n → E) → F) where
+  toFun ω := ω
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+/-- `Ωⁿ(M, F)` is a real vector space. -/
+instance instModule : Module ℝ (DifferentialForm E M F n) :=
+  coe_injective.module ℝ coeAddHom fun _ _ ↦ rfl
+
+/-- `d` is additive. -/
+theorem d_add (ω η : DifferentialForm E M F n) : (ω + η).d = ω.d + η.d := by
+  ext x v
+  exact (ω.isLocalForm_localRep _).dLoc_add (η.isLocalForm_localRep _)
+    (prefChart (E := E) x).1.open_target ((chartAt E x).map_source (mem_chart_source E x)) v
+
+/-- `d` is homogeneous. -/
+theorem d_smul (c : ℝ) (ω : DifferentialForm E M F n) : (c • ω).d = c • ω.d := by
+  ext x v
+  exact (ω.isLocalForm_localRep _).dLoc_smul (prefChart (E := E) x).1.open_target
+    ((chartAt E x).map_source (mem_chart_source E x)) c v
+
+variable (E M F n) in
+/-- The exterior derivative as a linear map `Ωⁿ(M, F) → Ωⁿ⁺¹(M, F)`. -/
+def dLinear : DifferentialForm E M F n →ₗ[ℝ] DifferentialForm E M F (n + 1) where
+  toFun := d
+  map_add' := d_add
+  map_smul' := d_smul
+
+@[simp] theorem dLinear_apply (ω : DifferentialForm E M F n) : dLinear E M F n ω = ω.d :=
+  rfl
+
+theorem d_zero : (0 : DifferentialForm E M F n).d = 0 :=
+  (dLinear E M F n).map_zero
+
+theorem d_neg (ω : DifferentialForm E M F n) : (-ω).d = -ω.d :=
+  (dLinear E M F n).map_neg ω
+
+theorem d_sub (ω η : DifferentialForm E M F n) : (ω - η).d = ω.d - η.d :=
+  (dLinear E M F n).map_sub ω η
+
+/-- `d ∘ d = 0`, as an identity of forms. -/
+theorem d_d_eq_zero (ω : DifferentialForm E M F n) : ω.d.d = 0 :=
+  ext fun x v ↦ ω.d_d x v
+
+end Linear
+
+
+/-! ### Composition with continuous linear maps (Glöckner–Neeb, Exercise 3.6.4) -/
+
+section CompCLM
+
+variable {G : Type u} [AddCommGroup G] [Module ℝ G] [TopologicalSpace G] [IsTopologicalAddGroup G]
+  [ContinuousSMul ℝ G] [LocallyConvexSpace ℝ G] [T2Space G]
+
+/-- The form `α_* ω = α ∘ ω` for a continuous linear map `α : F → G` (Glöckner–Neeb,
+Exercise 3.6.4). -/
+def compCLM (α : F →L[ℝ] G) (ω : DifferentialForm E M F n) : DifferentialForm E M G n where
+  toFun x v := α (ω x v)
+  alternating' x := by
+    obtain ⟨A, hA⟩ := ω.alternating' x
+    exact ⟨(α : F →ₗ[ℝ] G).compAlternatingMap A, fun v ↦ by simp [hA]⟩
+  smooth' i k :=
+    ContDiffMBOn.comp (i.1.open_target.prod isOpen_univ) isOpen_univ (α.contDiffMBOn k univ)
+      (ω.smooth' i k) (mapsTo_univ _ _)
+
+omit [MBManifold E M] in
+theorem compCLM_apply (α : F →L[ℝ] G) (ω : DifferentialForm E M F n) (x : M) (v : Fin n → E) :
+    ω.compCLM α x v = α (ω x v) :=
+  rfl
+
+/-- `α_*(dω) = d(α_* ω)` (Glöckner–Neeb, Exercise 3.6.4). -/
+theorem d_compCLM (α : F →L[ℝ] G) (ω : DifferentialForm E M F n) :
+    (ω.compCLM α).d = ω.d.compCLM α := by
+  ext x v
+  have hy : chartAt E x x ∈ (prefChart (E := E) x).1.target :=
+    (chartAt E x).map_source (mem_chart_source E x)
+  rw [d_apply, compCLM_apply, d_apply, IsLocalForm.dLoc_apply, IsLocalForm.dLoc_apply, map_sum]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  rw [map_smul]
+  congr 1
+  have hs := (ω.isLocalForm_localRep (prefChart x)).smooth_slice
+    (prefChart (E := E) x).1.open_target (i.removeNth v) 1
+  have h := ContDiffMBOn.dMB_comp isOpen_univ (α.contDiffMBOn 1 univ) hs (mapsTo_univ _ _) hy (v i)
+  rw [(α.hasDirDerivAt _ _).dMB_eq] at h
+  exact h
+
+end CompCLM
+
 /-! ### Functions as `0`-forms, closed and exact forms -/
 
 /-- A smooth function `f : M → F` as an `F`-valued `0`-form (Glöckner–Neeb, Definition 3.6.1:
@@ -369,7 +546,63 @@ theorem d_pullback (hφ : SmoothMBM E₀ E φ) (ω : DifferentialForm E M F n) :
   simp only [pullbackLoc, comp_apply, c.1.left_inv hx]
   rfl
 
+theorem pullback_add (hφ : SmoothMBM E₀ E φ) (ω η : DifferentialForm E M F n) :
+    (ω + η).pullback hφ = ω.pullback hφ + η.pullback hφ :=
+  rfl
+
+theorem pullback_smul (hφ : SmoothMBM E₀ E φ) (c : ℝ) (ω : DifferentialForm E M F n) :
+    (c • ω).pullback hφ = c • ω.pullback hφ :=
+  rfl
+
+variable (n) in
+/-- The pullback as a linear map `Ωⁿ(M, F) → Ωⁿ(N, F)`. -/
+def pullbackLinear (hφ : SmoothMBM E₀ E φ) :
+    DifferentialForm E M F n →ₗ[ℝ] DifferentialForm E₀ N F n where
+  toFun ω := ω.pullback hφ
+  map_add' ω η := pullback_add hφ ω η
+  map_smul' c ω := pullback_smul hφ c ω
+
+omit [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F] in
+/-- In the preferred charts, the vectors in `pullbackFun` are the images under the tangent
+map. -/
+theorem pullbackFun_eq_tangentMap (φ : N → M) (ω : DifferentialForm E M F n) (x : N)
+    (v : Fin n → E₀) :
+    pullbackFun φ ω x v = ω (φ x) fun k ↦ ((tangentMap E₀ E φ ⟨x, v k⟩).2 : E) :=
+  rfl
+
 end Pullback
+
+section Functoriality
+
+/-- `id* ω = ω` (Glöckner–Neeb, (3.27)). -/
+theorem pullback_id (ω : DifferentialForm E M F n) :
+    ω.pullback (fun k ↦ smoothMBMOn_id (E := E) (M := M) isOpen_univ k) = ω := by
+  ext x v
+  change pullbackFun id ω x v = ω x v
+  rw [pullbackFun_eq_tangentMap]
+  congr 1
+  funext k
+  exact congrArg (fun p : TangentBundle E M ↦ (p.2 : E)) (tangentMap_id ⟨x, v k⟩)
+
+variable {E₀ E₁ : Type u}
+  [AddCommGroup E₀] [Module ℝ E₀] [TopologicalSpace E₀] [IsTopologicalAddGroup E₀]
+  [ContinuousSMul ℝ E₀] [LocallyConvexSpace ℝ E₀] [T2Space E₀]
+  [AddCommGroup E₁] [Module ℝ E₁] [TopologicalSpace E₁] [IsTopologicalAddGroup E₁]
+  [ContinuousSMul ℝ E₁] [LocallyConvexSpace ℝ E₁] [T2Space E₁]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace E₀ N] [MBManifold E₀ N]
+  {P : Type*} [TopologicalSpace P] [ChartedSpace E₁ P] [MBManifold E₁ P]
+
+/-- `ψ* (φ* ω) = (φ ∘ ψ)* ω` (Glöckner–Neeb, (3.27)). -/
+theorem pullback_pullback {φ : N → M} {ψ : P → N} (hφ : SmoothMBM E₀ E φ)
+    (hψ : SmoothMBM E₁ E₀ ψ) (ω : DifferentialForm E M F n) :
+    (ω.pullback hφ).pullback hψ = ω.pullback (hφ.comp hψ) := by
+  ext x v
+  change pullbackFun ψ (ω.pullback hφ) x v = pullbackFun (φ ∘ ψ) ω x v
+  rw [pullbackFun_eq_tangentMap, pullbackFun_eq_tangentMap]
+  exact congrArg (ω.toFun (φ (ψ x))) (funext fun k ↦
+    congrArg (fun p : TangentBundle E M ↦ (p.2 : E)) (tangentMap_comp (hφ 1) (hψ 1) ⟨x, v k⟩))
+
+end Functoriality
 
 end DifferentialForm
 

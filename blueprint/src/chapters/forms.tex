@@ -209,6 +209,36 @@ in the preferred chart at $x$ (Definition~\ref{def:tangent-bundle}).
   For $n = 0$ the alternating sum of Definition~\ref{def:local-d} has a single term.
 \end{proof}
 
+\section{The vector space of forms}
+
+\begin{definition}[Linear structure]
+  \label{def:forms-linear}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.instModule,
+    LocallyConvex.Manifolds.DifferentialForm.add_apply,
+    LocallyConvex.Manifolds.DifferentialForm.smul_apply}
+  \leanok
+  \uses{def:diff-form}
+  Sums and real multiples of forms are taken pointwise; their local representatives are the
+  corresponding combinations of local representatives, hence smooth. This makes
+  $\Omega^n(M, F)$ a real vector space.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:d-linear}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.dLinear,
+    LocallyConvex.Manifolds.DifferentialForm.d_add,
+    LocallyConvex.Manifolds.DifferentialForm.d_smul}
+  \leanok
+  \uses{def:forms-linear, def:diff-form-d}
+  The exterior derivative $\dd \colon \Omega^n(M, F) \to \Omega^{n+1}(M, F)$ is linear.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  In the preferred chart at each point, directional derivatives are additive and homogeneous in
+  the function.
+\end{proof}
+
 \section{Pullbacks}
 
 \begin{definition}[Pullback]
@@ -238,3 +268,279 @@ in the preferred chart at $x$ (Definition~\ref{def:tangent-bundle}).
   In the preferred charts at $x$ and $\varphi(x)$, this is Theorem~\ref{thm:local-naturality}
   for the local representative of $\varphi$.
 \end{proof}
+
+\begin{proposition}[Functoriality of pullbacks]
+  \label{prop:pullback-functorial}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.pullback_id,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_pullback,
+    LocallyConvex.Manifolds.DifferentialForm.pullbackLinear}
+  \leanok
+  \uses{def:diff-form-pullback, thm:man-tangent-map, def:forms-linear}
+  The pullback $\varphi^*$ is linear, $\id^*\omega = \omega$ and
+  $\psi^*(\varphi^*\omega) = (\varphi \circ \psi)^*\omega$ \cite[(3.27)]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The vectors in $\varphi^*\omega$ are images under the tangent map, so this is the chain rule
+  $T(\varphi \circ \psi) = T\varphi \circ T\psi$ and $T\id = \id$.
+\end{proof}
+
+\begin{proposition}[Composition with linear maps]
+  \label{prop:d-comp-clm}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.compCLM,
+    LocallyConvex.Manifolds.DifferentialForm.d_compCLM}
+  \leanok
+  \uses{def:diff-form-d}
+  For a continuous linear map $\alpha \colon F \to G$, $(\alpha_*\omega)_x = \alpha \circ
+  \omega_x$ defines a $G$-valued form, and $\alpha_*(\dd\omega) = \dd(\alpha_*\omega)$
+  \cite[Exercise~3.6.4]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  A continuous linear map commutes with directional derivatives.
+\end{proof}
+
+\section{The wedge product}
+
+Let $\beta \colon E_1 \times E_2 \to E_3$ be a continuous bilinear map between locally convex
+spaces.
+
+\begin{definition}[Wedge product]
+  \label{def:wedge}
+  \lean{LocallyConvex.Manifolds.wedgeFun, LocallyConvex.Manifolds.wedgeAlt,
+    LocallyConvex.Manifolds.wedgeAlt_apply, LocallyConvex.Manifolds.DifferentialForm.wedge}
+  \leanok
+  \uses{def:diff-form}
+  For $\omega \in \Omega^p(M, E_1)$ and $\eta \in \Omega^q(M, E_2)$,
+  \[
+    (\omega \wedge \eta)_x(v_1, \dots, v_{p+q}) = \frac{1}{p!\,q!}
+      \sum_{\sigma \in S_{p+q}} \operatorname{sgn}(\sigma)\,
+      \beta\bigl(\omega_x(v_{\sigma(1)}, \dots, v_{\sigma(p)}),
+        \eta_x(v_{\sigma(p+1)}, \dots, v_{\sigma(p+q)})\bigr)
+  \]
+  \cite[Definition~3.6.3]{GN26}. It is alternating, being the alternation of a multilinear map,
+  and its local representatives are finite sums of compositions of $\beta$ with local
+  representatives of $\omega$ and $\eta$, hence smooth.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:wedge-properties}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.wedgeBilinear,
+    LocallyConvex.Manifolds.DifferentialForm.wedge_apply_one_one,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_wedge}
+  \leanok
+  \uses{def:wedge, def:diff-form-pullback, def:forms-linear}
+  The wedge product is bilinear; for $p = q = 1$,
+  $(\omega \wedge \eta)_x(v_1, v_2) = \beta(\omega_x v_1, \eta_x v_2) - \beta(\omega_x v_2,
+  \eta_x v_1)$ \cite[Definition~3.6.3]{GN26}; and $\varphi^*(\omega \wedge \eta) =
+  \varphi^*\omega \wedge \varphi^*\eta$ \cite[(3.28)]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Direct from the definitions; for $p = q = 1$ the symmetric group has two elements.
+\end{proof}
+
+\begin{proposition}[Products with functions]
+  \label{prop:smul-fun}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.smulFun,
+    LocallyConvex.Manifolds.DifferentialForm.mul_smulFun,
+    LocallyConvex.Manifolds.DifferentialForm.wedge_ofFunction}
+  \leanok
+  \uses{def:wedge, def:closed-exact}
+  For a smooth function $f \colon M \to \R$, $(f\omega)_x = f(x)\,\omega_x$ defines a smooth form,
+  and these products satisfy the module identities over $C^\infty(M, \R)$. The form $f\omega$ is
+  the wedge product of $\omega$ with the $0$-form $f$ for the scalar multiplication
+  \cite[Remark~3.6.5]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Smoothness follows from the product rule for the scalar multiplication $\R \times F \to F$.
+  For the wedge product with a $0$-form, each permutation contributes $\operatorname{sgn}(\sigma)^2
+  f(x)\,\omega_x(v) = f(x)\,\omega_x(v)$, and there are $p!$ of them.
+\end{proof}
+
+\section{Insertion and the Lie derivative}
+
+\begin{definition}[Insertion]
+  \label{def:interior}
+  \lean{LocallyConvex.Manifolds.SmoothVectorField,
+    LocallyConvex.Manifolds.DifferentialForm.interior,
+    LocallyConvex.Manifolds.DifferentialForm.localRep_interior}
+  \leanok
+  \uses{def:diff-form, def:vector-field}
+  For a smooth vector field $X$ and $\omega \in \Omega^{n+1}(M, F)$,
+  $(i_X\omega)_x(v_1, \dots, v_n) = \omega_x(X(x), v_1, \dots, v_n)$
+  \cite[Definition~3.6.15]{GN26}. In every chart, its local representative is
+  $(y, v) \mapsto \omega(y)(\tilde X(y), v)$.
+\end{definition}
+
+\begin{definition}[Lie derivative]
+  \label{def:lie-deriv}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.lieDeriv,
+    LocallyConvex.Manifolds.DifferentialForm.lieDeriv_succ,
+    LocallyConvex.Manifolds.DifferentialForm.lieDerivLinear}
+  \leanok
+  \uses{def:interior, prop:d-linear}
+  We define $L_X = \dd \circ i_X + i_X \circ \dd$, with $i_X = 0$ on functions. Then $L_X$ is a
+  linear map of $\Omega^n(M, F)$, and Cartan's formula \cite[Proposition~3.6.16(c)]{GN26} holds
+  by definition. Theorem~\ref{thm:lie-deriv-local} shows that this agrees with the definition
+  \cite[Definition~3.6.14]{GN26}.
+\end{definition}
+
+\begin{theorem}[The Lie derivative in charts]
+  \label{thm:lie-deriv-local}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.localRep_lieDeriv,
+    LocallyConvex.Manifolds.IsLocalForm.dLoc_iLoc_add,
+    LocallyConvex.Manifolds.IsLocalForm.dMB_comp_vectors}
+  \leanok
+  \uses{def:lie-deriv, thm:diff-form-d}
+  In every chart,
+  \[
+    (L_X\omega)(y)(v_1, \dots, v_n) = \partial_{\tilde X(y)}\omega(y)(v_1, \dots, v_n)
+      + \sum_{k=1}^n \omega(y)(v_1, \dots, \dd\tilde X(y)\,v_k, \dots, v_n).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Differentiating $z \mapsto \omega(z)(\tilde X(z), w)$ gives a partial derivative of $\omega$ and
+  the term $\omega(y)(\dd\tilde X(y)\,u, w)$. In $\dd(i_X\omega) + i_X(\dd\omega)$ the partial
+  derivatives $\partial_{v_j}\omega(y)(\tilde X(y), \dots)$ cancel, and moving
+  $\dd\tilde X(y)\,v_j$ to the $j$-th place removes the signs.
+\end{proof}
+
+\begin{theorem}[Evaluation on vector fields]
+  \label{thm:fields-formulas}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.d_apply_fields,
+    LocallyConvex.Manifolds.DifferentialForm.lieDeriv_apply_fields,
+    LocallyConvex.Manifolds.sum_neg_one_pow_smul_sum_update_eq}
+  \leanok
+  \uses{thm:lie-deriv-local, def:man-lie-bracket, thm:man-lie-bracket}
+  For smooth vector fields $X_0, \dots, X_{n+1}$ and $\omega \in \Omega^{n+1}(M, F)$,
+  \[
+    \dd\omega(X_0, \dots, X_{n+1}) = \sum_i (-1)^i X_i.\omega(\dots, \widehat{X_i}, \dots)
+      + \sum_{i<j} (-1)^{i+j} \omega([X_i, X_j], \dots, \widehat{X_i}, \dots, \widehat{X_j},
+      \dots),
+  \]
+  \cite[Proposition~3.6.7, (3.29)]{GN26}, and $(L_Y\omega)(X_1, \dots, X_n) =
+  Y.\omega(X_1, \dots, X_n) - \sum_j \omega(X_1, \dots, [Y, X_j], \dots, X_n)$
+  \cite[(3.35)]{GN26}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In a chart, $X_i.\omega(\dots, \widehat{X_i}, \dots)$ is a partial derivative of $\omega$ plus
+  the terms with $\dd\tilde X_k \cdot \tilde X_i$; the partial derivatives add up to
+  $\dd\omega$, and the other terms regroup in pairs into the brackets. The formula for $L_Y$
+  follows in the same way from Theorem~\ref{thm:lie-deriv-local}.
+\end{proof}
+
+\begin{theorem}
+  \label{thm:cartan-calculus}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.lieDeriv_interior_sub,
+    LocallyConvex.Manifolds.DifferentialForm.lieDeriv_d,
+    LocallyConvex.Manifolds.DifferentialForm.lieDeriv_lieDeriv_sub,
+    LocallyConvex.Manifolds.DifferentialForm.IsClosed.lieDeriv_eq,
+    LocallyConvex.Manifolds.DifferentialForm.IsClosed.isExact_lieDeriv}
+  \leanok
+  \uses{thm:lie-deriv-local, def:man-lie-bracket, thm:diff-form-dd}
+  For smooth vector fields $X$ and $Y$ \cite[Proposition~3.6.16]{GN26}:
+  \begin{enumerate}
+    \item[(a)] $[L_X, L_Y] = L_{[X, Y]}$;
+    \item[(b)] $[L_X, i_Y] = i_{[X, Y]}$;
+    \item[(d)] $L_X \circ \dd = \dd \circ L_X$;
+    \item[(e)] $L_X$ maps closed forms to exact forms.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  (b) is a computation in a chart with Theorem~\ref{thm:lie-deriv-local}: the difference is
+  $\omega(y)(\dd\tilde Y(y)\tilde X(y) - \dd\tilde X(y)\tilde Y(y), \dots)$, and the first
+  entry is the local representative of $[X, Y]$. (d) and (e) follow from Cartan's formula and
+  $\dd \circ \dd = 0$, and (a) follows algebraically from (b), (d) and Cartan's formula. Glöckner
+  and Neeb deduce (a)--(d) from the corresponding identities for Lie algebra cochains.
+\end{proof}
+
+\begin{proposition}[Related vector fields]
+  \label{prop:related-forms}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.pullback_interior,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_lieDeriv}
+  \leanok
+  \uses{def:interior, def:lie-deriv, thm:diff-form-naturality, thm:man-related}
+  If $X$ and $Y$ are $\varphi$-related, then $\varphi^*(i_Y\omega) = i_X(\varphi^*\omega)$ and
+  $\varphi^*(L_Y\omega) = L_X(\varphi^*\omega)$ \cite[Exercise~3.6.6]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The first identity holds because $T\varphi$ maps $X(x)$ to $Y(\varphi(x))$; the second follows
+  from it, Cartan's formula and Theorem~\ref{thm:diff-form-naturality}.
+\end{proof}
+
+\section{De Rham cohomology}
+
+\begin{definition}[De Rham cohomology]
+  \label{def:de-rham}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.closedForms,
+    LocallyConvex.Manifolds.DifferentialForm.exactForms,
+    LocallyConvex.Manifolds.DifferentialForm.exactForms_le_closedForms,
+    LocallyConvex.Manifolds.DeRham}
+  \leanok
+  \uses{prop:d-linear, def:closed-exact}
+  Let $Z^n_{dR}(M, F) = \ker \dd$ and $B^n_{dR}(M, F) = \dd(\Omega^{n-1}(M, F))$, with
+  $B^0_{dR}(M, F) = 0$. Then $B^n_{dR} \subseteq Z^n_{dR}$, and the de Rham cohomology is
+  $H^n_{dR}(M, F) = Z^n_{dR}(M, F) / B^n_{dR}(M, F)$ \cite[Definition~3.6.11]{GN26}.
+\end{definition}
+
+\begin{theorem}
+  \label{thm:closed-locally-constant}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.isClosed_iff_isLocallyConstant,
+    LocallyConvex.Manifolds.deRhamZeroEquiv}
+  \leanok
+  \uses{def:de-rham, prop:d-function}
+  A function is closed if and only if it is locally constant; hence $H^0_{dR}(M, F)$ is the
+  space of locally constant functions $M \to F$ \cite[Remark~3.6.12(b)]{GN26}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In a chart, a $C^1$ map with vanishing derivative is constant on convex open sets, and every
+  point of a locally convex space has a convex open neighbourhood in a given open set.
+\end{proof}
+
+\begin{proposition}[Functoriality]
+  \label{prop:de-rham-functorial}
+  \lean{LocallyConvex.Manifolds.deRhamMap, LocallyConvex.Manifolds.deRhamMap_id,
+    LocallyConvex.Manifolds.deRhamMap_comp}
+  \leanok
+  \uses{def:de-rham, thm:diff-form-naturality, prop:pullback-functorial}
+  A smooth map $\varphi \colon N \to M$ induces linear maps $\varphi^* \colon H^n_{dR}(M, F)
+  \to H^n_{dR}(N, F)$, $[\alpha] \mapsto [\varphi^*\alpha]$, with $\id^* = \id$ and
+  $(\varphi \circ \psi)^* = \psi^* \circ \varphi^*$ \cite[Section~3.6]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:diff-form-naturality}, pullbacks of closed (exact) forms are closed
+  (exact); functoriality comes from Proposition~\ref{prop:pullback-functorial}.
+\end{proof}
+
+\begin{remark}[What is not covered]
+  \label{rem:forms-not-covered}
+  The following parts of \cite[Section~3.6]{GN26} are not formalized.
+  \begin{itemize}
+    \item The flow description of $L_X$ \cite[Remark~3.6.17]{GN26}: vector fields on
+      locally convex manifolds need not have flows.
+    \item Real analytic forms \cite[Remark~3.6.18]{GN26}: they need the fact that directional
+      derivatives of real analytic maps are real analytic, which is not yet available.
+    \item The finite-dimensional material (Lemma~3.6.20, orientations, integration of forms and
+      Stokes' Theorem~3.6.23), and the Homotopy Lemma~3.6.25 with the Poincaré Lemma~3.6.28: these
+      need manifolds with boundary, smooth partitions of unity, and parametric integrals with
+      values in Mackey complete spaces.
+  \end{itemize}
+\end{remark}

@@ -318,7 +318,31 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `ofFunction`, `d_ofFunction_apply`: functions as `0`-forms, and `df` is the differential
     [GN26, Rem. 3.6.12]; `IsClosed`, `IsExact`, `IsExact.isClosed`;
   * `pullback`: pullbacks along smooth maps [GN26, Def. 3.6.6], and `d_pullback`:
-    `d(φ*ω) = φ*(dω)` [GN26, Lemma 3.6.13].
+    `d(φ*ω) = φ*(dω)` [GN26, Lemma 3.6.13]; `pullback_id`, `pullback_pullback` [GN26, (3.27)];
+  * the vector space structure of `Ωⁿ(M, F)`, `dLinear`; `compCLM`, `d_compCLM`: composition
+    with continuous linear maps commutes with `d` [GN26, Exercise 3.6.4].
+* [`LocallyConvexManifolds/Wedge.lean`](LocallyConvexManifolds/Wedge.lean): the wedge product
+  with respect to a continuous bilinear map `β` [GN26, Def. 3.6.3].
+  * `wedgeAlt`: the wedge product of alternating maps; `DifferentialForm.wedge`, `wedgeBilinear`;
+  * `wedge_apply_one_one`: `(ω ∧ η)(v₁, v₂) = β(ω v₁, η v₂) − β(ω v₂, η v₁)`;
+    `pullback_wedge`: `φ*(ω ∧ η) = φ*ω ∧ φ*η` [GN26, (3.28)];
+  * `smulFun`: products `f ω` with smooth real functions, and `wedge_ofFunction`
+    [GN26, Rem. 3.6.5].
+* [`LocallyConvexManifolds/LieDerivative.lean`](LocallyConvexManifolds/LieDerivative.lean):
+  insertion of vector fields and the Lie derivative [GN26, §3.6].
+  * `SmoothVectorField`, `DifferentialForm.interior`: `i_X ω` [GN26, Def. 3.6.15];
+  * `lieDeriv`: `L_X = d ∘ i_X + i_X ∘ d`; `localRep_lieDeriv`: the local formula
+    [GN26, Def. 3.6.14];
+  * `d_apply_fields`, `lieDeriv_apply_fields`: `dω` and `L_Y ω` evaluated on vector fields
+    [GN26, (3.29), (3.35)];
+  * `lieDeriv_lieDeriv_sub`, `lieDeriv_interior_sub`, `lieDeriv_d`, `IsClosed.isExact_lieDeriv`:
+    [GN26, Prop. 3.6.16]; `pullback_interior`, `pullback_lieDeriv`: related vector fields
+    [GN26, Exercise 3.6.6].
+* [`LocallyConvexManifolds/DeRham.lean`](LocallyConvexManifolds/DeRham.lean): de Rham cohomology.
+  * `closedForms`, `exactForms`, `DeRham E M F n` [GN26, Def. 3.6.11];
+  * `isClosed_iff_isLocallyConstant`, `deRhamZeroEquiv`: `H⁰` consists of the locally constant
+    functions [GN26, Rem. 3.6.12 (b)];
+  * `deRhamMap`, `deRhamMap_id`, `deRhamMap_comp`: functoriality of `H^n_dR`.
 
 There is no `sorry`.
 
@@ -332,8 +356,8 @@ Michal–Bastiani calculus of lc-analysis.
 
 ## Planned
 
-1. The wedge product and the Lie derivative of differential forms [GN26, §3.6]; symplectic,
-   complex and Kähler manifolds; the Newlander–Nirenberg theorem in the real analytic case.
+1. Real analytic forms [GN26, Rem. 3.6.18]; symplectic, complex and Kähler manifolds; the
+   Newlander–Nirenberg theorem in the real analytic case.
 2. Lie groups modeled on locally convex spaces and their Lie algebras [Nee06, GN26].
 
 ## References
