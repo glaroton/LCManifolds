@@ -1,7 +1,7 @@
-name = "LCManifolds"
+name = "lc-manifolds"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["LCManifolds"]
+defaultTargets = ["LocallyConvexManifolds"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -10,9 +10,9 @@ weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
 
 [[require]]
-name = "LCAnalysis"
-git = "https://github.com/glaroton/LCAnalysis"
+name = "lc-analysis"
+git = "https://github.com/glaroton/lc-analysis"
 rev = "main"
 
 [[lean_lib]]
-name = "LCManifolds"
+name = "LocallyConvexManifolds"

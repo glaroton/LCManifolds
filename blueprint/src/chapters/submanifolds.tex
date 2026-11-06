@@ -24,7 +24,7 @@ smooth into the subspace as it is into the ambient space.
 
 \begin{lemma}[Corestriction to a closed subspace]
   \label{lem:sub-codrestrict}
-  \lean{LCManifolds.ContDiffMBOn.codRestrict}
+  \lean{LocallyConvex.Manifolds.ContDiffMBOn.codRestrict}
   \leanok
   Let $T \subseteq F$ be a closed subspace, $D$ a locally convex space, $V \subseteq D$ open,
   and $h \colon V \to F$ a
@@ -41,7 +41,7 @@ smooth into the subspace as it is into the ambient space.
 
 \begin{definition}[Slice chart]
   \label{def:sub-slice-chart}
-  \lean{LCManifolds.IsSliceChart}
+  \lean{LocallyConvex.Manifolds.IsSliceChart}
   \leanok
   \uses{def:mb-manifold}
   Let $N \subseteq M$ and let $S \subseteq E$ be a subspace. A chart $\varphi \colon U \to E$ is
@@ -52,7 +52,7 @@ smooth into the subspace as it is into the ambient space.
 
 \begin{definition}[Embedded submanifold]
   \label{def:embedded-submanifold}
-  \lean{LCManifolds.IsEmbeddedSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold}
   \leanok
   \uses{def:sub-slice-chart}
   A subset $N \subseteq M$ is an \emph{embedded submanifold} modeled on the subspace
@@ -71,7 +71,7 @@ This is \cite[Def.~3.1.10]{GN26}. No complement of $S$ is required.
 
 \begin{definition}[Induced charts]
   \label{def:sub-induced-chart}
-  \lean{LCManifolds.sliceChart, LCManifolds.sliceChart_apply_coe, LCManifolds.sliceChart_symm_apply_coe}
+  \lean{LocallyConvex.Manifolds.sliceChart, LocallyConvex.Manifolds.sliceChart_apply_coe, LocallyConvex.Manifolds.sliceChart_symm_apply_coe}
   \leanok
   \uses{def:sub-slice-chart}
   A slice chart $\varphi \colon U \to E$ induces a chart of $N$ with values in $S$, namely the
@@ -84,7 +84,7 @@ outside the target of the inverse.
 
 \begin{lemma}[Transition maps of induced charts]
   \label{lem:sub-transition}
-  \lean{LCManifolds.smoothMBOn_sliceChart_transition, LCManifolds.sliceChart_transition_mem}
+  \lean{LocallyConvex.Manifolds.smoothMBOn_sliceChart_transition, LocallyConvex.Manifolds.sliceChart_transition_mem}
   \leanok
   \uses{def:sub-induced-chart, def:mb-groupoid, lem:sub-codrestrict}
   If $S$ is closed, the transition map between two induced charts is smooth, and so is its
@@ -102,7 +102,7 @@ outside the target of the inverse.
 
 \begin{theorem}[Embedded submanifolds are manifolds]
   \label{thm:sub-manifold}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.chartedSpace, LCManifolds.IsEmbeddedSubmanifold.mbManifold}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.chartedSpace, LocallyConvex.Manifolds.IsEmbeddedSubmanifold.mbManifold}
   \leanok
   \uses{def:embedded-submanifold, lem:sub-transition}
   Let $N \subseteq M$ be an embedded submanifold modeled on $S$. The induced charts form an
@@ -117,7 +117,7 @@ outside the target of the inverse.
 
 \begin{proposition}[The inclusion is smooth]
   \label{prop:sub-inclusion-smooth}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.smoothMBM_val}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.smoothMBM_val}
   \leanok
   \uses{thm:sub-manifold, def:contmdiff}
   The inclusion $N \hookrightarrow M$ of an embedded submanifold is smooth.
@@ -134,7 +134,7 @@ The simplest example is a closed subspace of the model space itself.
 
 \begin{proposition}[Closed subspaces]
   \label{prop:sub-subspace}
-  \lean{LCManifolds.isSliceChart_refl, LCManifolds.isEmbeddedSubmanifold_subspace, LCManifolds.isSplitSubmanifold_subspace}
+  \lean{LocallyConvex.Manifolds.isSliceChart_refl, LocallyConvex.Manifolds.isEmbeddedSubmanifold_subspace, LocallyConvex.Manifolds.isSplitSubmanifold_subspace}
   \leanok
   \uses{def:embedded-submanifold, def:split-submanifold}
   A closed subspace $S \subseteq F$ is an embedded submanifold of $F$ modeled on $S$, with the
@@ -166,7 +166,7 @@ fields of projectors and the induced connections in the chapter on connections.
 
 \begin{definition}[Tangent space]
   \label{def:tangent-space-submanifold}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.tangentSpace}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.tangentSpace}
   \leanok
   \uses{def:embedded-submanifold}
   Let $X \subseteq F$ be an embedded submanifold modeled on $S$ and $p \in X$. Choose a slice
@@ -178,7 +178,7 @@ fields of projectors and the induced connections in the chapter on connections.
 
 \begin{lemma}[Independence of the chart]
   \label{lem:sub-tangent-chart}
-  \lean{LCManifolds.dMB_mem_iff_of_isSliceChart, LCManifolds.IsEmbeddedSubmanifold.mem_tangentSpace_iff}
+  \lean{LocallyConvex.Manifolds.dMB_mem_iff_of_isSliceChart, LocallyConvex.Manifolds.IsEmbeddedSubmanifold.mem_tangentSpace_iff}
   \leanok
   \uses{def:tangent-space-submanifold}
   If $\varphi, \varphi'$ are slice charts at $p \in X$, then $\dd\varphi(p)(w) \in S$ iff
@@ -196,7 +196,7 @@ fields of projectors and the induced connections in the chapter on connections.
 
 \begin{proposition}[Curves]
   \label{prop:sub-curves}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
   \leanok
   \uses{thm:sub-manifold, def:ck-curve, lem:sub-codrestrict}
   A curve $\beta \colon \R \to X$ which is smooth as a curve in $F$ is a $\Ck{k}$ curve of the
@@ -211,7 +211,7 @@ fields of projectors and the induced connections in the chapter on connections.
 
 \begin{proposition}[Tangent space of a closed subspace]
   \label{prop:sub-tangent-subspace}
-  \lean{LCManifolds.tangentSpace_subspace}
+  \lean{LocallyConvex.Manifolds.tangentSpace_subspace}
   \leanok
   \uses{prop:sub-subspace, def:tangent-space-submanifold}
   For a closed subspace $S \subseteq F$, $\T_p S = S$ at every $p \in S$.
@@ -230,7 +230,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{lemma}[Derivatives of transition maps]
   \label{lem:sub-transition-inverse}
-  \lean{LCManifolds.dMB_transition_leftInverse, LCManifolds.dMB_transition_injective, LCManifolds.SmoothMBM.continuous_dMB_chart}
+  \lean{LocallyConvex.Manifolds.dMB_transition_leftInverse, LocallyConvex.Manifolds.dMB_transition_injective, LocallyConvex.Manifolds.SmoothMBM.continuous_dMB_chart}
   \leanok
   \uses{def:mb-manifold, def:contmdiff}
   For charts $e, e'$ of the maximal atlas, the derivative of $e \circ e'^{-1}$ at the image
@@ -246,7 +246,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{definition}[Weak immersion]
   \label{def:weak-immersion}
-  \lean{LCManifolds.IsWeakImmersion}
+  \lean{LocallyConvex.Manifolds.IsWeakImmersion}
   \leanok
   \uses{def:contmdiff}
   A smooth map $f \colon M \to N$ is a \emph{weak immersion} if its differential is injective
@@ -255,7 +255,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{definition}[Immersion]
   \label{def:immersion}
-  \lean{LCManifolds.IsImmersion}
+  \lean{LocallyConvex.Manifolds.IsImmersion}
   \leanok
   \uses{def:contmdiff}
   A smooth map $f \colon M \to N$ is an \emph{immersion} if, at every point, its differential
@@ -265,7 +265,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{definition}[Split immersion]
   \label{def:split-immersion}
-  \lean{LCManifolds.IsSplitImmersion}
+  \lean{LocallyConvex.Manifolds.IsSplitImmersion}
   \leanok
   \uses{def:contmdiff}
   A smooth map $f \colon M \to N$ is a \emph{split immersion} if, at every point, its
@@ -275,7 +275,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{proposition}[Split immersion $\Rightarrow$ immersion $\Rightarrow$ weak immersion]
   \label{prop:sub-immersion-implications}
-  \lean{LCManifolds.IsSplitImmersion.isImmersion, LCManifolds.IsImmersion.isWeakImmersion}
+  \lean{LocallyConvex.Manifolds.IsSplitImmersion.isImmersion, LocallyConvex.Manifolds.IsImmersion.isWeakImmersion}
   \leanok
   \uses{def:weak-immersion, def:immersion, def:split-immersion}
   Every split immersion is an immersion, and every immersion is a weak immersion.
@@ -296,7 +296,7 @@ $v \mapsto \dd(c' \circ f \circ c^{-1})(c(x))(v)$, $E \to F$. It is continuous a
 
 \begin{proposition}[Inclusion of a closed subspace]
   \label{prop:sub-subtype-immersion}
-  \lean{LCManifolds.dMB_chart_subtypeL, LCManifolds.isImmersion_subtypeL, LCManifolds.isSplitImmersion_subtypeL_iff}
+  \lean{LocallyConvex.Manifolds.dMB_chart_subtypeL, LocallyConvex.Manifolds.isImmersion_subtypeL, LocallyConvex.Manifolds.isSplitImmersion_subtypeL_iff}
   \leanok
   \uses{def:immersion, def:split-immersion}
   The linear inclusion $S \hookrightarrow F$ of a closed subspace is an immersion. It is a
@@ -329,7 +329,7 @@ two such structures. Initial submanifolds are the exception, since their structu
 
 \begin{definition}[Weakly immersed and immersed submanifolds]
   \label{def:sub-immersed}
-  \lean{LCManifolds.IsWeaklyImmersedSubmanifold, LCManifolds.IsImmersedSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsWeaklyImmersedSubmanifold, LocallyConvex.Manifolds.IsImmersedSubmanifold}
   \leanok
   \uses{def:weak-immersion, def:immersion}
   The map $f$ exhibits its image as a \emph{weakly immersed submanifold} if it is an injective
@@ -338,7 +338,7 @@ two such structures. Initial submanifolds are the exception, since their structu
 
 \begin{definition}[Initial submanifold]
   \label{def:initial-submanifold}
-  \lean{LCManifolds.IsInitialSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsInitialSubmanifold}
   \leanok
   \uses{def:weak-immersion}
   The map $f$ exhibits its image as an \emph{initial submanifold} if it is an injective weak
@@ -353,7 +353,7 @@ model spaces.
 
 \begin{proposition}
   \label{prop:sub-weakly-immersed}
-  \lean{LCManifolds.IsImmersedSubmanifold.isWeaklyImmersedSubmanifold, LCManifolds.IsInitialSubmanifold.isWeaklyImmersedSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsImmersedSubmanifold.isWeaklyImmersedSubmanifold, LocallyConvex.Manifolds.IsInitialSubmanifold.isWeaklyImmersedSubmanifold}
   \leanok
   \uses{def:sub-immersed, def:initial-submanifold, prop:sub-immersion-implications}
   Immersed submanifolds and initial submanifolds are weakly immersed.
@@ -369,7 +369,7 @@ model spaces.
 
 \begin{definition}[Split submanifold]
   \label{def:split-submanifold}
-  \lean{LCManifolds.IsSplitSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsSplitSubmanifold}
   \leanok
   \uses{def:embedded-submanifold}
   An embedded submanifold $X \subseteq M$ modeled on $S$ is \emph{split} if $S$ is
@@ -378,7 +378,7 @@ model spaces.
 
 \begin{lemma}[Differential of the inclusion]
   \label{lem:sub-dmb-inclusion}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.exists_dMB_chart_val}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.exists_dMB_chart_val}
   \leanok
   \uses{thm:sub-manifold, lem:sub-transition-inverse}
   Let $X \subseteq M$ be an embedded submanifold modeled on $S$ and $p \in X$. In the preferred
@@ -397,7 +397,7 @@ model spaces.
 
 \begin{theorem}[The inclusion is an immersion]
   \label{thm:sub-inclusion-immersion}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.isImmersion_val, LCManifolds.IsEmbeddedSubmanifold.isImmersedSubmanifold_val}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.isImmersion_val, LocallyConvex.Manifolds.IsEmbeddedSubmanifold.isImmersedSubmanifold_val}
   \leanok
   \uses{lem:sub-dmb-inclusion, def:immersion, def:sub-immersed, prop:sub-inclusion-smooth}
   The inclusion of an embedded submanifold is an immersion; hence it exhibits $X$ as an
@@ -412,7 +412,7 @@ model spaces.
 
 \begin{theorem}[Split submanifolds]
   \label{thm:sub-inclusion-split}
-  \lean{LCManifolds.IsSplitSubmanifold.isSplitImmersion_val}
+  \lean{LocallyConvex.Manifolds.IsSplitSubmanifold.isSplitImmersion_val}
   \leanok
   \uses{lem:sub-dmb-inclusion, def:split-submanifold, def:split-immersion}
   The inclusion of a split submanifold is a split immersion.
@@ -426,7 +426,7 @@ model spaces.
 
 \begin{theorem}[The inclusion is initial]
   \label{thm:sub-inclusion-initial}
-  \lean{LCManifolds.IsEmbeddedSubmanifold.isInitialSubmanifold_val}
+  \lean{LocallyConvex.Manifolds.IsEmbeddedSubmanifold.isInitialSubmanifold_val}
   \leanok
   \uses{thm:sub-inclusion-immersion, def:initial-submanifold, lem:sub-codrestrict}
   The inclusion of an embedded submanifold exhibits it as an initial submanifold: a map into
@@ -457,7 +457,7 @@ is not a Banach manifold.
 
 \begin{theorem}[Immersions reflect smoothness]
   \label{thm:sub-banach-reflect}
-  \lean{LCManifolds.IsImmersion.smoothMBM_of_comp}
+  \lean{LocallyConvex.Manifolds.IsImmersion.smoothMBM_of_comp}
   \leanok
   \uses{def:immersion, def:contmdiff}
   Let $E$ be a Banach space, $F$ a normed space, and $f \colon M \to N$ an immersion. Let $P$
@@ -472,14 +472,14 @@ is not a Banach manifold.
   differential $J'(y_0)$ is an embedding, hence bounded below, and a bound with half the
   constant persists on a neighborhood $V$ of $y_0$. On the open set where the local
   representative $\gamma$ of $g$ lands in $V$, $J \circ \gamma$ is $\Ck{k}$, and the calculus
-  result \texttt{LCAnalysis.ContDiffMBOn.of\_comp\_of\_boundedBelow} of \cite{LCA} gives that
+  result \texttt{LocallyConvex.Analysis.ContDiffMBOn.of\_comp\_of\_boundedBelow} of \cite{LCA} gives that
   $\gamma$ is $\Ck{k}$: the derivative of $\gamma$ is obtained as the limit of difference
   quotients, which are Cauchy by the lower bound.
 \end{proof}
 
 \begin{corollary}[Topologically embedded immersions are initial]
   \label{cor:sub-banach-initial}
-  \lean{LCManifolds.IsImmersedSubmanifold.isInitialSubmanifold}
+  \lean{LocallyConvex.Manifolds.IsImmersedSubmanifold.isInitialSubmanifold}
   \leanok
   \uses{thm:sub-banach-reflect, def:initial-submanifold, def:sub-immersed,
     prop:sub-immersion-implications}

@@ -22,7 +22,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{definition}[The rectifiable distance]
   \label{def:ms-length-dist}
-  \lean{LCManifolds.RectPath, LCManifolds.RectPath.length, LCManifolds.RectPath.concat, LCManifolds.RectPath.reverse, LCManifolds.RectPath.length_concat, LCManifolds.RectPath.length_reverse, LCManifolds.lengthDist}
+  \lean{LocallyConvex.Manifolds.RectPath, LocallyConvex.Manifolds.RectPath.length, LocallyConvex.Manifolds.RectPath.concat, LocallyConvex.Manifolds.RectPath.reverse, LocallyConvex.Manifolds.RectPath.length_concat, LocallyConvex.Manifolds.RectPath.length_reverse, LocallyConvex.Manifolds.lengthDist}
   \leanok
   The rectifiable distance $d_\ell(x, y)$ is the infimum of the lengths of the continuous curves
   from $x$ to $y$, and $\infty$ if there is none.
@@ -30,7 +30,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{proposition}
   \label{prop:ms-length-dist}
-  \lean{LCManifolds.lengthDist_self, LCManifolds.lengthDist_comm, LCManifolds.lengthDist_triangle, LCManifolds.edist_le_lengthDist, LCManifolds.LengthMetric, LCManifolds.lipschitzWith_ofLength, LCManifolds.continuous_ofLength}
+  \lean{LocallyConvex.Manifolds.lengthDist_self, LocallyConvex.Manifolds.lengthDist_comm, LocallyConvex.Manifolds.lengthDist_triangle, LocallyConvex.Manifolds.edist_le_lengthDist, LocallyConvex.Manifolds.LengthMetric, LocallyConvex.Manifolds.lipschitzWith_ofLength, LocallyConvex.Manifolds.continuous_ofLength}
   \leanok
   \uses{def:ms-length-dist}
   $d_\ell$ is a pseudo-distance, and $d \leq d_\ell$. In particular the topology of $d_\ell$ is
@@ -45,7 +45,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{lemma}[When the topologies agree]
   \label{lem:ms-topologies}
-  \lean{LCManifolds.continuous_toLength_iff}
+  \lean{LocallyConvex.Manifolds.continuous_toLength_iff}
   \leanok
   \uses{prop:ms-length-dist}
   The topologies of $d$ and $d_\ell$ coincide if and only if, for every $x$ and every
@@ -60,7 +60,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{definition}[Interior metric spaces]
   \label{def:ms-interior}
-  \lean{LCManifolds.IsInterior, LCManifolds.IsInterior.exists_rectPath}
+  \lean{LocallyConvex.Manifolds.IsInterior, LocallyConvex.Manifolds.IsInterior.exists_rectPath}
   \leanok
   \uses{def:ms-length-dist}
   $(X, d)$ is an interior metric space (a length space) if $d = d_\ell$
@@ -69,7 +69,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{proposition}[Approximate midpoints]
   \label{prop:ms-midpoints}
-  \lean{LCManifolds.IsInterior.exists_approx_midpoint}
+  \lean{LocallyConvex.Manifolds.IsInterior.exists_approx_midpoint}
   \leanok
   \uses{def:ms-interior}
   In an interior metric space, for all $x, y$ and $\varepsilon > 0$ there is $z$ with
@@ -84,7 +84,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{theorem}[\texorpdfstring{\cite[Lema~8.1.10, Problemas~8.III--8.IV]{Lar22}}{Lema 8.1.10}]
   \label{thm:ms-midpoints-iff}
-  \lean{LCManifolds.HasApproxMidpoints, LCManifolds.HasBallCondition, LCManifolds.IsInterior.exists_dist_le_sub_sub, LCManifolds.IsInterior.hasBallCondition, LCManifolds.HasBallCondition.hasApproxMidpoints, LCManifolds.HasApproxMidpoints.hasBallCondition, LCManifolds.hasApproxMidpoints_iff_hasBallCondition, LCManifolds.HasApproxMidpoints.exists_rectPath_length_le, LCManifolds.isInterior_of_approx_midpoint, LCManifolds.isInterior_iff_hasApproxMidpoints, LCManifolds.isInterior_iff_hasBallCondition}
+  \lean{LocallyConvex.Manifolds.HasApproxMidpoints, LocallyConvex.Manifolds.HasBallCondition, LocallyConvex.Manifolds.IsInterior.exists_dist_le_sub_sub, LocallyConvex.Manifolds.IsInterior.hasBallCondition, LocallyConvex.Manifolds.HasBallCondition.hasApproxMidpoints, LocallyConvex.Manifolds.HasApproxMidpoints.hasBallCondition, LocallyConvex.Manifolds.hasApproxMidpoints_iff_hasBallCondition, LocallyConvex.Manifolds.HasApproxMidpoints.exists_rectPath_length_le, LocallyConvex.Manifolds.isInterior_of_approx_midpoint, LocallyConvex.Manifolds.isInterior_iff_hasApproxMidpoints, LocallyConvex.Manifolds.isInterior_iff_hasBallCondition}
   \leanok
   \uses{prop:ms-midpoints}
   An interior metric space satisfies the ball condition: for $r_1 + r_2 \leq d(x, y)$, the closed
@@ -106,7 +106,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{lemma}[Approximate intermediate points]
   \label{lem:ms-intermediate}
-  \lean{LCManifolds.IsInterior.exists_dist_le_add, LCManifolds.IsInterior.exists_approx_intermediate, LCManifolds.IsInterior.exists_mem_closedBall_near}
+  \lean{LocallyConvex.Manifolds.IsInterior.exists_dist_le_add, LocallyConvex.Manifolds.IsInterior.exists_approx_intermediate, LocallyConvex.Manifolds.IsInterior.exists_mem_closedBall_near}
   \leanok
   \uses{prop:ms-midpoints}
   In an interior metric space, for $a, b \geq 0$ with $a + b = d(x, y)$ and $\varepsilon > 0$
@@ -120,7 +120,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{lemma}[Lipschitz reparametrization]
   \label{lem:ms-reparam}
-  \lean{LCManifolds.RectPath.exists_lipschitz_reparam}
+  \lean{LocallyConvex.Manifolds.RectPath.exists_lipschitz_reparam}
   \leanok
   \uses{def:ms-length-dist}
   A curve of finite length $\ell$ can be reparametrized on $[0, 1]$ as an $\ell$-Lipschitz curve
@@ -135,7 +135,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{theorem}[\texorpdfstring{Hopf--Rinow \cite[Teorema~8.2.3]{Lar22}}{Hopf-Rinow}]
   \label{thm:ms-hopf-rinow}
-  \lean{LCManifolds.IsInterior.isCompact_closedBall_of_lt, LCManifolds.IsInterior.exists_isCompact_closedBall_gt, LCManifolds.IsInterior.isCompact_closedBall, LCManifolds.IsInterior.properSpace, LCManifolds.IsInterior.exists_rectPath_length_eq_of_isCompact, LCManifolds.IsInterior.exists_rectPath_length_eq}
+  \lean{LocallyConvex.Manifolds.IsInterior.isCompact_closedBall_of_lt, LocallyConvex.Manifolds.IsInterior.exists_isCompact_closedBall_gt, LocallyConvex.Manifolds.IsInterior.isCompact_closedBall, LocallyConvex.Manifolds.IsInterior.properSpace, LocallyConvex.Manifolds.IsInterior.exists_rectPath_length_eq_of_isCompact, LocallyConvex.Manifolds.IsInterior.exists_rectPath_length_eq}
   \leanok
   \uses{lem:ms-intermediate, lem:ms-reparam}
   Let $X$ be a complete interior metric space.
@@ -161,7 +161,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{definition}[Short geodesics, geodesic spaces]
   \label{def:ms-geodesic}
-  \lean{LCManifolds.IsShortGeodesic, LCManifolds.IsShortGeodesic.continuousOn, LCManifolds.IsShortGeodesic.eVariationOn_eq, LCManifolds.IsGeodesicSpace}
+  \lean{LocallyConvex.Manifolds.IsShortGeodesic, LocallyConvex.Manifolds.IsShortGeodesic.continuousOn, LocallyConvex.Manifolds.IsShortGeodesic.eVariationOn_eq, LocallyConvex.Manifolds.IsGeodesicSpace}
   \leanok
   \uses{def:ms-interior}
   $\gamma \colon [0, 1] \to X$ is a short geodesic of length $L$ if
@@ -171,7 +171,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{proposition}
   \label{prop:ms-subarcs}
-  \lean{LCManifolds.RectPath.edist_eq_of_length_eq, LCManifolds.RectPath.exists_isShortGeodesic, LCManifolds.IsInterior.isGeodesicSpace}
+  \lean{LocallyConvex.Manifolds.RectPath.edist_eq_of_length_eq, LocallyConvex.Manifolds.RectPath.exists_isShortGeodesic, LocallyConvex.Manifolds.IsInterior.isGeodesicSpace}
   \leanok
   \uses{def:ms-geodesic, thm:ms-hopf-rinow, lem:ms-reparam}
   The sub-arcs of a curve realizing the distance realize the distance \cite[Obs.~8.1.13]{Lar22};
@@ -188,7 +188,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{remark}
   \label{rem:ms-proper}
-  \lean{LCManifolds.completeSpace_of_isCompact_closedBall}
+  \lean{LocallyConvex.Manifolds.completeSpace_of_isCompact_closedBall}
   \leanok
   A space whose closed balls are compact is complete \cite[Obs.~8.2.4]{Lar22}. Being geodesic and
   locally compact does not imply completeness: the interval $(0, 1)$.
@@ -196,7 +196,7 @@ $t \mapsto \ell(\gamma|_{[a, t]})$ is continuous \cite[Lema~8.1.4]{Lar22}.
 
 \begin{example}[McAlpin: no shortest curves in infinite dimension]
   \label{ex:ms-mcalpin}
-  \lean{LCManifolds.McAlpin.A, LCManifolds.McAlpin.norm_A_eq_iff_mem_span, LCManifolds.McAlpin.M, LCManifolds.McAlpin.Arc, LCManifolds.McAlpin.IsChain, LCManifolds.McAlpin.pathDist, LCManifolds.McAlpin.pathDist_le_pi, LCManifolds.McAlpin.pi_le_chainLength_sphere, LCManifolds.McAlpin.pi_lt_chainLength, LCManifolds.McAlpin.pathDist_eq_pi, LCManifolds.McAlpin.not_exists_shortest}
+  \lean{LocallyConvex.Manifolds.McAlpin.A, LocallyConvex.Manifolds.McAlpin.norm_A_eq_iff_mem_span, LocallyConvex.Manifolds.McAlpin.M, LocallyConvex.Manifolds.McAlpin.Arc, LocallyConvex.Manifolds.McAlpin.IsChain, LocallyConvex.Manifolds.McAlpin.pathDist, LocallyConvex.Manifolds.McAlpin.pathDist_le_pi, LocallyConvex.Manifolds.McAlpin.pi_le_chainLength_sphere, LocallyConvex.Manifolds.McAlpin.pi_lt_chainLength, LocallyConvex.Manifolds.McAlpin.pathDist_eq_pi, LocallyConvex.Manifolds.McAlpin.not_exists_shortest}
   \leanok
   Let $A$ be the diagonal operator on $\ell^2$ with $a_0 = 1$, $a_n = 1 + 2^{-n}$, and
   $M = A(S)$, $S$ the unit sphere, with lengths measured by the norm of $\ell^2$. Then the distance
@@ -226,7 +226,7 @@ theory of the previous section does not apply as such.
 
 \begin{theorem}[\texorpdfstring{\cite[Prop.~9.1.2]{Lar22}}{Prop. 9.1.2}]
   \label{thm:ms-finsler-interior}
-  \lean{LCManifolds.FinslerLengthStructure.FinslerSpace, LCManifolds.FinslerLengthStructure.edist_le_abs_length, LCManifolds.FinslerLengthStructure.continuous_toFinsler, LCManifolds.FinslerLengthStructure.eVariationOn_le_length, LCManifolds.FinslerLengthStructure.arcPath, LCManifolds.FinslerLengthStructure.lengthDist_le_of_reach, LCManifolds.FinslerLengthStructure.isInterior}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.FinslerSpace, LocallyConvex.Manifolds.FinslerLengthStructure.edist_le_abs_length, LocallyConvex.Manifolds.FinslerLengthStructure.continuous_toFinsler, LocallyConvex.Manifolds.FinslerLengthStructure.eVariationOn_le_length, LocallyConvex.Manifolds.FinslerLengthStructure.arcPath, LocallyConvex.Manifolds.FinslerLengthStructure.lengthDist_le_of_reach, LocallyConvex.Manifolds.FinslerLengthStructure.isInterior}
   \leanok
   \uses{prop:ms-length-dist, def:ms-interior, thm:mt-triangle, prop:mt-dist-comm}
   $\Ck{1}$ curves are continuous for $d_b$, the metric length of a $\Ck{1}$ arc is at most its
@@ -249,7 +249,7 @@ and $M$ is Hausdorff.
 
 \begin{definition}[\texorpdfstring{\cite[Def.~9.1.3, Obs.~9.1.4]{Lar22}}{Def. 9.1.3}]
   \label{def:ms-bounded}
-  \lean{LCManifolds.FinslerSeminormField.IsBoundedBelowOn, LCManifolds.FinslerSeminormField.IsBoundedAboveOn, LCManifolds.FinslerSeminormField.IsBoundedBelow, LCManifolds.FinslerSeminormField.IsBoundedAbove, LCManifolds.FinslerSeminormField.IsBounded, LCManifolds.FinslerSeminormField.IsBounded.isBoundedBelow, LCManifolds.FinslerSeminormField.IsBounded.isBoundedAbove}
+  \lean{LocallyConvex.Manifolds.FinslerSeminormField.IsBoundedBelowOn, LocallyConvex.Manifolds.FinslerSeminormField.IsBoundedAboveOn, LocallyConvex.Manifolds.FinslerSeminormField.IsBoundedBelow, LocallyConvex.Manifolds.FinslerSeminormField.IsBoundedAbove, LocallyConvex.Manifolds.FinslerSeminormField.IsBounded, LocallyConvex.Manifolds.FinslerSeminormField.IsBounded.isBoundedBelow, LocallyConvex.Manifolds.FinslerSeminormField.IsBounded.isBoundedAbove}
   \leanok
   $\mu$ is \emph{bounded below} if every point has an open neighborhood $U$ in the domain of a
   chart $\varphi$ and $C > 0$ with $\|\varphi_{*x} v\| \leq C \mu_x(v)$ for $x \in U$; it is
@@ -266,7 +266,7 @@ and $M$ is Hausdorff.
 
 \begin{lemma}[The integrated bound]
   \label{lem:ms-integrated}
-  \lean{LCManifolds.FinslerLengthStructure.norm_chart_sub_le}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.norm_chart_sub_le}
   \leanok
   \uses{def:ms-bounded}
   If $\mu$ is bounded below on $U$ with constant $C$ and $E$ is complete, a $\Ck{1}$ curve that
@@ -281,7 +281,7 @@ and $M$ is Hausdorff.
 
 \begin{lemma}[Leaving a chart costs length]
   \label{lem:ms-exit}
-  \lean{LCManifolds.FinslerLengthStructure.arc_exit, LCManifolds.FinslerLengthStructure.reach_exit}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.arc_exit, LocallyConvex.Manifolds.FinslerLengthStructure.reach_exit}
   \leanok
   \uses{lem:ms-integrated, def:mt-chain}
   Let $\mu$ be bounded below on $U$ with constant $C$, and let $\bar B(\varphi(x_0), r)$ be the
@@ -300,7 +300,7 @@ and $M$ is Hausdorff.
 
 \begin{theorem}[\texorpdfstring{\cite[Lema~9.1.8]{Lar22}}{Lema 9.1.8}]
   \label{thm:ms-bounded-below}
-  \lean{LCManifolds.FinslerLengthStructure.exists_chart_norm_le_dist, LCManifolds.FinslerLengthStructure.eq_of_dist_eq_zero, LCManifolds.FinslerLengthStructure.continuous_ofFinsler}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.exists_chart_norm_le_dist, LocallyConvex.Manifolds.FinslerLengthStructure.eq_of_dist_eq_zero, LocallyConvex.Manifolds.FinslerLengthStructure.continuous_ofFinsler}
   \leanok
   \uses{lem:ms-exit, thm:ms-finsler-interior}
   If $\mu$ is bounded below, every point $x_0$ has a chart and $C, r > 0$ such that
@@ -316,7 +316,7 @@ and $M$ is Hausdorff.
 
 \begin{theorem}[Weak and strong Finsler manifolds]
   \label{thm:ms-bounded-above}
-  \lean{LCManifolds.FinslerLengthStructure.dist_le_norm_chart, LCManifolds.FinslerLengthStructure.continuous_toFinsler_of_isBoundedAbove, LCManifolds.FinslerLengthStructure.homeomorphFinsler}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.dist_le_norm_chart, LocallyConvex.Manifolds.FinslerLengthStructure.continuous_toFinsler_of_isBoundedAbove, LocallyConvex.Manifolds.FinslerLengthStructure.homeomorphFinsler}
   \leanok
   \uses{def:ms-bounded, thm:ms-bounded-below}
   If $\mu$ is bounded above with constant $m$, then $d_b(x, y) \leq \|\varphi(y) - \varphi(x)\| / m$
@@ -335,7 +335,7 @@ and $M$ is Hausdorff.
 
 \begin{lemma}[\texorpdfstring{\cite[Lema~9.1.6]{Lar22}}{Lema 9.1.6}]
   \label{lem:ms-lipschitz}
-  \lean{LCManifolds.FinslerSeminormField.chartFun, LCManifolds.FinslerSeminormField.chartFun_tcc, LCManifolds.FinslerSeminormField.chartFun_smul, LCManifolds.FinslerSeminormField.chartFun_zero, LCManifolds.FinslerSeminormField.isBoundedAbove_of_lipschitz}
+  \lean{LocallyConvex.Manifolds.FinslerSeminormField.chartFun, LocallyConvex.Manifolds.FinslerSeminormField.chartFun_tcc, LocallyConvex.Manifolds.FinslerSeminormField.chartFun_smul, LocallyConvex.Manifolds.FinslerSeminormField.chartFun_zero, LocallyConvex.Manifolds.FinslerSeminormField.isBoundedAbove_of_lipschitz}
   \leanok
   \uses{def:ms-bounded}
   If $\mu$, read in charts, is Lipschitz near the zero section, then $\mu$ is bounded above.
@@ -351,7 +351,7 @@ and $M$ is Hausdorff.
 
 \begin{theorem}[\texorpdfstring{\cite[Teorema~9.1.5]{Lar22}}{Teorema 9.1.5}]
   \label{thm:ms-finite-dim}
-  \lean{LCManifolds.tangentCoordChange_smul, LCManifolds.FinslerMetric.isBounded_of_finiteDimensional}
+  \lean{LocallyConvex.Manifolds.tangentCoordChange_smul, LocallyConvex.Manifolds.FinslerMetric.isBounded_of_finiteDimensional}
   \leanok
   \uses{def:ms-bounded, def:finsler-metric}
   If the model is finite-dimensional, every Finsler metric whose seminorms are norms is strong.
@@ -366,7 +366,7 @@ and $M$ is Hausdorff.
 
 \begin{corollary}[\texorpdfstring{Hopf--Rinow for Finsler manifolds \cite[Cor.~9.1.10]{Lar22}}{Hopf-Rinow for Finsler manifolds}]
   \label{cor:ms-finsler-hopf-rinow}
-  \lean{LCManifolds.FinslerMetric.metricSpace, LCManifolds.FinslerMetric.locallyCompactSpace, LCManifolds.FinslerMetric.exists_rectPath_length_eq}
+  \lean{LocallyConvex.Manifolds.FinslerMetric.metricSpace, LocallyConvex.Manifolds.FinslerMetric.locallyCompactSpace, LocallyConvex.Manifolds.FinslerMetric.exists_rectPath_length_eq}
   \leanok
   \uses{thm:ms-finite-dim, thm:ms-bounded-above, thm:ms-finsler-interior, thm:ms-hopf-rinow}
   Let $M$ be a Hausdorff manifold modeled on a finite-dimensional normed space, with a reversible
@@ -397,7 +397,7 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
 
 \begin{definition}[Asymmetric distances and forward lengths]
   \label{def:ms-asymm}
-  \lean{LCManifolds.AsymmPseudoEMetricSpace, LCManifolds.AsymmPseudoEMetricSpace.ofBDist, LCManifolds.fwdVar, LCManifolds.bwdVar, LCManifolds.FwdPath, LCManifolds.fwdLengthDist, LCManifolds.IsFwdInterior}
+  \lean{LocallyConvex.Manifolds.AsymmPseudoEMetricSpace, LocallyConvex.Manifolds.AsymmPseudoEMetricSpace.ofBDist, LocallyConvex.Manifolds.fwdVar, LocallyConvex.Manifolds.bwdVar, LocallyConvex.Manifolds.FwdPath, LocallyConvex.Manifolds.fwdLengthDist, LocallyConvex.Manifolds.IsFwdInterior}
   \leanok
   An asymmetric metric space carries $b$ and the topology of its symmetrization. The forward
   length of a curve is its forward variation; $b_\ell$ is the infimum of forward lengths of
@@ -407,7 +407,7 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
 
 \begin{theorem}[Forward lengths]
   \label{thm:ms-fwd-length}
-  \lean{LCManifolds.fwdVar.Icc_add_Icc, LCManifolds.fwdVar.comp_eq_of_monotoneOn, LCManifolds.fwdVar_comp_neg, LCManifolds.fwdVar.continuousOn_Icc, LCManifolds.fwdLengthDist_triangle, LCManifolds.bdist_le_fwdLengthDist, LCManifolds.IsFwdInterior.exists_bdist_le_add, LCManifolds.FwdPath.exists_lipschitz_reparam}
+  \lean{LocallyConvex.Manifolds.fwdVar.Icc_add_Icc, LocallyConvex.Manifolds.fwdVar.comp_eq_of_monotoneOn, LocallyConvex.Manifolds.fwdVar_comp_neg, LocallyConvex.Manifolds.fwdVar.continuousOn_Icc, LocallyConvex.Manifolds.fwdLengthDist_triangle, LocallyConvex.Manifolds.bdist_le_fwdLengthDist, LocallyConvex.Manifolds.IsFwdInterior.exists_bdist_le_add, LocallyConvex.Manifolds.FwdPath.exists_lipschitz_reparam}
   \leanok
   \uses{def:ms-asymm}
   Forward lengths are additive and invariant under increasing reparametrizations; the running
@@ -425,7 +425,7 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
 
 \begin{theorem}[Shortest forward curves]
   \label{thm:ms-fwd-hopf-rinow}
-  \lean{LCManifolds.bdist_le_bdist_add_edist, LCManifolds.continuous_bdist, LCManifolds.IsFwdInterior.exists_fwdPath_length_eq_of_isCompact}
+  \lean{LocallyConvex.Manifolds.bdist_le_bdist_add_edist, LocallyConvex.Manifolds.continuous_bdist, LocallyConvex.Manifolds.IsFwdInterior.exists_fwdPath_length_eq_of_isCompact}
   \leanok
   \uses{thm:ms-fwd-length}
   Let $X$ be a Hausdorff forward interior space, $b(x, y) < \infty$, with compact closed forward
@@ -442,7 +442,7 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
 
 \begin{theorem}[Non-reversible Finsler structures]
   \label{thm:ms-finsler-asymm}
-  \lean{LCManifolds.FinslerLengthStructure.bdist_le_lengths, LCManifolds.FinslerLengthStructure.fwdVar_le_length, LCManifolds.FinslerLengthStructure.fwdArcPath, LCManifolds.FinslerLengthStructure.fwdLengthDist_le_of_reach, LCManifolds.FinslerLengthStructure.isFwdInterior, LCManifolds.FinslerLengthStructure.length_reverse_le, LCManifolds.FinslerLengthStructure.Reach.reverse_le, LCManifolds.FinslerLengthStructure.dist_comm_le, LCManifolds.FinslerLengthStructure.t2Space_finslerSpace, LCManifolds.FinslerLengthStructure.exists_fwdPath_length_eq}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.bdist_le_lengths, LocallyConvex.Manifolds.FinslerLengthStructure.fwdVar_le_length, LocallyConvex.Manifolds.FinslerLengthStructure.fwdArcPath, LocallyConvex.Manifolds.FinslerLengthStructure.fwdLengthDist_le_of_reach, LocallyConvex.Manifolds.FinslerLengthStructure.isFwdInterior, LocallyConvex.Manifolds.FinslerLengthStructure.length_reverse_le, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.reverse_le, LocallyConvex.Manifolds.FinslerLengthStructure.dist_comm_le, LocallyConvex.Manifolds.FinslerLengthStructure.t2Space_finslerSpace, LocallyConvex.Manifolds.FinslerLengthStructure.exists_fwdPath_length_eq}
   \leanok
   \uses{thm:ms-fwd-hopf-rinow, thm:ms-finsler-interior, thm:ms-bounded-below}
   For any Finsler length structure, $\ell^+(\gamma) \leq L_b(\gamma)$ and $(M, d_b)$ is forward
@@ -459,7 +459,7 @@ $\sum b(\gamma(t_i), \gamma(t_{i+1}))$, which change under reversal of the curve
 
 \begin{proposition}[Symmetrization]
   \label{prop:ms-symm}
-  \lean{LCManifolds.FinslerLengthStructure.symm, LCManifolds.FinslerLengthStructure.symm_isReversible, LCManifolds.FinslerLengthStructure.length_le_mul_of_le, LCManifolds.FinslerLengthStructure.Reach.mono_mul, LCManifolds.FinslerLengthStructure.dist_le_mul_of_le, LCManifolds.FinslerLengthStructure.dist_le_dist_symm, LCManifolds.FinslerLengthStructure.dist_swap_le_dist_symm, LCManifolds.FinslerLengthStructure.dist_symm_le, LCManifolds.FinslerLengthStructure.homeomorphSymm}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.symm, LocallyConvex.Manifolds.FinslerLengthStructure.symm_isReversible, LocallyConvex.Manifolds.FinslerLengthStructure.length_le_mul_of_le, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.mono_mul, LocallyConvex.Manifolds.FinslerLengthStructure.dist_le_mul_of_le, LocallyConvex.Manifolds.FinslerLengthStructure.dist_le_dist_symm, LocallyConvex.Manifolds.FinslerLengthStructure.dist_swap_le_dist_symm, LocallyConvex.Manifolds.FinslerLengthStructure.dist_symm_le, LocallyConvex.Manifolds.FinslerLengthStructure.homeomorphSymm}
   \leanok
   \uses{thm:ms-finsler-asymm}
   $\mu_s(v) = \mu(v) + \mu(-v)$ is a reversible Finsler length structure, and

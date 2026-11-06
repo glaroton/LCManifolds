@@ -4,7 +4,7 @@
 Real and complex analytic manifolds modeled on locally convex spaces, following
 \cite[Definitions~3.1.3--3.1.4 and~2.2.18]{GN26}. Real analyticity is Milnor's notion: a map is
 real analytic if it extends to a complex analytic map on an open subset of the complexification
-$E_{\mathbb{C}} = E \times E$ (see the companion library \texttt{LCAnalysis}). As for smooth manifolds,
+$E_{\mathbb{C}} = E \times E$ (see the companion library \texttt{lc-analysis}). As for smooth manifolds,
 no completeness of the model space is assumed: composition, locality, ``analytic implies
 smooth'' and ``complex analytic implies real analytic'' hold for arbitrary Hausdorff locally
 convex spaces.
@@ -13,8 +13,8 @@ convex spaces.
 
 \begin{definition}[Analytic groupoids]
   \label{def:analytic-groupoids}
-  \lean{LCManifolds.realAnalyticGroupoid, LCManifolds.complexAnalyticGroupoid,
-    LCManifolds.realAnalyticOn_congr}
+  \lean{LocallyConvex.Manifolds.realAnalyticGroupoid, LocallyConvex.Manifolds.complexAnalyticGroupoid,
+    LocallyConvex.Manifolds.realAnalyticOn_congr}
   \leanok
   \uses{def:mb-groupoid}
   For a real locally convex space $E$, the \emph{real analytic groupoid} consists of the
@@ -32,8 +32,8 @@ convex spaces.
 
 \begin{proposition}
   \label{prop:analytic-groupoids-le}
-  \lean{LCManifolds.realAnalyticGroupoid_le_mbGroupoid,
-    LCManifolds.complexAnalyticGroupoid_le_realAnalyticGroupoid}
+  \lean{LocallyConvex.Manifolds.realAnalyticGroupoid_le_mbGroupoid,
+    LocallyConvex.Manifolds.complexAnalyticGroupoid_le_realAnalyticGroupoid}
   \leanok
   \uses{def:analytic-groupoids}
   Every real analytic diffeomorphism is a smooth diffeomorphism, and (for a complex locally
@@ -48,9 +48,9 @@ convex spaces.
 
 \begin{definition}[Analytic manifolds]
   \label{def:analytic-manifold}
-  \lean{LCManifolds.RealAnalyticManifold, LCManifolds.ComplexAnalyticManifold,
-    LCManifolds.RealAnalyticManifold.mbManifold,
-    LCManifolds.ComplexAnalyticManifold.realAnalyticManifold}
+  \lean{LocallyConvex.Manifolds.RealAnalyticManifold, LocallyConvex.Manifolds.ComplexAnalyticManifold,
+    LocallyConvex.Manifolds.RealAnalyticManifold.mbManifold,
+    LocallyConvex.Manifolds.ComplexAnalyticManifold.realAnalyticManifold}
   \leanok
   \uses{def:analytic-groupoids, prop:analytic-groupoids-le, def:mb-manifold}
   A \emph{real (complex) analytic manifold} is a charted space whose transition maps belong to
@@ -69,7 +69,7 @@ convex spaces.
 
 \begin{definition}[Analytic maps]
   \label{def:analytic-maps}
-  \lean{LCManifolds.RealAnalyticMOn, LCManifolds.ComplexAnalyticMOn}
+  \lean{LocallyConvex.Manifolds.RealAnalyticMOn, LocallyConvex.Manifolds.ComplexAnalyticMOn}
   \leanok
   \uses{def:analytic-manifold, def:contmdiff}
   A map $f \colon M \to N$ is \emph{real (complex) analytic} on an open set $U \subseteq M$ if
@@ -79,7 +79,7 @@ convex spaces.
 
 \begin{lemma}[Insertion of charts]
   \label{lem:chart-change}
-  \lean{LCManifolds.exists_chartChange}
+  \lean{LocallyConvex.Manifolds.exists_chartChange}
   \leanok
   Near each point of the domain of $e' \circ f \circ e^{-1}$, this map factors as
   $(e' \circ c'^{-1}) \circ (c' \circ f \circ c^{-1}) \circ (c \circ e^{-1})$ with explicit
@@ -93,21 +93,21 @@ convex spaces.
 
 \begin{theorem}
   \label{thm:analytic-maps}
-  \lean{LCManifolds.realAnalyticOn_transition, LCManifolds.RealAnalyticMOn.realAnalyticOn_chart,
-    LCManifolds.RealAnalyticMOn.comp, LCManifolds.RealAnalyticMOn.smoothMBMOn,
-    LCManifolds.realAnalyticMOn_id, LCManifolds.realAnalyticMOn_const,
-    LCManifolds.realAnalyticMOn_iff_realAnalyticOn,
-    LCManifolds.complexAnalyticOn_transition,
-    LCManifolds.ComplexAnalyticMOn.complexAnalyticOn_chart, LCManifolds.ComplexAnalyticMOn.comp,
-    LCManifolds.ComplexAnalyticMOn.realAnalyticMOn, LCManifolds.complexAnalyticMOn_id,
-    LCManifolds.complexAnalyticMOn_const, LCManifolds.complexAnalyticMOn_iff_complexAnalyticOn}
+  \lean{LocallyConvex.Manifolds.realAnalyticOn_transition, LocallyConvex.Manifolds.RealAnalyticMOn.realAnalyticOn_chart,
+    LocallyConvex.Manifolds.RealAnalyticMOn.comp, LocallyConvex.Manifolds.RealAnalyticMOn.smoothMBMOn,
+    LocallyConvex.Manifolds.realAnalyticMOn_id, LocallyConvex.Manifolds.realAnalyticMOn_const,
+    LocallyConvex.Manifolds.realAnalyticMOn_iff_realAnalyticOn,
+    LocallyConvex.Manifolds.complexAnalyticOn_transition,
+    LocallyConvex.Manifolds.ComplexAnalyticMOn.complexAnalyticOn_chart, LocallyConvex.Manifolds.ComplexAnalyticMOn.comp,
+    LocallyConvex.Manifolds.ComplexAnalyticMOn.realAnalyticMOn, LocallyConvex.Manifolds.complexAnalyticMOn_id,
+    LocallyConvex.Manifolds.complexAnalyticMOn_const, LocallyConvex.Manifolds.complexAnalyticMOn_iff_complexAnalyticOn}
   \leanok
   \uses{def:analytic-maps, lem:chart-change}
   The local representatives of a real (complex) analytic map in arbitrary charts of the
   maximal atlases are real (complex) analytic. Compositions of analytic maps are analytic;
   identities and constants are analytic; real analytic maps are smooth; complex analytic maps
   are real analytic; and between open subsets of the model spaces, the notions agree with those
-  of \texttt{LCAnalysis}.
+  of \texttt{lc-analysis}.
 \end{theorem}
 
 \begin{proof}
@@ -118,7 +118,7 @@ convex spaces.
 
 \begin{example}[Inversion in a continuous inverse algebra]
   \label{ex:analytic-inversion}
-  \lean{LCManifolds.realAnalyticMOn_inverse}
+  \lean{LocallyConvex.Manifolds.realAnalyticMOn_inverse}
   \leanok
   \uses{def:analytic-maps}
   The unit group $A^\times$ of a real continuous inverse algebra $A$ is open in $A$, hence a
@@ -129,7 +129,7 @@ convex spaces.
 
 \begin{definition}[Complexification]
   \label{def:complexification-manifold}
-  \lean{LCManifolds.IsComplexification, LCManifolds.isComplexification_ofReal}
+  \lean{LocallyConvex.Manifolds.IsComplexification, LocallyConvex.Manifolds.isComplexification_ofReal}
   \leanok
   \uses{def:analytic-manifold}
   A complex analytic manifold $M^*$ modeled on $E_{\mathbb{C}}$ is a \emph{complexification} of a real

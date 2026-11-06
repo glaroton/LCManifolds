@@ -25,8 +25,8 @@ linear subspace.
 
 \begin{proposition}[Closed subspaces]
   \label{prop:ex-subspace}
-  \lean{LCManifolds.isSliceChart_refl, LCManifolds.isEmbeddedSubmanifold_subspace,
-    LCManifolds.isSplitSubmanifold_subspace, LCManifolds.tangentSpace_subspace}
+  \lean{LocallyConvex.Manifolds.isSliceChart_refl, LocallyConvex.Manifolds.isEmbeddedSubmanifold_subspace,
+    LocallyConvex.Manifolds.isSplitSubmanifold_subspace, LocallyConvex.Manifolds.tangentSpace_subspace}
   \leanok
   \uses{def:embedded-submanifold, def:split-submanifold, def:tangent-space-submanifold}
   If $S$ is closed, then $S$ is an embedded submanifold of $F$ modeled on $S$, with the identity
@@ -43,7 +43,7 @@ linear subspace.
 
 \begin{proposition}[Linear inclusions]
   \label{prop:ex-subspace-immersion}
-  \lean{LCManifolds.isImmersion_subtypeL, LCManifolds.isSplitImmersion_subtypeL_iff}
+  \lean{LocallyConvex.Manifolds.isImmersion_subtypeL, LocallyConvex.Manifolds.isSplitImmersion_subtypeL_iff}
   \leanok
   \uses{def:immersion, def:split-immersion}
   If $S$ is closed, the inclusion $\iota \colon S \to F$ is an immersion. It is a split
@@ -62,7 +62,7 @@ simplest field of projectors: the constant one.
 
 \begin{proposition}[The flat connection of a subspace]
   \label{prop:ex-subspace-flat}
-  \lean{LCManifolds.projectorField_subspace, LCManifolds.symb_subspace_refl, LCManifolds.isGeodesic_subspace_iff}
+  \lean{LocallyConvex.Manifolds.projectorField_subspace, LocallyConvex.Manifolds.symb_subspace_refl, LocallyConvex.Manifolds.isGeodesic_subspace_iff}
   \leanok
   \uses{prop:ex-subspace, def:projector-field, thm:projector-connection, def:geodesic}
   Let $S$ be closed and $P$ a continuous projection onto $S$. Then $E_p = P$ for all $p \in S$
@@ -85,7 +85,7 @@ separately in Lean).
 
 \begin{proposition}[Open subsets]
   \label{prop:ex-open}
-  \lean{LCManifolds.isEmbeddedSubmanifold_open}
+  \lean{LocallyConvex.Manifolds.isEmbeddedSubmanifold_open}
   \leanok
   \uses{def:embedded-submanifold, def:mb-manifold}
   An open subset $U$ of a manifold $M$ modeled on $E$ is an embedded submanifold of $M$, modeled
@@ -107,7 +107,7 @@ and its model is the horizontal subspace $E \times 0$, the kernel of the second 
 
 \begin{proposition}[Graphs]
   \label{prop:ex-graph}
-  \lean{LCManifolds.graph, LCManifolds.horizontal, LCManifolds.closedComplemented_horizontal, LCManifolds.graphChart, LCManifolds.graphChart_mem, LCManifolds.isSplitSubmanifold_graph}
+  \lean{LocallyConvex.Manifolds.graph, LocallyConvex.Manifolds.horizontal, LocallyConvex.Manifolds.closedComplemented_horizontal, LocallyConvex.Manifolds.graphChart, LocallyConvex.Manifolds.graphChart_mem, LocallyConvex.Manifolds.isSplitSubmanifold_graph}
   \leanok
   \uses{def:split-submanifold, def:mb-groupoid}
   The map $\Phi(x, y) = (x, y - g(x))$, defined on $U \times G$, is a chart of $E \times G$ with
@@ -159,7 +159,7 @@ $(p - e)^\perp$), a linear isometry, and then $\varphi_e$.
 
 \begin{lemma}[The charts of the sphere]
   \label{lem:ex-sphere-charts}
-  \lean{LCManifolds.Sphere.chart, LCManifolds.Sphere.chart_mem, LCManifolds.Sphere.norm_eq_one_iff, LCManifolds.Sphere.refl, LCManifolds.Sphere.chartAt', LCManifolds.Sphere.chartAt'_mem, LCManifolds.Sphere.mem_chartAt'_source}
+  \lean{LocallyConvex.Manifolds.Sphere.chart, LocallyConvex.Manifolds.Sphere.chart_mem, LocallyConvex.Manifolds.Sphere.norm_eq_one_iff, LocallyConvex.Manifolds.Sphere.refl, LocallyConvex.Manifolds.Sphere.chartAt', LocallyConvex.Manifolds.Sphere.chartAt'_mem, LocallyConvex.Manifolds.Sphere.mem_chartAt'_source}
   \leanok
   \uses{def:mb-groupoid}
   The map $\varphi_e$ is a smooth chart of $H$ with smooth inverse; for $q$ in its domain,
@@ -178,7 +178,7 @@ $(p - e)^\perp$), a linear isometry, and then $\varphi_e$.
 
 \begin{theorem}[The sphere is an embedded submanifold]
   \label{thm:ex-sphere}
-  \lean{LCManifolds.isEmbeddedSubmanifold_sphere, LCManifolds.tangentSpace_sphere}
+  \lean{LocallyConvex.Manifolds.isEmbeddedSubmanifold_sphere, LocallyConvex.Manifolds.tangentSpace_sphere}
   \leanok
   \uses{lem:ex-sphere-charts, def:embedded-submanifold, def:tangent-space-submanifold}
   The unit sphere $S$ is an embedded submanifold of $H$ modeled on $e^\perp$, and
@@ -199,7 +199,7 @@ of its connection are the curves whose acceleration is normal to the sphere.
 
 \begin{theorem}[Geodesics of the sphere]
   \label{thm:ex-sphere-geodesics}
-  \lean{LCManifolds.sphereProj, LCManifolds.projectorField_sphere, LCManifolds.isGeodesic_sphere_iff, LCManifolds.greatCircle, LCManifolds.isGeodesic_greatCircle}
+  \lean{LocallyConvex.Manifolds.sphereProj, LocallyConvex.Manifolds.projectorField_sphere, LocallyConvex.Manifolds.isGeodesic_sphere_iff, LocallyConvex.Manifolds.greatCircle, LocallyConvex.Manifolds.isGeodesic_greatCircle}
   \leanok
   \uses{thm:ex-sphere, def:projector-field, thm:projector-connection, def:geodesic}
   The maps $E_p w = w - \langle w, p\rangle p$, $p \in S$, form a field of projectors onto
@@ -236,7 +236,7 @@ spaces, hence manifolds with a single chart.
 
 \begin{proposition}[$\ell^1 \to \ell^2$]
   \label{prop:ex-l1-l2}
-  \lean{LCManifolds.lpInclusion, LCManifolds.lpInclusion_injective, LCManifolds.not_boundedBelow_lpInclusion, LCManifolds.isWeakImmersion_lpInclusion, LCManifolds.not_isImmersion_lpInclusion}
+  \lean{LocallyConvex.Manifolds.lpInclusion, LocallyConvex.Manifolds.lpInclusion_injective, LocallyConvex.Manifolds.not_boundedBelow_lpInclusion, LocallyConvex.Manifolds.isWeakImmersion_lpInclusion, LocallyConvex.Manifolds.not_isImmersion_lpInclusion}
   \leanok
   \uses{def:weak-immersion, def:immersion}
   The inclusion $\iota$ is continuous, linear and injective, hence a weak immersion. It is not
@@ -271,7 +271,7 @@ at $t = 0$ and tending to the origin again as $t \to \pm\infty$.
 
 \begin{proposition}[The figure eight is immersed]
   \label{prop:ex-lemniscate-immersed}
-  \lean{LCManifolds.Lemniscate.j, LCManifolds.Lemniscate.j_injective, LCManifolds.Lemniscate.vel_ne_zero, LCManifolds.Lemniscate.isImmersedSubmanifold_lemniscate}
+  \lean{LocallyConvex.Manifolds.Lemniscate.j, LocallyConvex.Manifolds.Lemniscate.j_injective, LocallyConvex.Manifolds.Lemniscate.vel_ne_zero, LocallyConvex.Manifolds.Lemniscate.isImmersedSubmanifold_lemniscate}
   \leanok
   \uses{def:immersion}
   The map $j$ is smooth, injective and has nonvanishing velocity; hence it is an injective
@@ -288,7 +288,7 @@ at $t = 0$ and tending to the origin again as $t \to \pm\infty$.
 
 \begin{theorem}[The figure eight is not initial]
   \label{thm:ex-lemniscate-not-initial}
-  \lean{LCManifolds.Lemniscate.f, LCManifolds.Lemniscate.g, LCManifolds.Lemniscate.j_g, LCManifolds.Lemniscate.one_lt_g, LCManifolds.Lemniscate.g_zero, LCManifolds.Lemniscate.not_isInitialSubmanifold_lemniscate}
+  \lean{LocallyConvex.Manifolds.Lemniscate.f, LocallyConvex.Manifolds.Lemniscate.g, LocallyConvex.Manifolds.Lemniscate.j_g, LocallyConvex.Manifolds.Lemniscate.one_lt_g, LocallyConvex.Manifolds.Lemniscate.g_zero, LocallyConvex.Manifolds.Lemniscate.not_isInitialSubmanifold_lemniscate}
   \leanok
   \uses{prop:ex-lemniscate-immersed, def:initial-submanifold}
   Let $\sigma(s) = \tfrac12\arctan s$ and $f(s) = (\sin\sigma, -\sin 2\sigma)$. Then $f$ is a
@@ -320,7 +320,7 @@ Phillips \cite{Phi40}; we formalize the short proof of Whitley \cite{Whi66}.
 
 \begin{theorem}[Phillips' lemma]
   \label{thm:ex-phillips}
-  \lean{LCManifolds.Phillips.Linf, LCManifolds.Phillips.c0, LCManifolds.Phillips.isClosed_c0, LCManifolds.Phillips.not_closedComplemented_c0}
+  \lean{LocallyConvex.Manifolds.Phillips.Linf, LocallyConvex.Manifolds.Phillips.c0, LocallyConvex.Manifolds.Phillips.isClosed_c0, LocallyConvex.Manifolds.Phillips.not_closedComplemented_c0}
   \leanok
   There is no continuous linear projection of $\ell^\infty$ onto $c_0$.
 \end{theorem}
@@ -330,7 +330,7 @@ that a functional vanishing on $c_0$ can only see countably many of them.
 
 \begin{lemma}[An almost disjoint family]
   \label{lem:ex-almost-disjoint}
-  \lean{LCManifolds.Phillips.N, LCManifolds.Phillips.infinite_N, LCManifolds.Phillips.finite_N_inter, LCManifolds.Phillips.ind, LCManifolds.Phillips.ind_not_mem_c0}
+  \lean{LocallyConvex.Manifolds.Phillips.N, LocallyConvex.Manifolds.Phillips.infinite_N, LocallyConvex.Manifolds.Phillips.finite_N_inter, LocallyConvex.Manifolds.Phillips.ind, LocallyConvex.Manifolds.Phillips.ind_not_mem_c0}
   \leanok
   For each $A \subseteq \N$ there is an infinite set $N_A \subseteq \N$ such that
   $N_A \cap N_B$ is finite whenever $A \ne B$. The indicator $\chi_A \in \ell^\infty$ of $N_A$
@@ -347,7 +347,7 @@ that a functional vanishing on $c_0$ can only see countably many of them.
 
 \begin{lemma}[Whitley]
   \label{lem:ex-whitley}
-  \lean{LCManifolds.Phillips.abs_le_of_eventually, LCManifolds.Phillips.countable_ne_zero}
+  \lean{LocallyConvex.Manifolds.Phillips.abs_le_of_eventually, LocallyConvex.Manifolds.Phillips.countable_ne_zero}
   \leanok
   \uses{lem:ex-almost-disjoint}
   Let $f$ be a continuous linear functional on $\ell^\infty$ that vanishes on $c_0$. If
@@ -375,7 +375,7 @@ that a functional vanishing on $c_0$ can only see countably many of them.
 
 \begin{corollary}[Embedded but not split]
   \label{cor:ex-c0}
-  \lean{LCManifolds.Phillips.isEmbeddedSubmanifold_c0, LCManifolds.Phillips.not_isSplitSubmanifold_c0, LCManifolds.Phillips.isImmersion_c0, LCManifolds.Phillips.not_isSplitImmersion_c0}
+  \lean{LocallyConvex.Manifolds.Phillips.isEmbeddedSubmanifold_c0, LocallyConvex.Manifolds.Phillips.not_isSplitSubmanifold_c0, LocallyConvex.Manifolds.Phillips.isImmersion_c0, LocallyConvex.Manifolds.Phillips.not_isSplitImmersion_c0}
   \leanok
   \uses{thm:ex-phillips, prop:ex-subspace, prop:ex-subspace-immersion,
     def:embedded-submanifold, def:split-submanifold, def:immersion, def:split-immersion}
@@ -423,7 +423,7 @@ homeomorphism of $A$ with inverse $a \mapsto pa$.
 
 \begin{lemma}[The Cayley transform]
   \label{lem:ex-cayley}
-  \lean{LCManifolds.Cayley.cay, LCManifolds.Cayley.cayInv, LCManifolds.Cayley.chart, LCManifolds.Cayley.chart_mem, LCManifolds.Cayley.mem_unitary_iff, LCManifolds.Cayley.chartAt', LCManifolds.Cayley.isSliceChart}
+  \lean{LocallyConvex.Manifolds.Cayley.cay, LocallyConvex.Manifolds.Cayley.cayInv, LocallyConvex.Manifolds.Cayley.chart, LocallyConvex.Manifolds.Cayley.chart_mem, LocallyConvex.Manifolds.Cayley.mem_unitary_iff, LocallyConvex.Manifolds.Cayley.chartAt', LocallyConvex.Manifolds.Cayley.isSliceChart}
   \leanok
   \uses{def:mb-groupoid}
   The Cayley transform $\varphi$ is a smooth chart of $A$ with smooth inverse. If $a + 1$ is
@@ -442,7 +442,7 @@ homeomorphism of $A$ with inverse $a \mapsto pa$.
 
 \begin{theorem}[The unitary group is a split submanifold]
   \label{thm:ex-unitary}
-  \lean{LCManifolds.closedComplemented_skewAdjoint, LCManifolds.isSplitSubmanifold_unitary, LCManifolds.tangentSpace_unitary, LCManifolds.isSplitSubmanifold_unitary_clm}
+  \lean{LocallyConvex.Manifolds.closedComplemented_skewAdjoint, LocallyConvex.Manifolds.isSplitSubmanifold_unitary, LocallyConvex.Manifolds.tangentSpace_unitary, LocallyConvex.Manifolds.isSplitSubmanifold_unitary_clm}
   \leanok
   \uses{lem:ex-cayley, def:split-submanifold, def:tangent-space-submanifold}
   The unitary group $U(A)$ is a split submanifold of $A$ modeled on $\mathfrak u(A)$, and
@@ -465,7 +465,7 @@ is $E_p w = p\,\tfrac12(X - X^*)$, the skew-adjoint part translated back to $p$.
 
 \begin{theorem}[Geodesics of the unitary group]
   \label{thm:ex-unitary-geodesics}
-  \lean{LCManifolds.unitaryProj, LCManifolds.unitaryProj_idem, LCManifolds.projectorField_unitary, LCManifolds.isGeodesic_unitary_iff, LCManifolds.expCurve, LCManifolds.isGeodesic_expCurve}
+  \lean{LocallyConvex.Manifolds.unitaryProj, LocallyConvex.Manifolds.unitaryProj_idem, LocallyConvex.Manifolds.projectorField_unitary, LocallyConvex.Manifolds.isGeodesic_unitary_iff, LocallyConvex.Manifolds.expCurve, LocallyConvex.Manifolds.isGeodesic_expCurve}
   \leanok
   \uses{thm:ex-unitary, def:projector-field, thm:projector-connection, def:geodesic}
   The maps $E_p w = \tfrac12(w - p w^* p)$, $p \in U(A)$, form a field of projectors onto the
@@ -509,7 +509,7 @@ the derivatives, that is, the topology of the seminorms
 
 \begin{definition}[$C^\infty_{per}$]
   \label{def:ex-cinfper}
-  \lean{LCManifolds.CInfPer, LCManifolds.CInfPer.J, LCManifolds.CInfPer.isEmbedding_J, LCManifolds.CInfPer.seminorm}
+  \lean{LocallyConvex.Manifolds.CInfPer, LocallyConvex.Manifolds.CInfPer.J, LocallyConvex.Manifolds.CInfPer.isEmbedding_J, LocallyConvex.Manifolds.CInfPer.seminorm}
   \leanok
   The topology and the uniform structure of $C^\infty_{per}$ are those induced by the injective
   linear map
@@ -526,7 +526,7 @@ are instances on \texttt{CInfPer}.
 
 \begin{proposition}[Convergence and seminorms]
   \label{prop:ex-cinfper-tendsto}
-  \lean{LCManifolds.CInfPer.tendsto_iff, LCManifolds.CInfPer.norm_iteratedDeriv_le_seminorm, LCManifolds.CInfPer.seminorm_le_iff}
+  \lean{LocallyConvex.Manifolds.CInfPer.tendsto_iff, LocallyConvex.Manifolds.CInfPer.norm_iteratedDeriv_le_seminorm, LocallyConvex.Manifolds.CInfPer.seminorm_le_iff}
   \leanok
   \uses{def:ex-cinfper}
   A net $u_i$ converges to $u$ in $C^\infty_{per}$ if and only if $u_i^{(k)} \to u^{(k)}$
@@ -541,7 +541,7 @@ are instances on \texttt{CInfPer}.
 
 \begin{theorem}[$C^\infty_{per}$ is a Fréchet space]
   \label{thm:ex-cinfper-frechet}
-  \lean{LCManifolds.CInfPer.isClosed_range_J}
+  \lean{LocallyConvex.Manifolds.CInfPer.isClosed_range_J}
   \leanok
   \uses{def:ex-cinfper}
   The range of $J$ is closed. Consequently $C^\infty_{per}$ is complete, and it is a Fréchet
@@ -604,7 +604,7 @@ $\varphi = \id + u$ of $\R$ with $u \in C^\infty_{per}$ and $\varphi' = 1 + u' >
 
 \begin{definition}[The domain $\Omega$]
   \label{def:ex-omega}
-  \lean{LCManifolds.DiffCircle.domain, LCManifolds.DiffCircle.Ω, LCManifolds.DiffCircle.lift}
+  \lean{LocallyConvex.Manifolds.DiffCircle.domain, LocallyConvex.Manifolds.DiffCircle.Ω, LocallyConvex.Manifolds.DiffCircle.lift}
   \leanok
   \uses{def:ex-cinfper}
   We let
@@ -616,7 +616,7 @@ $\varphi = \id + u$ of $\R$ with $u \in C^\infty_{per}$ and $\varphi' = 1 + u' >
 
 \begin{proposition}[$\Omega$ is open and convex]
   \label{prop:ex-omega-open}
-  \lean{LCManifolds.DiffCircle.exists_pos_le, LCManifolds.DiffCircle.isOpen_domain, LCManifolds.DiffCircle.convex_domain, LCManifolds.DiffCircle.zero_mem}
+  \lean{LocallyConvex.Manifolds.DiffCircle.exists_pos_le, LocallyConvex.Manifolds.DiffCircle.isOpen_domain, LocallyConvex.Manifolds.DiffCircle.convex_domain, LocallyConvex.Manifolds.DiffCircle.zero_mem}
   \leanok
   \uses{def:ex-omega, thm:ex-cinfper-frechet, prop:ex-open, def:mb-manifold}
   The set $\Omega$ is open and convex in $C^\infty_{per}$, and contains $0$. Hence $\Omega$ is a
@@ -635,7 +635,7 @@ $\varphi = \id + u$ of $\R$ with $u \in C^\infty_{per}$ and $\varphi' = 1 + u' >
 
 \begin{proposition}[Lifts are diffeomorphisms]
   \label{prop:ex-lift-diffeo}
-  \lean{LCManifolds.DiffCircle.lift_add_one, LCManifolds.DiffCircle.strictMono_lift, LCManifolds.DiffCircle.surjective_lift, LCManifolds.DiffCircle.liftHomeomorph, LCManifolds.DiffCircle.contDiff_liftHomeomorph_symm, LCManifolds.DiffCircle.liftHomeomorph_symm_add_one}
+  \lean{LocallyConvex.Manifolds.DiffCircle.lift_add_one, LocallyConvex.Manifolds.DiffCircle.strictMono_lift, LocallyConvex.Manifolds.DiffCircle.surjective_lift, LocallyConvex.Manifolds.DiffCircle.liftHomeomorph, LocallyConvex.Manifolds.DiffCircle.contDiff_liftHomeomorph_symm, LocallyConvex.Manifolds.DiffCircle.liftHomeomorph_symm_add_one}
   \leanok
   \uses{def:ex-omega}
   For $u \in \Omega$, the lift $\varphi_u$ is an increasing homeomorphism of $\R$, smooth with
@@ -652,7 +652,7 @@ $\varphi = \id + u$ of $\R$ with $u \in C^\infty_{per}$ and $\varphi' = 1 + u' >
 
 \begin{theorem}[$\Omega$ is closed under the group operations]
   \label{thm:ex-omega-group}
-  \lean{LCManifolds.DiffCircle.inv, LCManifolds.DiffCircle.lift_inv, LCManifolds.DiffCircle.inv_mem, LCManifolds.DiffCircle.comp, LCManifolds.DiffCircle.lift_comp, LCManifolds.DiffCircle.comp_mem}
+  \lean{LocallyConvex.Manifolds.DiffCircle.inv, LocallyConvex.Manifolds.DiffCircle.lift_inv, LocallyConvex.Manifolds.DiffCircle.inv_mem, LocallyConvex.Manifolds.DiffCircle.comp, LocallyConvex.Manifolds.DiffCircle.lift_comp, LocallyConvex.Manifolds.DiffCircle.comp_mem}
   \leanok
   \uses{prop:ex-lift-diffeo}
   Let $u, w \in \Omega$. Then $\varphi_u^{-1} = \id + v$ with $v \in \Omega$, and
@@ -676,7 +676,7 @@ translation by $1$, and positivity of the derivative does not need to be assumed
 
 \begin{theorem}[Characterization of $\Omega$]
   \label{thm:ex-omega-characterization}
-  \lean{LCManifolds.DiffCircle.lift_injective, LCManifolds.DiffCircle.mem_domain_iff, LCManifolds.DiffCircle.ofLift, LCManifolds.DiffCircle.existsUnique_mem_domain_lift_eq}
+  \lean{LocallyConvex.Manifolds.DiffCircle.lift_injective, LocallyConvex.Manifolds.DiffCircle.mem_domain_iff, LocallyConvex.Manifolds.DiffCircle.ofLift, LocallyConvex.Manifolds.DiffCircle.existsUnique_mem_domain_lift_eq}
   \leanok
   \uses{prop:ex-lift-diffeo}
   For $u \in C^\infty_{per}$, $u \in \Omega$ if and only if $\varphi_u$ has a differentiable

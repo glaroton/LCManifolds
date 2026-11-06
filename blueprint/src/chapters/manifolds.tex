@@ -13,7 +13,7 @@ from the start that \emph{no completeness is assumed}: nothing in this chapter n
 
 \begin{definition}[The Michal--Bastiani groupoid]
   \label{def:mb-groupoid}
-  \lean{LCManifolds.mbGroupoid}
+  \lean{LocallyConvex.Manifolds.mbGroupoid}
   \leanok
   The groupoid $\mathcal{G}_{\mb}(E)$ consists of the homeomorphisms $\varphi\colon U \to V$
   between open subsets of $E$ such that $\varphi$ is smooth on $U$ and $\varphi^{-1}$ is smooth
@@ -25,7 +25,7 @@ local in nature) follows from the chain rule and the locality of smoothness.
 
 \begin{definition}[Manifolds]
   \label{def:mb-manifold}
-  \lean{LCManifolds.MBManifold, LCManifolds.BanachManifold, LCManifolds.HilbertManifold}
+  \lean{LocallyConvex.Manifolds.MBManifold, LocallyConvex.Manifolds.BanachManifold, LocallyConvex.Manifolds.HilbertManifold}
   \leanok
   \uses{def:mb-groupoid}
   A \emph{manifold modeled on $E$} is a topological space $M$ with an atlas of charts with
@@ -59,8 +59,8 @@ normed $E$ a Banach manifold is the classical object of \cite{Lan99}.
 
 \begin{proposition}[Products]
   \label{prop:man-product}
-  \lean{LCManifolds.prod_mem_mbGroupoid, LCManifolds.SmoothMBOn.prodMap,
-    LCManifolds.smoothMBM_fst, LCManifolds.smoothMBM_snd, LCManifolds.ContMDiffMBOn.prodMk}
+  \lean{LocallyConvex.Manifolds.prod_mem_mbGroupoid, LocallyConvex.Manifolds.SmoothMBOn.prodMap,
+    LocallyConvex.Manifolds.smoothMBM_fst, LocallyConvex.Manifolds.smoothMBM_snd, LocallyConvex.Manifolds.ContMDiffMBOn.prodMk}
   \leanok
   \uses{def:mb-manifold, def:contmdiff}
   If $M$ and $N$ are manifolds modeled on $E$ and $F$, then $M \times N$, with the product
@@ -88,12 +88,12 @@ by
   e')\bigr) \subseteq E
 \]
 the domain of the local representative $e' \circ f \circ e^{-1}$. It is open when $f$ is
-continuous on $U$ (\texttt{LCManifolds.isOpen\_chartDomain}).
+continuous on $U$ (\texttt{LocallyConvex.Manifolds.isOpen\_chartDomain}).
 
 \begin{definition}[$\Ck{k}$ maps between manifolds]
   \label{def:contmdiff}
-  \lean{LCManifolds.chartDomain, LCManifolds.ContMDiffMBOn, LCManifolds.ContMDiffMB,
-    LCManifolds.SmoothMBMOn, LCManifolds.SmoothMBM}
+  \lean{LocallyConvex.Manifolds.chartDomain, LocallyConvex.Manifolds.ContMDiffMBOn, LocallyConvex.Manifolds.ContMDiffMB,
+    LocallyConvex.Manifolds.SmoothMBMOn, LocallyConvex.Manifolds.SmoothMBM}
   \leanok
   \uses{def:mb-manifold}
   A map $f \colon M \to N$ is $\Ck{k}$ on an open set $U \subseteq M$ if it is continuous on $U$
@@ -107,10 +107,10 @@ restriction.
 
 \begin{theorem}[Independence of the charts]
   \label{thm:man-contmdiff-chart}
-  \lean{LCManifolds.smoothMBOn_transition, LCManifolds.smoothMBOn_transition_of_mem_maximalAtlas,
-    LCManifolds.ContMDiffMBOn.contDiffMBOn_chart,
-    LCManifolds.ContMDiffMBOn.contDiffMBOn_chart_of_mem_maximalAtlas,
-    LCManifolds.contMDiffMB_of_chartAt}
+  \lean{LocallyConvex.Manifolds.smoothMBOn_transition, LocallyConvex.Manifolds.smoothMBOn_transition_of_mem_maximalAtlas,
+    LocallyConvex.Manifolds.ContMDiffMBOn.contDiffMBOn_chart,
+    LocallyConvex.Manifolds.ContMDiffMBOn.contDiffMBOn_chart_of_mem_maximalAtlas,
+    LocallyConvex.Manifolds.contMDiffMB_of_chartAt}
   \leanok
   \uses{def:contmdiff}
   If $f$ is $\Ck{k}$ on $U$, then its local representatives $e' \circ f \circ e^{-1}$ in arbitrary
@@ -129,8 +129,8 @@ restriction.
 
 \begin{theorem}[Composition]
   \label{thm:man-comp}
-  \lean{LCManifolds.ContMDiffMBOn.comp, LCManifolds.SmoothMBMOn.comp, LCManifolds.SmoothMBM.comp,
-    LCManifolds.smoothMBMOn_id, LCManifolds.smoothMBMOn_const}
+  \lean{LocallyConvex.Manifolds.ContMDiffMBOn.comp, LocallyConvex.Manifolds.SmoothMBMOn.comp, LocallyConvex.Manifolds.SmoothMBM.comp,
+    LocallyConvex.Manifolds.smoothMBMOn_id, LocallyConvex.Manifolds.smoothMBMOn_const}
   \leanok
   \uses{def:contmdiff, thm:man-contmdiff-chart}
   If $f$ is $\Ck{k}$ on $U$, $g$ is $\Ck{k}$ on $V$ and $f(U) \subseteq V$, then $g \circ f$ is
@@ -147,7 +147,7 @@ restriction.
 
 \begin{proposition}[Consistency with the calculus]
   \label{prop:man-consistency}
-  \lean{LCManifolds.contMDiffMBOn_iff_contDiffMBOn}
+  \lean{LocallyConvex.Manifolds.contMDiffMBOn_iff_contDiffMBOn}
   \leanok
   \uses{def:contmdiff}
   For a map $f \colon E \to F$ between the model spaces themselves (with their identity charts)
@@ -174,8 +174,8 @@ restriction.
 
 \begin{definition}[The tangent bundle]
   \label{def:tangent-bundle}
-  \lean{LCManifolds.tangentCoordChange, LCManifolds.tangentBundleCore,
-    LCManifolds.TangentBundle, LCManifolds.tangentChart}
+  \lean{LocallyConvex.Manifolds.tangentCoordChange, LocallyConvex.Manifolds.tangentBundleCore,
+    LocallyConvex.Manifolds.TangentBundle, LocallyConvex.Manifolds.tangentChart}
   \leanok
   \uses{def:mb-manifold}
   For charts $i$, $j$ of the atlas of $M$ and $x$ in both domains, the \emph{coordinate change}
@@ -195,13 +195,13 @@ $\dd(i \circ c_x^{-1})(c_x(x))\,v$. This is a choice of representative, not a re
 every construction below (tangent maps, local representatives of vector fields, Lie brackets,
 derivations, velocities) is defined in the preferred chart and then shown to transform correctly
 in every chart of the atlas. The coordinate changes satisfy the cocycle condition by the chain
-rule (\texttt{LCManifolds.tangentCoordChange\_comp}), and they are continuous in $(x, v)$ since
+rule (\texttt{LocallyConvex.Manifolds.tangentCoordChange\_comp}), and they are continuous in $(x, v)$ since
 the transition maps are $\Ck{1}$.
 
 \begin{theorem}[$\T M$ is a manifold]
   \label{thm:man-tangent-manifold}
-  \lean{LCManifolds.smoothMBOn_tangentChart_transition, LCManifolds.tangentChart_transition_mem,
-    LCManifolds.tangentChart_mem_atlas, LCManifolds.tangentChart_transition_apply}
+  \lean{LocallyConvex.Manifolds.smoothMBOn_tangentChart_transition, LocallyConvex.Manifolds.tangentChart_transition_mem,
+    LocallyConvex.Manifolds.tangentChart_mem_atlas, LocallyConvex.Manifolds.tangentChart_transition_apply}
   \leanok
   \uses{def:tangent-bundle}
   The charts of $\T M$ over the charts of $M$ form an atlas modeled on $E \times E$ whose
@@ -221,7 +221,7 @@ the transition maps are $\Ck{1}$.
 
 \begin{definition}[The tangent map]
   \label{def:tangent-map}
-  \lean{LCManifolds.tangentMap}
+  \lean{LocallyConvex.Manifolds.tangentMap}
   \leanok
   \uses{def:tangent-bundle, def:contmdiff}
   Let $f \colon M \to N$. The \emph{tangent map} $\T f \colon \T M \to \T N$ sends $(x, v)$ to
@@ -236,9 +236,9 @@ meaningful when $f$ is $\Ck{1}$.
 
 \begin{theorem}[The tangent map in charts; chain rule]
   \label{thm:man-tangent-map}
-  \lean{LCManifolds.dMB_eq_comp_of_eventuallyEq, LCManifolds.dMB_chart_comp,
-    LCManifolds.dMB_comp_chart, LCManifolds.tangentMap_chart, LCManifolds.tangentMap_id,
-    LCManifolds.tangentMap_comp}
+  \lean{LocallyConvex.Manifolds.dMB_eq_comp_of_eventuallyEq, LocallyConvex.Manifolds.dMB_chart_comp,
+    LocallyConvex.Manifolds.dMB_comp_chart, LocallyConvex.Manifolds.tangentMap_chart, LocallyConvex.Manifolds.tangentMap_id,
+    LocallyConvex.Manifolds.tangentMap_comp}
   \leanok
   \uses{def:tangent-map, thm:man-contmdiff-chart}
   Let $f \colon M \to N$ be $\Ck{1}$. The derivatives of the local representatives of $f$
@@ -261,7 +261,7 @@ meaningful when $f$ is $\Ck{1}$.
 
 \begin{theorem}[Smoothness of the tangent map]
   \label{thm:man-tangent-map-smooth}
-  \lean{LCManifolds.ContMDiffMB.tangentMap}
+  \lean{LocallyConvex.Manifolds.ContMDiffMB.tangentMap}
   \leanok
   \uses{thm:man-tangent-map, thm:man-tangent-manifold}
   If $f \colon M \to N$ is $\Ck{k+1}$, then $\T f \colon \T M \to \T N$ is $\Ck{k}$.
@@ -277,7 +277,7 @@ meaningful when $f$ is $\Ck{1}$.
 
 \begin{definition}[Vector fields]
   \label{def:vector-field}
-  \lean{LCManifolds.IsVectorField, LCManifolds.localRep}
+  \lean{LocallyConvex.Manifolds.IsVectorField, LocallyConvex.Manifolds.localRep}
   \leanok
   \uses{def:tangent-bundle}
   A \emph{vector field} on $M$ is a section $X \colon M \to \T M$ of the tangent bundle. Its
@@ -287,8 +287,8 @@ meaningful when $f$ is $\Ck{1}$.
 
 \begin{proposition}[Local representatives]
   \label{prop:man-localrep}
-  \lean{LCManifolds.localRep_transition, LCManifolds.contDiffMBOn_localRep,
-    LCManifolds.contMDiffMB_of_localRep, LCManifolds.localRep_chartAt}
+  \lean{LocallyConvex.Manifolds.localRep_transition, LocallyConvex.Manifolds.contDiffMBOn_localRep,
+    LocallyConvex.Manifolds.contMDiffMB_of_localRep, LocallyConvex.Manifolds.localRep_chartAt}
   \leanok
   \uses{def:vector-field, thm:man-tangent-manifold}
   On chart overlaps, $\widetilde{X}_j \circ \tau = \dd\tau(\cdot)\,\widetilde{X}_i$ for the
@@ -311,9 +311,9 @@ For maps $X, Y$ defined on an open subset of $E$, the \emph{local bracket} is
 
 \begin{lemma}[The local bracket]
   \label{lem:man-local-bracket}
-  \lean{LCManifolds.localBracket, LCManifolds.dMB_dMB_comp_apply,
-    LCManifolds.localBracket_transition, LCManifolds.localBracket_jacobi,
-    LCManifolds.contDiffMBOn_localBracket}
+  \lean{LocallyConvex.Manifolds.localBracket, LocallyConvex.Manifolds.dMB_dMB_comp_apply,
+    LocallyConvex.Manifolds.localBracket_transition, LocallyConvex.Manifolds.localBracket_jacobi,
+    LocallyConvex.Manifolds.contDiffMBOn_localBracket}
   \leanok
   Let $\tau$ be $\Ck{2}$, and let $X_i, Y_i, X_j, Y_j$ be $\Ck{1}$ with
   $X_j \circ \tau = \dd\tau \cdot X_i$ and $Y_j \circ \tau = \dd\tau \cdot Y_i$ near $y$. Then
@@ -332,7 +332,7 @@ For maps $X, Y$ defined on an open subset of $E$, the \emph{local bracket} is
 
 \begin{definition}[The Lie bracket]
   \label{def:man-lie-bracket}
-  \lean{LCManifolds.lieBracket}
+  \lean{LocallyConvex.Manifolds.lieBracket}
   \leanok
   \uses{def:vector-field, lem:man-local-bracket}
   The \emph{Lie bracket} of the vector fields $X$ and $Y$ is the vector field whose value at $x$
@@ -342,9 +342,9 @@ For maps $X, Y$ defined on an open subset of $E$, the \emph{local bracket} is
 
 \begin{theorem}[The bracket is well defined]
   \label{thm:man-lie-bracket}
-  \lean{LCManifolds.localRep_lieBracket, LCManifolds.localRep_lieBracket_eventuallyEq,
-    LCManifolds.lieBracket_swap, LCManifolds.lieBracket_jacobi,
-    LCManifolds.contMDiffMB_lieBracket}
+  \lean{LocallyConvex.Manifolds.localRep_lieBracket, LocallyConvex.Manifolds.localRep_lieBracket_eventuallyEq,
+    LocallyConvex.Manifolds.lieBracket_swap, LocallyConvex.Manifolds.lieBracket_jacobi,
+    LocallyConvex.Manifolds.contMDiffMB_lieBracket}
   \leanok
   \uses{def:man-lie-bracket, prop:man-localrep}
   Let $X$, $Y$ be $\Ck{1}$ vector fields. In every chart $j$ of the atlas, the local
@@ -371,7 +371,7 @@ For maps $X, Y$ defined on an open subset of $E$, the \emph{local bracket} is
 
 \begin{theorem}[Related fields]
   \label{thm:man-related}
-  \lean{LCManifolds.IsRelated, LCManifolds.localRep_related, LCManifolds.lieBracket_related}
+  \lean{LocallyConvex.Manifolds.IsRelated, LocallyConvex.Manifolds.localRep_related, LocallyConvex.Manifolds.lieBracket_related}
   \leanok
   \uses{thm:man-lie-bracket, def:tangent-map}
   Let $f \colon M \to N$ be $\Ck{2}$. We say that $X$ on $M$ and $X'$ on $N$ are $f$-related if
@@ -392,7 +392,7 @@ $\varphi \circ i^{-1}$ are $\Ck{k}$ on $i(\operatorname{dom} i)$.
 
 \begin{definition}[Derivative along a vector field]
   \label{def:man-vf-deriv}
-  \lean{LCManifolds.IsCkFunction, LCManifolds.vfDeriv, LCManifolds.smulField}
+  \lean{LocallyConvex.Manifolds.IsCkFunction, LocallyConvex.Manifolds.vfDeriv, LocallyConvex.Manifolds.smulField}
   \leanok
   \uses{def:vector-field}
   For a vector field $X$ and $\varphi \colon M \to \R$, we let
@@ -403,9 +403,9 @@ $\varphi \circ i^{-1}$ are $\Ck{k}$ on $i(\operatorname{dom} i)$.
 
 \begin{theorem}[Vector fields as derivations]
   \label{thm:man-derivation}
-  \lean{LCManifolds.vfDeriv_chart, LCManifolds.vfDeriv_mul, LCManifolds.HasDirDerivAt.smul_fun,
-    LCManifolds.isVectorField_smulField, LCManifolds.localRep_smulField,
-    LCManifolds.lieBracket_smulField}
+  \lean{LocallyConvex.Manifolds.vfDeriv_chart, LocallyConvex.Manifolds.vfDeriv_mul, LocallyConvex.Manifolds.HasDirDerivAt.smul_fun,
+    LocallyConvex.Manifolds.isVectorField_smulField, LocallyConvex.Manifolds.localRep_smulField,
+    LocallyConvex.Manifolds.lieBracket_smulField}
   \leanok
   \uses{def:man-vf-deriv, thm:man-lie-bracket}
   Let $\varphi, \psi$ be $\Ck{1}$ functions. Then $X(\varphi)(x) = \dd(\varphi \circ
@@ -427,7 +427,7 @@ $\varphi \circ i^{-1}$ are $\Ck{k}$ on $i(\operatorname{dom} i)$.
 
 \begin{theorem}[Vector fields are determined by local functions]
   \label{thm:man-determined}
-  \lean{LCManifolds.vfDeriv_clm_comp_chart, LCManifolds.eq_of_vfDeriv_clm_comp_chart}
+  \lean{LocallyConvex.Manifolds.vfDeriv_clm_comp_chart, LocallyConvex.Manifolds.eq_of_vfDeriv_clm_comp_chart}
   \leanok
   \uses{thm:man-derivation}
   Let $c$ be a chart around $x$. For $\lambda \in E'$ we have $X(\lambda \circ c)(x) =
@@ -460,8 +460,8 @@ tangent vector at it.
 
 \begin{theorem}[Transition maps of $\T\T M$]
   \label{thm:man-double-transition}
-  \lean{LCManifolds.tangentAtlas, LCManifolds.dMB_tangentChart_transition,
-    LCManifolds.DoubleTangentBundle, LCManifolds.ddChart, LCManifolds.ddChart_transition_apply}
+  \lean{LocallyConvex.Manifolds.tangentAtlas, LocallyConvex.Manifolds.dMB_tangentChart_transition,
+    LocallyConvex.Manifolds.DoubleTangentBundle, LocallyConvex.Manifolds.ddChart, LocallyConvex.Manifolds.ddChart_transition_apply}
   \leanok
   \uses{thm:man-tangent-manifold}
   Let $\tau = j \circ i^{-1}$. In the charts of $\T\T M$ over $i$ and $j$, the transition map is
@@ -481,9 +481,9 @@ tangent vector at it.
 
 \begin{theorem}[The canonical flip]
   \label{thm:man-flip}
-  \lean{LCManifolds.swapUV, LCManifolds.ddChart_transition_swap, LCManifolds.ddChartAt,
-    LCManifolds.flip, LCManifolds.flip_proj_proj, LCManifolds.ddChart_flip,
-    LCManifolds.flip_flip}
+  \lean{LocallyConvex.Manifolds.swapUV, LocallyConvex.Manifolds.ddChart_transition_swap, LocallyConvex.Manifolds.ddChartAt,
+    LocallyConvex.Manifolds.flip, LocallyConvex.Manifolds.flip_proj_proj, LocallyConvex.Manifolds.ddChart_flip,
+    LocallyConvex.Manifolds.flip_flip}
   \leanok
   \uses{thm:man-double-transition}
   The swap $((x, v), (u, w)) \mapsto ((x, u), (v, w))$ commutes with the transition maps of
@@ -508,7 +508,7 @@ representatives, without regarding $\R$ as a manifold.
 
 \begin{definition}[$\Ck{k}$ curves and lifts]
   \label{def:ck-curve}
-  \lean{LCManifolds.IsCkCurve, LCManifolds.liftCoord, LCManifolds.IsCkLift}
+  \lean{LocallyConvex.Manifolds.IsCkCurve, LocallyConvex.Manifolds.liftCoord, LocallyConvex.Manifolds.IsCkLift}
   \leanok
   \uses{def:mb-manifold, def:tangent-bundle}
   A curve $\alpha \colon \R \to M$ is $\Ck{k}$ if it is continuous and $i \circ \alpha$ is
@@ -521,7 +521,7 @@ representatives, without regarding $\R$ as a manifold.
 
 \begin{definition}[Velocity]
   \label{def:velocity}
-  \lean{LCManifolds.velocity}
+  \lean{LocallyConvex.Manifolds.velocity}
   \leanok
   \uses{def:ck-curve}
   The \emph{velocity} of a curve $\alpha$ is the lift $\dot\alpha(t) = (\alpha(t),
@@ -531,8 +531,8 @@ representatives, without regarding $\R$ as a manifold.
 
 \begin{theorem}[The velocity in charts]
   \label{thm:man-velocity}
-  \lean{LCManifolds.dMB_chart_curve, LCManifolds.liftCoord_velocity,
-    LCManifolds.isCkLift_velocity, LCManifolds.continuous_velocity}
+  \lean{LocallyConvex.Manifolds.dMB_chart_curve, LocallyConvex.Manifolds.liftCoord_velocity,
+    LocallyConvex.Manifolds.isCkLift_velocity, LocallyConvex.Manifolds.continuous_velocity}
   \leanok
   \uses{def:velocity, thm:man-tangent-manifold}
   Let $\alpha$ be a $\Ck{1}$ curve. For charts $i$, $j$ around $\alpha(t)$ we have
@@ -552,7 +552,7 @@ representatives, without regarding $\R$ as a manifold.
 
 \begin{proposition}[Germs and the chain rule for velocities]
   \label{prop:man-velocity-chain}
-  \lean{LCManifolds.velocity_congr, LCManifolds.tangentMap_velocity}
+  \lean{LocallyConvex.Manifolds.velocity_congr, LocallyConvex.Manifolds.tangentMap_velocity}
   \leanok
   \uses{def:velocity, def:tangent-map}
   The velocity $\dot\alpha(t)$ only depends on the germ of $\alpha$ at $t$. If $p \colon N \to

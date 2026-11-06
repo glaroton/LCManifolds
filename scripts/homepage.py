@@ -23,7 +23,7 @@ out = markdown.markdown(body, extensions=["tables", "fenced_code", "toc"])
 
 
 def resolve(n):
-    for cand in (f"{name}.{n}", f"LCAnalysis.{n}", n):
+    for cand in (f"{name}.{n}", f"LocallyConvex.Analysis.{n}", n):
         d = decls.get(cand)
         if d and "docLink" in d:
             return "docs/" + d["docLink"].removeprefix("./")

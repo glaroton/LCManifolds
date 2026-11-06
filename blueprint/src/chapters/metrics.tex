@@ -19,7 +19,7 @@ word for each question, and we never use one for the other.
 
 \begin{definition}[Finsler seminorm]
   \label{def:finsler-seminorm}
-  \lean{LCManifolds.FinslerSeminorm, LCManifolds.FinslerSeminorm.IsNorm, LCManifolds.FinslerSeminorm.IsReversible}
+  \lean{LocallyConvex.Manifolds.FinslerSeminorm, LocallyConvex.Manifolds.FinslerSeminorm.IsNorm, LocallyConvex.Manifolds.FinslerSeminorm.IsReversible}
   \leanok
   A \emph{Finsler seminorm} on a topological vector space $E$ is a continuous function
   $\mu \colon E \to [0, \infty)$ that is subadditive, $\mu(v + w) \le \mu(v) + \mu(w)$, and
@@ -33,7 +33,7 @@ at this stage.
 
 \begin{definition}[Field of Finsler seminorms]
   \label{def:mt-field}
-  \lean{LCManifolds.FinslerSeminormField, LCManifolds.FinslerSeminormField.fiber, LCManifolds.FinslerSeminormField.IsNondegenerate, LCManifolds.FinslerSeminormField.IsReversible}
+  \lean{LocallyConvex.Manifolds.FinslerSeminormField, LocallyConvex.Manifolds.FinslerSeminormField.fiber, LocallyConvex.Manifolds.FinslerSeminormField.IsNondegenerate, LocallyConvex.Manifolds.FinslerSeminormField.IsReversible}
   \leanok
   \uses{def:finsler-seminorm, def:tangent-bundle}
   A \emph{field of Finsler seminorms} on $M$ is a function $\mu \colon \T M \to [0,\infty)$ whose
@@ -45,7 +45,7 @@ whole point of this section is that they are different.
 
 \begin{definition}[Finsler metric]
   \label{def:finsler-metric}
-  \lean{LCManifolds.FinslerMetric}
+  \lean{LocallyConvex.Manifolds.FinslerMetric}
   \leanok
   \uses{def:mt-field}
   A \emph{Finsler metric} is a field of Finsler seminorms $\mu$ that is continuous as a function
@@ -54,7 +54,7 @@ whole point of this section is that they are different.
 
 \begin{definition}[Finsler length structure]
   \label{def:finsler-length-structure}
-  \lean{LCManifolds.FinslerLengthStructure}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure}
   \leanok
   \uses{def:mt-field, def:ck-curve, def:velocity}
   A \emph{Finsler length structure} is a field of Finsler seminorms $\mu$ such that
@@ -78,7 +78,7 @@ length structures of \cite[\S2.1.1]{BBI01}), and nothing more.
 
 \begin{theorem}[Velocities are continuous]
   \label{thm:mt-continuous-velocity}
-  \lean{LCManifolds.FinslerMetric.toFinslerLengthStructure}
+  \lean{LocallyConvex.Manifolds.FinslerMetric.toFinslerLengthStructure}
   \leanok
   \uses{def:finsler-metric, def:finsler-length-structure, def:velocity}
   The velocity $t \mapsto \dot\gamma(t)$ of a $\Ck{1}$ curve is a continuous curve in $\T M$.
@@ -103,7 +103,7 @@ through Theorem~\ref{thm:mt-continuous-velocity}.
 
 \begin{definition}[Length]
   \label{def:mt-length}
-  \lean{LCManifolds.FinslerLengthStructure.length, LCManifolds.FinslerMetric.length}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.length, LocallyConvex.Manifolds.FinslerMetric.length}
   \leanok
   \uses{def:finsler-length-structure}
   The length of a $\Ck{1}$ curve $\gamma$ on $[a, b]$ is
@@ -112,7 +112,7 @@ through Theorem~\ref{thm:mt-continuous-velocity}.
 
 \begin{proposition}
   \label{prop:mt-length}
-  \lean{LCManifolds.FinslerLengthStructure.length_nonneg, LCManifolds.FinslerLengthStructure.length_add, LCManifolds.FinslerLengthStructure.length_const}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.length_nonneg, LocallyConvex.Manifolds.FinslerLengthStructure.length_add, LocallyConvex.Manifolds.FinslerLengthStructure.length_const}
   \leanok
   \uses{def:mt-length}
   Lengths are nonnegative, additive on adjacent intervals, and constant curves have length zero.
@@ -126,7 +126,7 @@ through Theorem~\ref{thm:mt-continuous-velocity}.
 
 \begin{definition}[Chains of arcs]
   \label{def:mt-chain}
-  \lean{LCManifolds.FinslerLengthStructure.Reach, LCManifolds.FinslerLengthStructure.Reach.single, LCManifolds.FinslerLengthStructure.Reach.nonneg, LCManifolds.FinslerLengthStructure.Reach.trans}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.Reach, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.single, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.nonneg, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.trans}
   \leanok
   \uses{def:mt-length}
   A \emph{chain of $\Ck{1}$ arcs} from $x$ to $y$ of length $L$ is either empty ($x = y$, $L = 0$)
@@ -141,7 +141,7 @@ manifold would require reparametrizations with vanishing velocity at the end poi
 
 \begin{definition}[Finsler distance]
   \label{def:mt-dist}
-  \lean{LCManifolds.FinslerLengthStructure.dist, LCManifolds.FinslerLengthStructure.dist_le_of_reach, LCManifolds.FinslerLengthStructure.dist_le, LCManifolds.FinslerLengthStructure.dist_self, LCManifolds.FinslerMetric.dist}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.dist, LocallyConvex.Manifolds.FinslerLengthStructure.dist_le_of_reach, LocallyConvex.Manifolds.FinslerLengthStructure.dist_le, LocallyConvex.Manifolds.FinslerLengthStructure.dist_self, LocallyConvex.Manifolds.FinslerMetric.dist}
   \leanok
   \uses{def:mt-chain}
   The distance $d_\mu(x, y) \in [0, \infty]$ is the infimum of the lengths of the chains of
@@ -152,7 +152,7 @@ This is \cite[Def.~2.7]{Lar19}, where the infimum is taken over piecewise $\Ck{1
 
 \begin{theorem}[Triangle inequality]
   \label{thm:mt-triangle}
-  \lean{LCManifolds.FinslerLengthStructure.dist_triangle}
+  \lean{LocallyConvex.Manifolds.FinslerLengthStructure.dist_triangle}
   \leanok
   \uses{def:mt-dist}
   $d_\mu(x, z) \leq d_\mu(x, y) + d_\mu(y, z)$ for all $x, y, z \in M$. Hence $d_\mu$ is an
@@ -167,7 +167,7 @@ This is \cite[Def.~2.7]{Lar19}, where the infimum is taken over piecewise $\Ck{1
 
 \begin{proposition}[Reversible fields give symmetric distances]
   \label{prop:mt-dist-comm}
-  \lean{LCManifolds.isCkCurve_reverse, LCManifolds.velocity_reverse, LCManifolds.FinslerLengthStructure.length_reverse, LCManifolds.FinslerLengthStructure.Reach.symm, LCManifolds.FinslerLengthStructure.dist_comm}
+  \lean{LocallyConvex.Manifolds.isCkCurve_reverse, LocallyConvex.Manifolds.velocity_reverse, LocallyConvex.Manifolds.FinslerLengthStructure.length_reverse, LocallyConvex.Manifolds.FinslerLengthStructure.Reach.symm, LocallyConvex.Manifolds.FinslerLengthStructure.dist_comm}
   \leanok
   \uses{thm:mt-triangle}
   The reversed curve $t \mapsto \gamma(-t)$ of a $\Ck{1}$ curve is $\Ck{1}$, with velocity
@@ -197,7 +197,7 @@ correspond to two lifting properties of $\pi$.
 
 \begin{lemma}[Chain rule for velocities]
   \label{lem:mt-chain}
-  \lean{LCManifolds.tangentMap_velocity, LCManifolds.velocity_congr}
+  \lean{LocallyConvex.Manifolds.tangentMap_velocity, LocallyConvex.Manifolds.velocity_congr}
   \leanok
   \uses{def:tangent-map, def:velocity}
   If $\pi$ is $\Ck{1}$ and $\Gamma$ is a $\Ck{1}$ curve in $N$, then
@@ -213,7 +213,7 @@ correspond to two lifting properties of $\pi$.
 
 \begin{theorem}[Lifting curves gives a Finsler length structure]
   \label{thm:mt-lift-curves}
-  \lean{LCManifolds.FinslerSeminormField.toFinslerLengthStructureOfLifts}
+  \lean{LocallyConvex.Manifolds.FinslerSeminormField.toFinslerLengthStructureOfLifts}
   \leanok
   \uses{lem:mt-chain, def:finsler-length-structure}
   Suppose that every $\Ck{1}$ curve of $M$ has, near each time, a $\Ck{1}$ lift to $N$, and that
@@ -229,7 +229,7 @@ correspond to two lifting properties of $\pi$.
 
 \begin{theorem}[Lifting neighborhoods gives a Finsler metric]
   \label{thm:mt-quotient-map}
-  \lean{LCManifolds.FinslerSeminormField.toFinslerMetricOfIsQuotientMap}
+  \lean{LocallyConvex.Manifolds.FinslerSeminormField.toFinslerMetricOfIsQuotientMap}
   \leanok
   \uses{def:finsler-metric, def:tangent-map}
   If $\T\pi \colon \T N \to \T M$ is a quotient map and $\mu \circ \T\pi$ is continuous on $\T N$,
@@ -267,7 +267,7 @@ on the $x$-axis minus the origin, and is continuous away from the origin.
 
 \begin{proposition}
   \label{prop:mt-cusp-fibers}
-  \lean{LCManifolds.CuspFinsler.field, LCManifolds.CuspFinsler.isNondegenerate, LCManifolds.CuspFinsler.isReversible, LCManifolds.CuspFinsler.continuousAt_β}
+  \lean{LocallyConvex.Manifolds.CuspFinsler.field, LocallyConvex.Manifolds.CuspFinsler.isNondegenerate, LocallyConvex.Manifolds.CuspFinsler.isReversible, LocallyConvex.Manifolds.CuspFinsler.continuousAt_β}
   \leanok
   \uses{def:mt-field}
   Each $\mu_p$ is a reversible Finsler norm.
@@ -280,7 +280,7 @@ on the $x$-axis minus the origin, and is continuous away from the origin.
 
 \begin{theorem}
   \label{thm:mt-cusp}
-  \lean{LCManifolds.CuspFinsler.not_continuous, LCManifolds.CuspFinsler.lengthStructure, LCManifolds.CuspFinsler.eventually_outside_cusp, LCManifolds.CuspFinsler.lengthStructure_not_finslerMetric}
+  \lean{LocallyConvex.Manifolds.CuspFinsler.not_continuous, LocallyConvex.Manifolds.CuspFinsler.lengthStructure, LocallyConvex.Manifolds.CuspFinsler.eventually_outside_cusp, LocallyConvex.Manifolds.CuspFinsler.lengthStructure_not_finslerMetric}
   \leanok
   \uses{prop:mt-cusp-fibers, def:finsler-metric, def:finsler-length-structure}
   The field $\mu$ is a Finsler length structure but not a Finsler metric.
@@ -304,7 +304,7 @@ which converge to $(0, e_2)$ in $\T\R^2$, are not of this kind.
 
 \begin{definition}[Smooth symmetric bilinear field]
   \label{def:mt-bilin}
-  \lean{LCManifolds.SymmBilinField, LCManifolds.bilinLocalRep, LCManifolds.SymmBilinField.continuous_fiber, LCManifolds.SymmBilinField.continuous_quadratic, LCManifolds.SymmBilinField.IsWeaklyNondegenerate}
+  \lean{LocallyConvex.Manifolds.SymmBilinField, LocallyConvex.Manifolds.bilinLocalRep, LocallyConvex.Manifolds.SymmBilinField.continuous_fiber, LocallyConvex.Manifolds.SymmBilinField.continuous_quadratic, LocallyConvex.Manifolds.SymmBilinField.IsWeaklyNondegenerate}
   \leanok
   \uses{def:tangent-bundle}
   A smooth field of symmetric bilinear forms on $M$ assigns to each $x$ a symmetric bilinear form
@@ -318,7 +318,7 @@ which converge to $(0, e_2)$ in $\T\R^2$, are not of this kind.
 
 \begin{definition}[Weak Riemannian metric]
   \label{def:weak-riemannian}
-  \lean{LCManifolds.WeakRiemannianMetric, LCManifolds.WeakRiemannianMetric.IsStrongAt}
+  \lean{LocallyConvex.Manifolds.WeakRiemannianMetric, LocallyConvex.Manifolds.WeakRiemannianMetric.IsStrongAt}
   \leanok
   \uses{def:mt-bilin}
   A \emph{weak Riemannian metric} is a smooth field of positive definite symmetric bilinear forms.
@@ -335,7 +335,7 @@ every Riemannian metric is weak.
 
 \begin{theorem}[Riemannian metrics are Finsler metrics]
   \label{thm:mt-riemannian-finsler}
-  \lean{LCManifolds.BilinForm.sq_le_mul, LCManifolds.BilinForm.sqrt_add_le, LCManifolds.WeakRiemannianMetric.toFinslerMetric, LCManifolds.WeakRiemannianMetric.toFinslerMetric_isNondegenerate, LCManifolds.WeakRiemannianMetric.toFinslerMetric_isReversible}
+  \lean{LocallyConvex.Manifolds.BilinForm.sq_le_mul, LocallyConvex.Manifolds.BilinForm.sqrt_add_le, LocallyConvex.Manifolds.WeakRiemannianMetric.toFinslerMetric, LocallyConvex.Manifolds.WeakRiemannianMetric.toFinslerMetric_isNondegenerate, LocallyConvex.Manifolds.WeakRiemannianMetric.toFinslerMetric_isReversible}
   \leanok
   \uses{def:weak-riemannian, def:finsler-metric}
   If $g$ is a weak Riemannian metric, $\mu_x(v) = \sqrt{g_x(v, v)}$ is a Finsler metric, and each
@@ -355,7 +355,7 @@ So lengths and distances of Riemannian metrics are those of the previous section
 
 \begin{definition}[Fundamental decomposition]
   \label{def:fundamental-decomposition}
-  \lean{LCManifolds.FundamentalDecomposition}
+  \lean{LocallyConvex.Manifolds.FundamentalDecomposition}
   \leanok
   Let $B$ be a symmetric bilinear form on a topological vector space $E$. A \emph{fundamental
   decomposition} of $B$ is a splitting $E = E_+ \oplus E_-$ given by a continuous projection,
@@ -364,7 +364,7 @@ So lengths and distances of Riemannian metrics are those of the previous section
 
 \begin{theorem}[The index is well defined]
   \label{thm:mt-index}
-  \lean{LCManifolds.FundamentalDecomposition.rank_le_rank_neg, LCManifolds.FundamentalDecomposition.rank_neg_eq}
+  \lean{LocallyConvex.Manifolds.FundamentalDecomposition.rank_le_rank_neg, LocallyConvex.Manifolds.FundamentalDecomposition.rank_neg_eq}
   \leanok
   \uses{def:fundamental-decomposition}
   A negative definite subspace has (algebraic) dimension at most $\dim E_-$. In particular, two
@@ -386,7 +386,7 @@ So lengths and distances of Riemannian metrics are those of the previous section
 
 \begin{proposition}
   \label{prop:mt-nondegenerate}
-  \lean{LCManifolds.FundamentalDecomposition.nondegenerate}
+  \lean{LocallyConvex.Manifolds.FundamentalDecomposition.nondegenerate}
   \leanok
   \uses{def:fundamental-decomposition}
   A form with a fundamental decomposition is weakly nondegenerate.
@@ -402,7 +402,7 @@ So lengths and distances of Riemannian metrics are those of the previous section
 
 \begin{definition}[Weak pseudo-Riemannian metric]
   \label{def:weak-pseudo-riemannian}
-  \lean{LCManifolds.WeakPseudoRiemannianMetric, LCManifolds.WeakPseudoRiemannianMetric.index, LCManifolds.WeakPseudoRiemannianMetric.index_eq, LCManifolds.WeakPseudoRiemannianMetric.isWeaklyNondegenerate}
+  \lean{LocallyConvex.Manifolds.WeakPseudoRiemannianMetric, LocallyConvex.Manifolds.WeakPseudoRiemannianMetric.index, LocallyConvex.Manifolds.WeakPseudoRiemannianMetric.index_eq, LocallyConvex.Manifolds.WeakPseudoRiemannianMetric.isWeaklyNondegenerate}
   \leanok
   \uses{def:mt-bilin, thm:mt-index, prop:mt-nondegenerate}
   A \emph{weak pseudo-Riemannian metric} is a smooth field of symmetric bilinear forms admitting a
@@ -416,7 +416,7 @@ theory on purpose: Krein spaces appear naturally in operator theory.
 
 \begin{proposition}
   \label{prop:mt-riemannian-index}
-  \lean{LCManifolds.FundamentalDecomposition.ofPosDef, LCManifolds.WeakRiemannianMetric.toWeakPseudoRiemannianMetric, LCManifolds.WeakRiemannianMetric.index_eq_zero}
+  \lean{LocallyConvex.Manifolds.FundamentalDecomposition.ofPosDef, LocallyConvex.Manifolds.WeakRiemannianMetric.toWeakPseudoRiemannianMetric, LocallyConvex.Manifolds.WeakRiemannianMetric.index_eq_zero}
   \leanok
   \uses{def:weak-riemannian, def:weak-pseudo-riemannian}
   A weak Riemannian metric is a weak pseudo-Riemannian metric of index $0$.
@@ -429,7 +429,7 @@ theory on purpose: Krein spaces appear naturally in operator theory.
 
 \begin{definition}[Weak Lorentzian metric]
   \label{def:weak-lorentzian}
-  \lean{LCManifolds.WeakLorentzianMetric}
+  \lean{LocallyConvex.Manifolds.WeakLorentzianMetric}
   \leanok
   \uses{def:weak-pseudo-riemannian}
   A \emph{weak Lorentzian metric} is a weak pseudo-Riemannian metric of index $1$ at every point.
@@ -437,7 +437,7 @@ theory on purpose: Krein spaces appear naturally in operator theory.
 
 \begin{theorem}[Lorentzian metrics from timelike vectors]
   \label{thm:mt-timelike}
-  \lean{LCManifolds.FundamentalDecomposition.ofTimelike, LCManifolds.FundamentalDecomposition.rank_neg_ofTimelike, LCManifolds.SymmBilinField.toWeakLorentzianMetric}
+  \lean{LocallyConvex.Manifolds.FundamentalDecomposition.ofTimelike, LocallyConvex.Manifolds.FundamentalDecomposition.rank_neg_ofTimelike, LocallyConvex.Manifolds.SymmBilinField.toWeakLorentzianMetric}
   \leanok
   \uses{def:weak-lorentzian, def:fundamental-decomposition}
   Let $g$ be a smooth field of symmetric bilinear forms such that each $\T_x M$ contains a vector $v$
@@ -480,7 +480,7 @@ $\nabla_X Y = \dd \tilde Y \cdot \tilde X - \Gamma(\tilde X, \tilde Y)$ in a cha
 
 \begin{definition}[Metric connections]
   \label{def:mt-metric-connection}
-  \lean{LCManifolds.SymmBilinField.localForm, LCManifolds.SymmBilinField.localDeriv, LCManifolds.Connection.IsMetric}
+  \lean{LocallyConvex.Manifolds.SymmBilinField.localForm, LocallyConvex.Manifolds.SymmBilinField.localDeriv, LocallyConvex.Manifolds.Connection.IsMetric}
   \leanok
   \uses{def:mt-bilin, def:connection}
   A connection is \emph{metric} for $g$ if in every chart
@@ -495,7 +495,7 @@ $G(y)$.
 
 \begin{theorem}[Koszul formula]
   \label{thm:mt-koszul}
-  \lean{LCManifolds.koszul, LCManifolds.koszul_eq, LCManifolds.Connection.koszul}
+  \lean{LocallyConvex.Manifolds.koszul, LocallyConvex.Manifolds.koszul_eq, LocallyConvex.Manifolds.Connection.koszul}
   \leanok
   \uses{def:mt-metric-connection}
   If the connection is symmetric and metric for $g$, then in every chart
@@ -517,7 +517,7 @@ sign of $g$.
 
 \begin{theorem}[Uniqueness of the Levi-Civita connection]
   \label{thm:mt-lc-unique}
-  \lean{LCManifolds.eq_of_koszul, LCManifolds.SymmBilinField.localForm_nondegenerate, LCManifolds.Connection.Γ_eq_of_isMetric, LCManifolds.Connection.covDeriv_eq_of_isMetric, LCManifolds.WeakPseudoRiemannianMetric.covDeriv_eq, LCManifolds.WeakRiemannianMetric.covDeriv_eq}
+  \lean{LocallyConvex.Manifolds.eq_of_koszul, LocallyConvex.Manifolds.SymmBilinField.localForm_nondegenerate, LocallyConvex.Manifolds.Connection.Γ_eq_of_isMetric, LocallyConvex.Manifolds.Connection.covDeriv_eq_of_isMetric, LocallyConvex.Manifolds.WeakPseudoRiemannianMetric.covDeriv_eq, LocallyConvex.Manifolds.WeakRiemannianMetric.covDeriv_eq}
   \leanok
   \uses{thm:mt-koszul, prop:mt-nondegenerate}
   If $g$ is weakly nondegenerate, two symmetric metric connections have the same symbols in every
@@ -534,7 +534,7 @@ sign of $g$.
 
 \begin{theorem}[The metric spray]
   \label{thm:mt-metric-spray}
-  \lean{LCManifolds.koszul_diag, LCManifolds.compatible_of_koszul, LCManifolds.koszul_of_spray, LCManifolds.compatible_iff_spray, LCManifolds.SymmBilinField.localDeriv_add_dir, LCManifolds.SymmBilinField.localDeriv_add_left, LCManifolds.SymmBilinField.localDeriv_add_right, LCManifolds.Connection.isMetric_iff_spray}
+  \lean{LocallyConvex.Manifolds.koszul_diag, LocallyConvex.Manifolds.compatible_of_koszul, LocallyConvex.Manifolds.koszul_of_spray, LocallyConvex.Manifolds.compatible_iff_spray, LocallyConvex.Manifolds.SymmBilinField.localDeriv_add_dir, LocallyConvex.Manifolds.SymmBilinField.localDeriv_add_left, LocallyConvex.Manifolds.SymmBilinField.localDeriv_add_right, LocallyConvex.Manifolds.Connection.isMetric_iff_spray}
   \leanok
   \uses{thm:mt-koszul, prop:conn-to-spray}
   A symmetric connection is metric for $g$ if and only if its spray $F_y(v) = \Gamma_y(v, v)$
@@ -561,7 +561,7 @@ v\rangle$, and the Koszul formula is its polarization; see also \cite[Ch.~VIII, 
 
 \begin{proposition}[The obstruction to existence]
   \label{prop:mt-lc-existence}
-  \lean{LCManifolds.exists_symm_compatible_iff, LCManifolds.Connection.koszul_represented}
+  \lean{LocallyConvex.Manifolds.exists_symm_compatible_iff, LocallyConvex.Manifolds.Connection.koszul_represented}
   \leanok
   \uses{thm:mt-koszul}
   Let $B$ be a symmetric, weakly nondegenerate bilinear form and $D(u)(a, b)$ symmetric in $(a, b)$.
@@ -591,7 +591,7 @@ Proposition~\ref{prop:mt-lc-existence} does occur.
 
 \begin{theorem}[A weak Riemannian metric without Levi-Civita connection]
   \label{thm:mt-no-levi-civita}
-  \lean{LCManifolds.NoLeviCivita.form, LCManifolds.NoLeviCivita.conformalMetric, LCManifolds.NoLeviCivita.localDeriv_conformal, LCManifolds.NoLeviCivita.not_exists_isMetric, LCManifolds.NoLeviCivita.L2.diag, LCManifolds.NoLeviCivita.L2.diag_symm, LCManifolds.NoLeviCivita.L2.diag_pos, LCManifolds.NoLeviCivita.L2.v_not_mem_range, LCManifolds.NoLeviCivita.L2.not_exists_isMetric}
+  \lean{LocallyConvex.Manifolds.NoLeviCivita.form, LocallyConvex.Manifolds.NoLeviCivita.conformalMetric, LocallyConvex.Manifolds.NoLeviCivita.localDeriv_conformal, LocallyConvex.Manifolds.NoLeviCivita.not_exists_isMetric, LocallyConvex.Manifolds.NoLeviCivita.L2.diag, LocallyConvex.Manifolds.NoLeviCivita.L2.diag_symm, LocallyConvex.Manifolds.NoLeviCivita.L2.diag_pos, LocallyConvex.Manifolds.NoLeviCivita.L2.v_not_mem_range, LocallyConvex.Manifolds.NoLeviCivita.L2.not_exists_isMetric}
   \leanok
   \uses{prop:mt-lc-existence, def:weak-riemannian}
   Let $H$ be a real inner product space, $T$ a continuous, symmetric and positive definite
@@ -632,7 +632,7 @@ $t \in \T_p X$.
 
 \begin{lemma}[Orthogonal projectors need nondegenerate ranges]
   \label{lem:mt-orth-nondegenerate}
-  \lean{LCManifolds.nondegenerate_of_orthogonal}
+  \lean{LocallyConvex.Manifolds.nondegenerate_of_orthogonal}
   \leanok
   If $\beta$ is weakly nondegenerate and $Q$ is a $\beta$-orthogonal projector, no nonzero vector
   of the range of $Q$ is $\beta$-orthogonal to the whole range.
@@ -646,7 +646,7 @@ $t \in \T_p X$.
 
 \begin{theorem}[Gauss: the projector connection is metric]
   \label{thm:mt-gauss}
-  \lean{LCManifolds.ProjectorField.IsOrthogonal, LCManifolds.ProjectorField.inducedForm, LCManifolds.ProjectorField.inducedDeriv, LCManifolds.ProjectorField.inducedDeriv_eq, LCManifolds.ProjectorField.dMB_param_mem_tangentSpace, LCManifolds.ProjectorField.isMetric_symb}
+  \lean{LocallyConvex.Manifolds.ProjectorField.IsOrthogonal, LocallyConvex.Manifolds.ProjectorField.inducedForm, LocallyConvex.Manifolds.ProjectorField.inducedDeriv, LocallyConvex.Manifolds.ProjectorField.inducedDeriv_eq, LocallyConvex.Manifolds.ProjectorField.dMB_param_mem_tangentSpace, LocallyConvex.Manifolds.ProjectorField.isMetric_symb}
   \leanok
   \uses{thm:projector-connection, def:mt-metric-connection}
   If $P$ is $\beta$-orthogonal, the connection of $P$ is metric for the induced form in every
@@ -668,7 +668,7 @@ No sign condition on $\beta$ is used: the computation is the one of the Riemanni
 
 \begin{theorem}[The projector connection is the Levi-Civita connection]
   \label{thm:mt-projector-levi-civita}
-  \lean{LCManifolds.ProjectorField.inducedForm_sub, LCManifolds.ProjectorField.inducedForm_nondegenerate, LCManifolds.ProjectorField.symb_eq_of_isMetric}
+  \lean{LocallyConvex.Manifolds.ProjectorField.inducedForm_sub, LocallyConvex.Manifolds.ProjectorField.inducedForm_nondegenerate, LocallyConvex.Manifolds.ProjectorField.symb_eq_of_isMetric}
   \leanok
   \uses{thm:mt-gauss, lem:mt-orth-nondegenerate, thm:mt-lc-unique}
   If $\beta$ is weakly nondegenerate and $P$ is $\beta$-orthogonal, then in every slice chart the
@@ -686,7 +686,7 @@ No sign condition on $\beta$ is used: the computation is the one of the Riemanni
 
 \begin{theorem}[The induced metric]
   \label{thm:mt-induced-metric}
-  \lean{LCManifolds.ProjectorField.bilinAt, LCManifolds.ProjectorField.smoothMBOn_inducedForm, LCManifolds.ProjectorField.dMB_param_transition, LCManifolds.ProjectorField.inducedFun, LCManifolds.ProjectorField.bilinLocalRep_inducedFun, LCManifolds.ProjectorField.inducedMetric, LCManifolds.ProjectorField.inducedRiemannian}
+  \lean{LocallyConvex.Manifolds.ProjectorField.bilinAt, LocallyConvex.Manifolds.ProjectorField.smoothMBOn_inducedForm, LocallyConvex.Manifolds.ProjectorField.dMB_param_transition, LocallyConvex.Manifolds.ProjectorField.inducedFun, LocallyConvex.Manifolds.ProjectorField.bilinLocalRep_inducedFun, LocallyConvex.Manifolds.ProjectorField.inducedMetric, LocallyConvex.Manifolds.ProjectorField.inducedRiemannian}
   \leanok
   \uses{def:mt-bilin, thm:mt-gauss}
   The induced forms of the slice charts define a smooth field of symmetric bilinear forms on $X$,
@@ -706,7 +706,7 @@ No sign condition on $\beta$ is used: the computation is the one of the Riemanni
 
 \begin{theorem}[Levi-Civita connection of a submanifold, any signature]
   \label{thm:mt-submanifold-levi-civita}
-  \lean{LCManifolds.ProjectorField.connection_isMetric, LCManifolds.ProjectorField.inducedMetric_isWeaklyNondegenerate, LCManifolds.ProjectorField.covDeriv_eq_connection}
+  \lean{LocallyConvex.Manifolds.ProjectorField.connection_isMetric, LocallyConvex.Manifolds.ProjectorField.inducedMetric_isWeaklyNondegenerate, LocallyConvex.Manifolds.ProjectorField.covDeriv_eq_connection}
   \leanok
   \uses{thm:mt-induced-metric, thm:mt-projector-levi-civita, thm:mt-lc-unique}
   If $P$ is $\beta$-orthogonal, the connection of $P$ is metric for the induced metric. If

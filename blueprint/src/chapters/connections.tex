@@ -31,7 +31,7 @@ for the transition map, defined on $i(U_i \cap U_j)$.
 
 \begin{definition}[Connection]
   \label{def:connection}
-  \lean{LCManifolds.Connection}
+  \lean{LocallyConvex.Manifolds.Connection}
   \leanok
   \uses{def:mb-manifold, def:mb-groupoid}
   A \emph{connection} on $M$ assigns to each chart $i$ of the atlas a family of maps
@@ -56,7 +56,7 @@ joint smoothness, and no topology on the space of bilinear maps is needed.
 
 \begin{definition}[Local covariant derivative]
   \label{def:conn-local-cov-deriv}
-  \lean{LCManifolds.localCovDeriv}
+  \lean{LocallyConvex.Manifolds.localCovDeriv}
   \leanok
   Let $\Gamma$ be a family of bilinear maps on an open set $U \subseteq E$ and let
   $X, Y \colon U \to E$. The \emph{local covariant derivative} is
@@ -67,7 +67,7 @@ joint smoothness, and no topology on the space of bilinear maps is needed.
 
 \begin{lemma}[Change of coordinates]
   \label{lem:conn-local-transition}
-  \lean{LCManifolds.dMB_comp_transition, LCManifolds.localCovDeriv_transition}
+  \lean{LocallyConvex.Manifolds.dMB_comp_transition, LocallyConvex.Manifolds.localCovDeriv_transition}
   \leanok
   \uses{def:conn-local-cov-deriv}
   Let $\tau$ be $\Ck{2}$, and let $X_i, Y_i$ and $X_j, Y_j$ be related by $\tau$, that is
@@ -90,7 +90,7 @@ joint smoothness, and no topology on the space of bilinear maps is needed.
 
 \begin{definition}[Covariant derivative]
   \label{def:conn-cov-deriv}
-  \lean{LCManifolds.Connection.covDeriv, LCManifolds.Connection.isVectorField_covDeriv}
+  \lean{LocallyConvex.Manifolds.Connection.covDeriv, LocallyConvex.Manifolds.Connection.isVectorField_covDeriv}
   \leanok
   \uses{def:connection, def:conn-local-cov-deriv, def:vector-field}
   Let $C$ be a connection on $M$ and $X, Y$ vector fields. The \emph{covariant derivative}
@@ -101,7 +101,7 @@ joint smoothness, and no topology on the space of bilinear maps is needed.
 
 \begin{theorem}[Chart independence]
   \label{thm:conn-cov-deriv-chart}
-  \lean{LCManifolds.Connection.localRep_covDeriv}
+  \lean{LocallyConvex.Manifolds.Connection.localRep_covDeriv}
   \leanok
   \uses{def:conn-cov-deriv, lem:conn-local-transition, def:tangent-bundle}
   Let $Y$ be a $\Ck{1}$ vector field and $X$ any vector field. In every chart $j$ of the atlas,
@@ -121,7 +121,7 @@ convenience. The usual algebraic rules follow at once from the local formula.
 
 \begin{proposition}[Rules of the covariant derivative]
   \label{prop:conn-rules}
-  \lean{LCManifolds.Connection.covDeriv_smulField_left, LCManifolds.Connection.covDeriv_smulField_right, LCManifolds.Connection.contMDiffMB_covDeriv}
+  \lean{LocallyConvex.Manifolds.Connection.covDeriv_smulField_left, LocallyConvex.Manifolds.Connection.covDeriv_smulField_right, LocallyConvex.Manifolds.Connection.contMDiffMB_covDeriv}
   \leanok
   \uses{thm:conn-cov-deriv-chart, def:contmdiff}
   Let $X, Y$ be vector fields with $Y$ of class $\Ck{1}$, and let $\varphi \colon M \to \R$.
@@ -144,7 +144,7 @@ convenience. The usual algebraic rules follow at once from the local formula.
 
 \begin{proposition}[Torsion]
   \label{prop:conn-torsion}
-  \lean{LCManifolds.Connection.covDeriv_sub_covDeriv_sub_lieBracket, LCManifolds.Connection.IsSymmetric, LCManifolds.Connection.covDeriv_sub_covDeriv}
+  \lean{LocallyConvex.Manifolds.Connection.covDeriv_sub_covDeriv_sub_lieBracket, LocallyConvex.Manifolds.Connection.IsSymmetric, LocallyConvex.Manifolds.Connection.covDeriv_sub_covDeriv}
   \leanok
   \uses{def:conn-cov-deriv}
   For vector fields $X, Y$, the vector $\nabla_X Y - \nabla_Y X - [X, Y]$ at $x$ is, in the
@@ -172,7 +172,7 @@ We use Lang's sign for the curvature.
 
 \begin{definition}[Curvature]
   \label{def:conn-curvature}
-  \lean{LCManifolds.dSymb, LCManifolds.localCurv, LCManifolds.Connection.curvature}
+  \lean{LocallyConvex.Manifolds.dSymb, LocallyConvex.Manifolds.localCurv, LocallyConvex.Manifolds.Connection.curvature}
   \leanok
   \uses{def:conn-cov-deriv}
   For vector fields $X, Y, Z$, the \emph{curvature} at $x$ is
@@ -190,7 +190,7 @@ We use Lang's sign for the curvature.
 
 \begin{lemma}[Local curvature formula]
   \label{lem:conn-local-curv}
-  \lean{LCManifolds.dMB_symb_comp, LCManifolds.localCovDeriv_curv}
+  \lean{LocallyConvex.Manifolds.dMB_symb_comp, LocallyConvex.Manifolds.localCovDeriv_curv}
   \leanok
   \uses{def:conn-curvature, def:conn-local-cov-deriv}
   Let $X, Y, Z$ be $\Ck{2}$ fields on an open set $U \subseteq E$ and $\Gamma$ a $\Ck{1}$ family of
@@ -210,7 +210,7 @@ We use Lang's sign for the curvature.
 
 \begin{theorem}[The curvature is tensorial]
   \label{thm:conn-curvature-tensorial}
-  \lean{LCManifolds.Connection.curvature_eq}
+  \lean{LocallyConvex.Manifolds.Connection.curvature_eq}
   \leanok
   \uses{lem:conn-local-curv, thm:conn-cov-deriv-chart}
   Let $X, Y, Z$ be $\Ck{2}$ vector fields. Then $R(X, Y) Z$ at $x$ is the trilinear expression
@@ -228,7 +228,7 @@ We use Lang's sign for the curvature.
 
 \begin{proposition}[Symmetries of the curvature]
   \label{prop:conn-curvature-symmetries}
-  \lean{LCManifolds.localCurv_swap, LCManifolds.localCurv_bianchi, LCManifolds.Connection.curvature_swap, LCManifolds.Connection.curvature_bianchi}
+  \lean{LocallyConvex.Manifolds.localCurv_swap, LocallyConvex.Manifolds.localCurv_bianchi, LocallyConvex.Manifolds.Connection.curvature_swap, LocallyConvex.Manifolds.Connection.curvature_bianchi}
   \leanok
   \uses{thm:conn-curvature-tensorial, prop:conn-torsion}
   For $\Ck{2}$ vector fields, $R(Y, X) Z = -R(X, Y) Z$. If the connection is symmetric, the first
@@ -251,7 +251,7 @@ local parts.
 
 \begin{definition}[Spray]
   \label{def:spray}
-  \lean{LCManifolds.Spray, LCManifolds.Spray.IsQuadratic}
+  \lean{LocallyConvex.Manifolds.Spray, LocallyConvex.Manifolds.Spray.IsQuadratic}
   \leanok
   \uses{def:mb-manifold, def:tangent-bundle}
   A \emph{spray} on $M$ assigns to each chart $i$ of the atlas a smooth map
@@ -271,7 +271,7 @@ needed to pass to connections.
 
 \begin{proposition}[The spray of a connection]
   \label{prop:conn-to-spray}
-  \lean{LCManifolds.Connection.toSpray, LCManifolds.Connection.toSpray_isQuadratic}
+  \lean{LocallyConvex.Manifolds.Connection.toSpray, LocallyConvex.Manifolds.Connection.toSpray_isQuadratic}
   \leanok
   \uses{def:connection, def:spray}
   Every connection defines a quadratic spray, with local parts $f_i(x, v) = \Gamma_i(x)(v, v)$.
@@ -289,7 +289,7 @@ identity holds without any regularity assumption.
 
 \begin{lemma}[Homogeneous maps of degree two]
   \label{lem:conn-homogeneous}
-  \lean{LCManifolds.hasDirDerivAt_of_homogeneous, LCManifolds.dMB_dMB_zero_of_homogeneous, LCManifolds.polarization}
+  \lean{LocallyConvex.Manifolds.hasDirDerivAt_of_homogeneous, LocallyConvex.Manifolds.dMB_dMB_zero_of_homogeneous, LocallyConvex.Manifolds.polarization}
   \leanok
   Let $g \colon E \to F$ satisfy $g(s v) = s^2 g(v)$ for all $s \in \R$, $v \in E$. Then
   $\dd^{(2)} g(0; v, v) = 2\, g(v)$. Moreover, if $B$ is symmetric and bilinear, then
@@ -306,7 +306,7 @@ identity holds without any regularity assumption.
 
 \begin{theorem}[The connection of a quadratic spray]
   \label{thm:conn-spray-to-connection}
-  \lean{LCManifolds.Spray.polar, LCManifolds.Spray.polar_eq, LCManifolds.Spray.polar_transition, LCManifolds.Spray.toConnection, LCManifolds.Spray.toConnection_isSymmetric, LCManifolds.Spray.toConnection_toSpray}
+  \lean{LocallyConvex.Manifolds.Spray.polar, LocallyConvex.Manifolds.Spray.polar_eq, LocallyConvex.Manifolds.Spray.polar_transition, LocallyConvex.Manifolds.Spray.toConnection, LocallyConvex.Manifolds.Spray.toConnection_isSymmetric, LocallyConvex.Manifolds.Spray.toConnection_toSpray}
   \leanok
   \uses{def:spray, def:connection, lem:conn-homogeneous, prop:conn-to-spray}
   Let $f$ be a quadratic spray. In each chart $i$ put
@@ -340,7 +340,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{definition}[Lifts of curves]
   \label{def:conn-lift}
-  \lean{LCManifolds.liftCoord, LCManifolds.IsCkLift}
+  \lean{LocallyConvex.Manifolds.liftCoord, LocallyConvex.Manifolds.IsCkLift}
   \leanok
   \uses{def:ck-curve, def:tangent-bundle}
   A lift $\beta$ of $\alpha$ is $\Ck{k}$ if, for every chart $i$, its fiber coordinate $\mu_i$ is
@@ -349,7 +349,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{lemma}[Change of charts along a curve]
   \label{lem:conn-curve-transition}
-  \lean{LCManifolds.tangentChart_snd_transition, LCManifolds.dMB_dMB_curve}
+  \lean{LocallyConvex.Manifolds.tangentChart_snd_transition, LocallyConvex.Manifolds.dMB_dMB_curve}
   \leanok
   \uses{def:conn-lift, def:velocity}
   For two charts $i, j$ and $\tau = j \circ i^{-1}$, we have
@@ -371,7 +371,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{definition}[Covariant derivative along a curve]
   \label{def:cov-deriv-along}
-  \lean{LCManifolds.Connection.covDerivAlong}
+  \lean{LocallyConvex.Manifolds.Connection.covDerivAlong}
   \leanok
   \uses{def:connection, def:conn-lift}
   Let $C$ be a connection and $\beta$ a lift of $\alpha$. The \emph{covariant derivative of
@@ -383,7 +383,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{theorem}[Chart independence along curves]
   \label{thm:conn-cov-deriv-along-chart}
-  \lean{LCManifolds.Connection.covDerivAlong_chart}
+  \lean{LocallyConvex.Manifolds.Connection.covDerivAlong_chart}
   \leanok
   \uses{def:cov-deriv-along, lem:conn-curve-transition}
   Let $\alpha$ be a $\Ck{1}$ curve and $\beta$ a $\Ck{1}$ lift. Read in any chart $j$ around
@@ -402,7 +402,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{definition}[Geodesic]
   \label{def:geodesic}
-  \lean{LCManifolds.Connection.IsGeodesic}
+  \lean{LocallyConvex.Manifolds.Connection.IsGeodesic}
   \leanok
   \uses{def:cov-deriv-along, def:velocity}
   A curve $\alpha$ is a \emph{geodesic} of the connection $C$ if its velocity is parallel:
@@ -411,7 +411,7 @@ $\tilde\alpha = i \circ \alpha$ and $\mu_i(t)$ for the fiber coordinate of $\bet
 
 \begin{theorem}[The geodesic equation]
   \label{thm:conn-geodesic-equation}
-  \lean{LCManifolds.Connection.isGeodesic_iff}
+  \lean{LocallyConvex.Manifolds.Connection.isGeodesic_iff}
   \leanok
   \uses{def:geodesic, thm:conn-cov-deriv-along-chart}
   A $\Ck{2}$ curve $\alpha$ is a geodesic if and only if, in every chart $j$,
@@ -461,7 +461,7 @@ $\alpha(t)$.
 
 \begin{theorem}[The geodesic equation does not depend on the chart]
   \label{thm:geodesic-eq-chart}
-  \lean{LCManifolds.geodesicEq_comp, LCManifolds.Connection.geodesicEqAt_of_chart}
+  \lean{LocallyConvex.Manifolds.geodesicEq_comp, LocallyConvex.Manifolds.Connection.geodesicEqAt_of_chart}
   \leanok
   If $\alpha$ is continuous at $t$ and satisfies the geodesic equation at $t$ in a chart around
   $\alpha(t)$, it satisfies it in every chart around $\alpha(t)$.
@@ -476,7 +476,7 @@ $\alpha(t)$.
 
 \begin{theorem}[Local existence of geodesics, with uniform time]
   \label{thm:geodesic-existence}
-  \lean{LCManifolds.Connection.exists_isGeodesicOn_uniform, LCManifolds.Connection.exists_isGeodesicOn}
+  \lean{LocallyConvex.Manifolds.Connection.exists_isGeodesicOn_uniform, LocallyConvex.Manifolds.Connection.exists_isGeodesicOn}
   \leanok
   \uses{thm:geodesic-eq-chart}
   Let $y_0$ be a point of the chart $i$. There is $r > 0$ such that for every $K \ge 0$ there is
@@ -495,7 +495,7 @@ $\alpha(t)$.
 
 \begin{theorem}[Uniqueness of geodesics]
   \label{thm:geodesic-uniqueness}
-  \lean{LCManifolds.Connection.IsGeodesicOn.eqOn}
+  \lean{LocallyConvex.Manifolds.Connection.IsGeodesicOn.eqOn}
   \leanok
   \uses{thm:geodesic-eq-chart}
   If $M$ is Hausdorff, two geodesics on $(a, b)$ with the same position and velocity at some
@@ -518,7 +518,7 @@ $\alpha(t)$.
 
 \begin{theorem}[Extension of geodesics]
   \label{thm:geodesic-extension}
-  \lean{LCManifolds.Connection.IsGeodesicOn.exists_extend}
+  \lean{LocallyConvex.Manifolds.Connection.IsGeodesicOn.exists_extend}
   \leanok
   \uses{thm:geodesic-existence, thm:geodesic-uniqueness}
   Let $M$ be Hausdorff, and let $\alpha$ be a geodesic on $(a, b)$ such that $\alpha(t) \to q$ as
@@ -537,7 +537,7 @@ $\alpha(t)$.
 
 \begin{theorem}[Complete Finsler manifolds: geodesics extend {\cite[Prop.~9.2.1]{Lar22}}]
   \label{thm:finsler-geodesic-extension}
-  \lean{LCManifolds.Connection.IsGeodesicOn.exists_extend_of_complete}
+  \lean{LocallyConvex.Manifolds.Connection.IsGeodesicOn.exists_extend_of_complete}
   \leanok
   \uses{thm:geodesic-extension}
   Let $M$ be Hausdorff, with a Finsler length structure $\mu$ bounded below, such that $M$ is
@@ -575,7 +575,7 @@ $\dd\psi(y)$ maps $S$ injectively onto $T_{\psi(y)} X$.
 
 \begin{definition}[Field of projectors]
   \label{def:projector-field}
-  \lean{LCManifolds.ProjectorField, LCManifolds.ProjectorField.param, LCManifolds.ProjectorField.localE}
+  \lean{LocallyConvex.Manifolds.ProjectorField, LocallyConvex.Manifolds.ProjectorField.param, LocallyConvex.Manifolds.ProjectorField.localE}
   \leanok
   \uses{def:embedded-submanifold, def:tangent-space-submanifold}
   A \emph{field of projectors} onto the tangent spaces of $X$ is a map
@@ -598,7 +598,7 @@ $\dd\psi(y)$ maps $S$ injectively onto $T_{\psi(y)} X$.
 
 \begin{lemma}[Tangent vectors]
   \label{lem:projector-tangent}
-  \lean{LCManifolds.ProjectorField.mem_tangentSpace, LCManifolds.ProjectorField.E_eq_self, LCManifolds.IsEmbeddedSubmanifold.dMB_symm_mem_tangentSpace, LCManifolds.ProjectorField.E_dMB_param, LCManifolds.ProjectorField.dMB_param_injective}
+  \lean{LocallyConvex.Manifolds.ProjectorField.mem_tangentSpace, LocallyConvex.Manifolds.ProjectorField.E_eq_self, LocallyConvex.Manifolds.IsEmbeddedSubmanifold.dMB_symm_mem_tangentSpace, LocallyConvex.Manifolds.ProjectorField.E_dMB_param, LocallyConvex.Manifolds.ProjectorField.dMB_param_injective}
   \leanok
   \uses{def:projector-field}
   $E_p w \in T_p X$ for every $w$, and $E_p w = w$ if $w \in T_p X$. In a slice chart,
@@ -615,7 +615,7 @@ $\dd\psi(y)$ maps $S$ injectively onto $T_{\psi(y)} X$.
 
 \begin{definition}[Symbols of a field of projectors]
   \label{def:projector-symbols}
-  \lean{LCManifolds.ProjectorField.symb, LCManifolds.ProjectorField.symb_mem, LCManifolds.ProjectorField.coe_symb}
+  \lean{LocallyConvex.Manifolds.ProjectorField.symb, LocallyConvex.Manifolds.ProjectorField.symb_mem, LocallyConvex.Manifolds.ProjectorField.coe_symb}
   \leanok
   \uses{def:projector-field}
   In a slice chart $\varphi$, with $\psi = \varphi^{-1}|_S$ and $y \in \varphi(U) \cap S$, put
@@ -631,7 +631,7 @@ symbols are the tangent part of the second derivative of the parametrization, re
 
 \begin{lemma}[Properties of the symbols]
   \label{lem:projector-symbols}
-  \lean{LCManifolds.ProjectorField.symb_symm, LCManifolds.ProjectorField.smoothMBOn_symb, LCManifolds.ProjectorField.dMB_param_symb, LCManifolds.ProjectorField.symb_transition}
+  \lean{LocallyConvex.Manifolds.ProjectorField.symb_symm, LocallyConvex.Manifolds.ProjectorField.smoothMBOn_symb, LocallyConvex.Manifolds.ProjectorField.dMB_param_symb, LocallyConvex.Manifolds.ProjectorField.symb_transition}
   \leanok
   \uses{def:projector-symbols, lem:projector-tangent, def:connection}
   The symbols $\Gamma_y$ are bilinear and symmetric, they are smooth on the chart domain, and for
@@ -650,7 +650,7 @@ symbols are the tangent part of the second derivative of the parametrization, re
 
 \begin{theorem}[The connection of a field of projectors]
   \label{thm:projector-connection}
-  \lean{LCManifolds.ProjectorField.connection, LCManifolds.ProjectorField.connection_isSymmetric}
+  \lean{LocallyConvex.Manifolds.ProjectorField.connection, LocallyConvex.Manifolds.ProjectorField.connection_isSymmetric}
   \leanok
   \uses{lem:projector-symbols, def:connection, prop:conn-torsion}
   A field of projectors $E$ onto the tangent spaces of $X$ defines a symmetric connection on $X$,
@@ -670,7 +670,7 @@ differentiating in $F$ and projecting onto the tangent space.
 
 \begin{theorem}[Derive and project]
   \label{thm:projector-derive-project}
-  \lean{LCManifolds.ProjectorField.dMB_param_localCovDeriv}
+  \lean{LocallyConvex.Manifolds.ProjectorField.dMB_param_localCovDeriv}
   \leanok
   \uses{thm:projector-connection, def:conn-local-cov-deriv}
   Let $A, B$ be fields on an open subset of the chart domain in $S$, with $B$ of class $\Ck{1}$,
@@ -693,7 +693,7 @@ differentiating in $F$ and projecting onto the tangent space.
 
 \begin{lemma}[Acceleration in a slice chart]
   \label{lem:projector-accel}
-  \lean{LCManifolds.ProjectorField.E_accel_eq, LCManifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
+  \lean{LocallyConvex.Manifolds.ProjectorField.E_accel_eq, LocallyConvex.Manifolds.IsEmbeddedSubmanifold.isCkCurve_of_smooth}
   \leanok
   \uses{def:projector-symbols, def:ck-curve}
   Let $c$ be a $\Ck{2}$ curve in the chart domain in $S$ and $\alpha = \psi \circ c$. Then
@@ -715,7 +715,7 @@ differentiating in $F$ and projecting onto the tangent space.
 
 \begin{theorem}[Derive and project: geodesics]
   \label{thm:projector-geodesics}
-  \lean{LCManifolds.ProjectorField.connection_isGeodesic_iff}
+  \lean{LocallyConvex.Manifolds.ProjectorField.connection_isGeodesic_iff}
   \leanok
   \uses{thm:projector-connection, thm:conn-geodesic-equation, lem:projector-accel, def:geodesic}
   Let $\alpha$ be a $\Ck{2}$ curve in $X$. Then $\alpha$ is a geodesic of the connection defined
@@ -743,7 +743,7 @@ $q \mapsto E_q w$ at $p$ in the direction $v$, computed in the slice chart.
 
 \begin{proposition}[The identity of the book]
   \label{prop:projector-book-identity}
-  \lean{LCManifolds.ProjectorField.dMB_localE_param, LCManifolds.ProjectorField.dMB_localE_param_symm}
+  \lean{LocallyConvex.Manifolds.ProjectorField.dMB_localE_param, LocallyConvex.Manifolds.ProjectorField.dMB_localE_param_symm}
   \leanok
   \uses{def:projector-field, lem:projector-tangent}
   Let $v = \dd\psi(y)(a)$ and $w = \dd\psi(y)(b)$ be tangent vectors at $p = \psi(y)$, with
