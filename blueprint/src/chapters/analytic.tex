@@ -1,0 +1,150 @@
+\chapter{Analytic manifolds}
+\label{chap:analytic}
+
+Real and complex analytic manifolds modeled on locally convex spaces, following
+\cite[Definitions~3.1.3--3.1.4 and~2.2.18]{GN26}. Real analyticity is Milnor's notion: a map is
+real analytic if it extends to a complex analytic map on an open subset of the complexification
+$E_{\mathbb{C}} = E \times E$ (see the companion library \texttt{LCAnalysis}). As for smooth manifolds,
+no completeness of the model space is assumed: composition, locality, ``analytic implies
+smooth'' and ``complex analytic implies real analytic'' hold for arbitrary Hausdorff locally
+convex spaces.
+
+\section{The analytic groupoids}
+
+\begin{definition}[Analytic groupoids]
+  \label{def:analytic-groupoids}
+  \lean{LCManifolds.realAnalyticGroupoid, LCManifolds.complexAnalyticGroupoid,
+    LCManifolds.realAnalyticOn_congr}
+  \leanok
+  \uses{def:mb-groupoid}
+  For a real locally convex space $E$, the \emph{real analytic groupoid} consists of the
+  homeomorphisms between open subsets of $E$ which are real analytic, with real analytic
+  inverse. For a complex locally convex space $E$, the \emph{complex analytic groupoid} is
+  defined in the same way with complex analytic maps.
+\end{definition}
+
+\begin{proof}
+  \leanok
+  These are structure groupoids: compositions of real (complex) analytic maps are real
+  (complex) analytic \cite[Proposition~2.2.4]{GN26}, and real (complex) analyticity is a local
+  property \cite[Lemma~2.2.3]{GN26}.
+\end{proof}
+
+\begin{proposition}
+  \label{prop:analytic-groupoids-le}
+  \lean{LCManifolds.realAnalyticGroupoid_le_mbGroupoid,
+    LCManifolds.complexAnalyticGroupoid_le_realAnalyticGroupoid}
+  \leanok
+  \uses{def:analytic-groupoids}
+  Every real analytic diffeomorphism is a smooth diffeomorphism, and (for a complex locally
+  convex space) every complex analytic diffeomorphism is real analytic.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Real analytic maps are smooth \cite[Lemma~2.2.5]{GN26}; complex analytic maps are real
+  analytic \cite[Proposition~2.2.11]{GN26}. Neither statement uses completeness.
+\end{proof}
+
+\begin{definition}[Analytic manifolds]
+  \label{def:analytic-manifold}
+  \lean{LCManifolds.RealAnalyticManifold, LCManifolds.ComplexAnalyticManifold,
+    LCManifolds.RealAnalyticManifold.mbManifold,
+    LCManifolds.ComplexAnalyticManifold.realAnalyticManifold}
+  \leanok
+  \uses{def:analytic-groupoids, prop:analytic-groupoids-le, def:mb-manifold}
+  A \emph{real (complex) analytic manifold} is a charted space whose transition maps belong to
+  the real (complex) analytic groupoid. By Proposition~\ref{prop:analytic-groupoids-le}, a
+  complex analytic manifold is real analytic, and a real analytic manifold is smooth.
+\end{definition}
+
+\begin{remark}
+  \label{rem:analytic-opens}
+  Both groupoids are closed under restriction to open sets, so open subsets of analytic
+  manifolds (in particular of the model space) are analytic manifolds
+  \cite[Examples~3.1.8 and~3.1.9]{GN26}.
+\end{remark}
+
+\section{Analytic maps}
+
+\begin{definition}[Analytic maps]
+  \label{def:analytic-maps}
+  \lean{LCManifolds.RealAnalyticMOn, LCManifolds.ComplexAnalyticMOn}
+  \leanok
+  \uses{def:analytic-manifold, def:contmdiff}
+  A map $f \colon M \to N$ is \emph{real (complex) analytic} on an open set $U \subseteq M$ if
+  it is continuous on $U$ and its local representatives in the preferred charts are real
+  (complex) analytic.
+\end{definition}
+
+\begin{lemma}[Insertion of charts]
+  \label{lem:chart-change}
+  \lean{LCManifolds.exists_chartChange}
+  \leanok
+  Near each point of the domain of $e' \circ f \circ e^{-1}$, this map factors as
+  $(e' \circ c'^{-1}) \circ (c' \circ f \circ c^{-1}) \circ (c \circ e^{-1})$ with explicit
+  open domains, for any other charts $c$, $c'$ \cite[Remark~3.1.5]{GN26}.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Set theory.
+\end{proof}
+
+\begin{theorem}
+  \label{thm:analytic-maps}
+  \lean{LCManifolds.realAnalyticOn_transition, LCManifolds.RealAnalyticMOn.realAnalyticOn_chart,
+    LCManifolds.RealAnalyticMOn.comp, LCManifolds.RealAnalyticMOn.smoothMBMOn,
+    LCManifolds.realAnalyticMOn_id, LCManifolds.realAnalyticMOn_const,
+    LCManifolds.realAnalyticMOn_iff_realAnalyticOn,
+    LCManifolds.complexAnalyticOn_transition,
+    LCManifolds.ComplexAnalyticMOn.complexAnalyticOn_chart, LCManifolds.ComplexAnalyticMOn.comp,
+    LCManifolds.ComplexAnalyticMOn.realAnalyticMOn, LCManifolds.complexAnalyticMOn_id,
+    LCManifolds.complexAnalyticMOn_const, LCManifolds.complexAnalyticMOn_iff_complexAnalyticOn}
+  \leanok
+  \uses{def:analytic-maps, lem:chart-change}
+  The local representatives of a real (complex) analytic map in arbitrary charts of the
+  maximal atlases are real (complex) analytic. Compositions of analytic maps are analytic;
+  identities and constants are analytic; real analytic maps are smooth; complex analytic maps
+  are real analytic; and between open subsets of the model spaces, the notions agree with those
+  of \texttt{LCAnalysis}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Insert charts (Lemma~\ref{lem:chart-change}) and use that the classes of analytic maps are
+  closed under composition and local.
+\end{proof}
+
+\begin{example}[Inversion in a continuous inverse algebra]
+  \label{ex:analytic-inversion}
+  \lean{LCManifolds.realAnalyticMOn_inverse}
+  \leanok
+  \uses{def:analytic-maps}
+  The unit group $A^\times$ of a real continuous inverse algebra $A$ is open in $A$, hence a
+  real analytic manifold, and inversion is real analytic on it \cite[Proposition~2.2.13]{GN26}.
+\end{example}
+
+\section{Complexifications}
+
+\begin{definition}[Complexification]
+  \label{def:complexification-manifold}
+  \lean{LCManifolds.IsComplexification, LCManifolds.isComplexification_ofReal}
+  \leanok
+  \uses{def:analytic-manifold}
+  A complex analytic manifold $M^*$ modeled on $E_{\mathbb{C}}$ is a \emph{complexification} of a real
+  analytic manifold $M$ modeled on $E$ if $M \subseteq M^*$ and each $x \in M$ lies in the
+  domain $U^*$ of a chart $\varphi \colon U^* \to U'$ of $M^*$ with
+  $\varphi(M \cap U^*) = E \cap U'$ such that $\varphi|_{M \cap U^*}$ is a chart of $M$
+  \cite[Definition~2.2.18]{GN26}. In Lean the inclusion is an injective map
+  $\iota \colon M \to M^*$. The space $E_{\mathbb{C}}$ is a complexification of $E$.
+\end{definition}
+
+\begin{remark}
+  \label{rem:complexification-extension}
+  Glöckner and Neeb show that, if $M$ is closed in a paracompact complexification $M^*$, every
+  real analytic map from $M$ to a complex analytic manifold extends to a complex analytic map on
+  an open neighbourhood of $M$ in $M^*$ \cite[Proposition~2.2.19]{GN26}. The proof glues local
+  extensions with the identity theorem and a gluing lemma for paracompact spaces
+  \cite[Lemma~A.5.10]{GN26}; it is not formalized yet.
+\end{remark}

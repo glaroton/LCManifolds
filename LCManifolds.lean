@@ -5,6 +5,7 @@ Authors: Gabriel Larotonda
 -/
 import LCManifolds.Basic
 import LCManifolds.ContMDiff
+import LCManifolds.Analytic
 import LCManifolds.TangentBundle
 import LCManifolds.TangentMap
 import LCManifolds.VectorField
