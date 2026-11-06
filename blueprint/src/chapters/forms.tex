@@ -1,0 +1,240 @@
+\chapter{Differential forms}
+\label{chap:forms}
+
+Differential forms on manifolds modeled on locally convex spaces and the exterior derivative,
+following \cite[Section~3.6]{GN26}. Two features of the finite-dimensional theory are missing:
+there is no coordinate description of a form by components in a chart, and there are no
+partitions of unity, even on Banach manifolds. The definitions below only use local
+representatives, and all statements are local. No completeness of the model space or of the
+space of values is assumed.
+
+Glöckner and Neeb define the exterior derivative through the Lie algebra differential of vector
+fields \cite[Proposition~3.6.7, formula~(3.29)]{GN26} and show that it is given in charts by the
+formula~(3.33) below. We take~(3.33) as the definition and check directly that it does not depend
+on the chart: the terms with second derivatives of the transition maps cancel because these are
+symmetric. The same kind of computation proves $\dd \circ \dd = 0$, as indicated in
+\cite[Remark~3.6.10]{GN26}.
+
+\section{Local forms}
+
+Let $E$ and $F$ be Hausdorff locally convex spaces and $U \subseteq E$ open.
+
+\begin{definition}[Local forms]
+  \label{def:local-form}
+  \lean{LocallyConvex.Manifolds.IsLocalForm}
+  \leanok
+  A \emph{local $F$-valued $n$-form} on $U$ is a map $\omega \colon U \times E^n \to F$ which is
+  smooth in the sense of Michal--Bastiani and alternating $n$-linear in the last $n$ variables.
+\end{definition}
+
+\begin{definition}[Local exterior derivative]
+  \label{def:local-d}
+  \lean{LocallyConvex.Manifolds.dLoc}
+  \leanok
+  \uses{def:local-form}
+  For a local $n$-form $\omega$,
+  \[
+    \dd\omega(y)(v_0, \dots, v_n) =
+      \sum_{i=0}^{n} (-1)^i \, \partial_{v_i} \omega(y)(v_0, \dots, \widehat{v_i}, \dots, v_n),
+  \]
+  where $\partial_{v_i}$ is the directional derivative in the base point $y$
+  \cite[(3.33)]{GN26}.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:local-d-form}
+  \lean{LocallyConvex.Manifolds.IsLocalForm.dLoc, LocallyConvex.Manifolds.IsLocalForm.exists_partial}
+  \leanok
+  \uses{def:local-d}
+  The exterior derivative of a local $n$-form is a local $(n+1)$-form.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  Smoothness: each term is the derivative $\dd\omega$ composed with a continuous linear map.
+  For fixed $y$, the partial derivative $(u, w) \mapsto \partial_u \omega(y)(w)$ is linear in $u$
+  and alternating $n$-linear in $w$, because $\omega(z)$ is so for every $z$ near $y$; then
+  $\dd\omega(y)$ is its alternation, which is alternating $(n+1)$-linear.
+\end{proof}
+
+\begin{theorem}[$\dd \circ \dd = 0$, locally]
+  \label{thm:local-dd}
+  \lean{LocallyConvex.Manifolds.IsLocalForm.dLoc_dLoc,
+    LocallyConvex.Manifolds.sum_neg_one_pow_smul_sum_eq_zero_of_symm}
+  \leanok
+  \uses{prop:local-d-form}
+  For a local form $\omega$ on $U$, $\dd(\dd\omega) = 0$ on $U$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\dd(\dd\omega)(y)(v_0, \dots, v_{n+1})$ is a double alternating sum of second derivatives
+  $\partial_{v_i}\partial_{v_j}\omega(y)$, which are symmetric in $i, j$ (Schwarz's theorem for
+  Michal--Bastiani maps). The terms cancel in pairs \cite[Remark~3.6.10]{GN26}.
+\end{proof}
+
+\begin{definition}[Local pullback]
+  \label{def:local-pullback}
+  \lean{LocallyConvex.Manifolds.pullbackLoc, LocallyConvex.Manifolds.IsLocalForm.pullback}
+  \leanok
+  \uses{def:local-form}
+  For a smooth map $\tau \colon U \to V$ between open subsets of locally convex spaces and a
+  local form $\omega$ on $V$,
+  $(\tau^*\omega)(y)(v_1, \dots, v_n) = \omega(\tau y)(\dd\tau(y) v_1, \dots, \dd\tau(y) v_n)$.
+  It is a local form on $U$.
+\end{definition}
+
+\begin{theorem}[Naturality, locally]
+  \label{thm:local-naturality}
+  \lean{LocallyConvex.Manifolds.IsLocalForm.dLoc_pullbackLoc,
+    LocallyConvex.Manifolds.IsLocalForm.dMB_pullbackLoc,
+    AlternatingMap.sum_neg_one_pow_smul_sum_update_eq_zero}
+  \leanok
+  \uses{def:local-pullback, def:local-d}
+  $\dd(\tau^*\omega) = \tau^*(\dd\omega)$ on $U$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By the chain rule, $\partial_u (\tau^*\omega)(y)(w)$ is
+  $\partial_{\dd\tau(y) u}\omega(\tau y)(\dd\tau(y) w)$ plus the sum over $k$ of
+  $\omega(\tau y)(\dd\tau(y) w_1, \dots, \dd^2\tau(y)(w_k, u), \dots, \dd\tau(y) w_n)$; the second
+  part uses that $\omega(\tau y)$ is multilinear. In the alternating sum, the first terms give
+  $\tau^*(\dd\omega)$, and the terms with $\dd^2\tau(y)$ cancel because $\dd^2\tau(y)$ is
+  symmetric.
+\end{proof}
+
+\section{Forms on manifolds}
+
+Let $M$ be a smooth manifold modeled on $E$. A tangent vector at $x$ is given by its coordinates
+in the preferred chart at $x$ (Definition~\ref{def:tangent-bundle}).
+
+\begin{definition}[Differential forms]
+  \label{def:diff-form}
+  \lean{LocallyConvex.Manifolds.DifferentialForm, LocallyConvex.Manifolds.formLocalRep,
+    LocallyConvex.Manifolds.DifferentialForm.localRep}
+  \leanok
+  \uses{def:tangent-bundle, def:local-form}
+  An \emph{$F$-valued $n$-form} $\omega$ on $M$ assigns to each $x \in M$ an alternating
+  $n$-linear map $\omega_x \colon (T_xM)^n \to F$ such that, for every chart $\varphi$ of the
+  atlas, the local representative
+  $(y, v_1, \dots, v_n) \mapsto \omega_{\varphi^{-1} y}(T\varphi^{-1} v_1, \dots,
+  T\varphi^{-1} v_n)$ is smooth on $\varphi(U) \times E^n$ \cite[Definition~3.6.1]{GN26}. We
+  write $\Omega^n(M, F)$ for the space of these forms.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:form-localrep}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.isLocalForm_localRep,
+    LocallyConvex.Manifolds.DifferentialForm.localRep_eq_pullbackLoc,
+    LocallyConvex.Manifolds.DifferentialForm.localRep_prefChart}
+  \leanok
+  \uses{def:diff-form, def:local-pullback}
+  The local representatives of a form are local forms. On chart overlaps they are related by
+  pullback along the transition map: $\omega_i = \tau^*\omega_j$ for $\tau = j \circ i^{-1}$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The coordinate changes of tangent vectors are the derivatives of the transition maps, and they
+  compose by the chain rule.
+\end{proof}
+
+\begin{definition}[Exterior derivative]
+  \label{def:diff-form-d}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.d, LocallyConvex.Manifolds.DifferentialForm.d_apply}
+  \leanok
+  \uses{def:diff-form, def:local-d}
+  For $\omega \in \Omega^n(M, F)$, $(\dd\omega)_x$ is the local exterior derivative of the local
+  representative of $\omega$ in the preferred chart at $x$, evaluated at the image of $x$.
+\end{definition}
+
+\begin{theorem}
+  \label{thm:diff-form-d}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.localRep_d,
+    LocallyConvex.Manifolds.DifferentialForm.formLocalRep_dFun}
+  \leanok
+  \uses{def:diff-form-d, lem:form-localrep, thm:local-naturality, prop:local-d-form}
+  In every chart of the atlas, the local representative of $\dd\omega$ is the local exterior
+  derivative of the local representative of $\omega$. In particular, $\dd\omega$ is a smooth
+  $(n+1)$-form \cite[Proposition~3.6.7]{GN26}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Near a point, $\omega_i = \tau^*\omega_j$ with $\tau$ the transition map from the chart $i$ to
+  the preferred chart $j$ at the point; apply Theorem~\ref{thm:local-naturality}.
+\end{proof}
+
+\begin{theorem}[$\dd \circ \dd = 0$]
+  \label{thm:diff-form-dd}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.d_d}
+  \leanok
+  \uses{thm:diff-form-d, thm:local-dd}
+  For every $\omega \in \Omega^n(M, F)$, $\dd(\dd\omega) = 0$ \cite[Proposition~3.6.9]{GN26}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In the preferred chart at $x$, the local representative of $\dd\omega$ is $\dd$ of the local
+  representative of $\omega$ (Theorem~\ref{thm:diff-form-d}); apply
+  Theorem~\ref{thm:local-dd}.
+\end{proof}
+
+\begin{definition}[Functions, closed and exact forms]
+  \label{def:closed-exact}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.ofFunction,
+    LocallyConvex.Manifolds.DifferentialForm.IsClosed,
+    LocallyConvex.Manifolds.DifferentialForm.IsExact,
+    LocallyConvex.Manifolds.DifferentialForm.IsExact.isClosed}
+  \leanok
+  \uses{def:diff-form-d, thm:diff-form-dd}
+  A smooth function $f \colon M \to F$ is an $F$-valued $0$-form. A form $\omega$ is
+  \emph{closed} if $\dd\omega = 0$ and \emph{exact} if $\omega = \dd\eta$ for some form $\eta$
+  \cite[Definition~3.6.11]{GN26}. By Theorem~\ref{thm:diff-form-dd}, exact forms are closed.
+\end{definition}
+
+\begin{proposition}
+  \label{prop:d-function}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.d_ofFunction_apply}
+  \leanok
+  \uses{def:closed-exact}
+  For a smooth function $f$, $(\dd f)_x(v) = \dd(f \circ \varphi^{-1})(\varphi x)\, v$, where
+  $\varphi$ is the preferred chart at $x$: the exterior derivative of $f$ is its differential
+  \cite[Remark~3.6.12(a)]{GN26}.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  For $n = 0$ the alternating sum of Definition~\ref{def:local-d} has a single term.
+\end{proof}
+
+\section{Pullbacks}
+
+\begin{definition}[Pullback]
+  \label{def:diff-form-pullback}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.pullback,
+    LocallyConvex.Manifolds.DifferentialForm.formLocalRep_pullbackFun}
+  \leanok
+  \uses{def:diff-form, def:tangent-map, def:local-pullback}
+  For a smooth map $\varphi \colon N \to M$ and $\omega \in \Omega^n(M, F)$,
+  $(\varphi^*\omega)_x(v_1, \dots, v_n) = \omega_{\varphi(x)}(T_x\varphi\, v_1, \dots,
+  T_x\varphi\, v_n)$ \cite[Definition~3.6.6]{GN26}. In charts, the local representative of
+  $\varphi^*\omega$ is the local pullback of the local representative of $\omega$ along the local
+  representative of $\varphi$; in particular $\varphi^*\omega$ is a smooth form.
+\end{definition}
+
+\begin{theorem}[Naturality of $\dd$]
+  \label{thm:diff-form-naturality}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.d_pullback}
+  \leanok
+  \uses{def:diff-form-pullback, thm:diff-form-d, thm:local-naturality}
+  For a smooth map $\varphi \colon N \to M$ and $\omega \in \Omega^n(M, F)$,
+  $\dd(\varphi^*\omega) = \varphi^*(\dd\omega)$ \cite[Lemma~3.6.13]{GN26}.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  In the preferred charts at $x$ and $\varphi(x)$, this is Theorem~\ref{thm:local-naturality}
+  for the local representative of $\varphi$.
+\end{proof}

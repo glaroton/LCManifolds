@@ -292,6 +292,33 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `eq_of_vfDeriv_clm_comp_chart`: a vector field is determined at `x` by its action on the
     local functions `λ ∘ c`, `λ` continuous linear (Hahn–Banach). Smooth bump functions need not
     exist, so global functions do not suffice in general.
+* [`LocallyConvexManifolds/Analytic.lean`](LocallyConvexManifolds/Analytic.lean): real and complex
+  analytic manifolds [GN26, Defs. 3.1.3–3.1.4].
+  * `realAnalyticGroupoid`, `complexAnalyticGroupoid`, with real analyticity in the sense of
+    Milnor (extension to a complex analytic map on the complexification);
+  * `RealAnalyticManifold`, `ComplexAnalyticManifold`: complex analytic manifolds are real
+    analytic, and real analytic manifolds are smooth;
+  * `RealAnalyticMOn`, `ComplexAnalyticMOn`: analytic maps between manifolds, closed under
+    composition; `IsComplexification`: complexifications of real analytic manifolds
+    [GN26, Def. 2.2.18].
+* [`LocallyConvexManifolds/LocalForm.lean`](LocallyConvexManifolds/LocalForm.lean): differential
+  forms on open subsets of locally convex spaces [GN26, §3.6].
+  * `IsLocalForm`: smooth maps `U × Eⁿ → F`, alternating `n`-linear in the vectors;
+  * `dLoc`: the exterior derivative `dω(y)(v₀, …, vₙ) = ∑ᵢ (-1)ⁱ ∂_{vᵢ} ω(y)(…, v̂ᵢ, …)`
+    [GN26, (3.33)]; `IsLocalForm.dLoc_dLoc`: `d ∘ d = 0`;
+  * `IsLocalForm.dLoc_pullbackLoc`: naturality `d(τ*ω) = τ*(dω)` under smooth changes of
+    variables; the terms with `d²τ` cancel because `d²τ` is symmetric.
+* [`LocallyConvexManifolds/DifferentialForm.lean`](LocallyConvexManifolds/DifferentialForm.lean):
+  differential forms on manifolds [GN26, §3.6].
+  * `DifferentialForm E M F n`: smooth `F`-valued `n`-forms, defined by their local
+    representatives [GN26, Def. 3.6.1];
+  * `DifferentialForm.d`: the exterior derivative; `localRep_d`: in every chart it is given by
+    the local formula, so it does not depend on the charts [GN26, Prop. 3.6.7];
+    `d_d`: `d ∘ d = 0` [GN26, Prop. 3.6.9];
+  * `ofFunction`, `d_ofFunction_apply`: functions as `0`-forms, and `df` is the differential
+    [GN26, Rem. 3.6.12]; `IsClosed`, `IsExact`, `IsExact.isClosed`;
+  * `pullback`: pullbacks along smooth maps [GN26, Def. 3.6.6], and `d_pullback`:
+    `d(φ*ω) = φ*(dω)` [GN26, Lemma 3.6.13].
 
 There is no `sorry`.
 
@@ -305,10 +332,9 @@ Michal–Bastiani calculus of lc-analysis.
 
 ## Planned
 
-1. More manifold theory that carries over to locally convex models: products, submanifolds,
-   the second tangent bundle, sprays and connections, differential forms.
-2. Lie groups modeled on locally convex spaces and their Lie algebras [Nee06, GN26], after the
-   theory of real and complex analytic maps in lc-analysis.
+1. The wedge product and the Lie derivative of differential forms [GN26, §3.6]; symplectic,
+   complex and Kähler manifolds; the Newlander–Nirenberg theorem in the real analytic case.
+2. Lie groups modeled on locally convex spaces and their Lie algebras [Nee06, GN26].
 
 ## References
 

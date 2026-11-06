@@ -10,6 +10,8 @@ import LocallyConvexManifolds.TangentBundle
 import LocallyConvexManifolds.TangentMap
 import LocallyConvexManifolds.VectorField
 import LocallyConvexManifolds.Derivation
+import LocallyConvexManifolds.LocalForm
+import LocallyConvexManifolds.DifferentialForm
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold
 import LocallyConvexManifolds.Connection
