@@ -12,8 +12,10 @@ import LocallyConvexManifolds.Examples.OpenAndGraph
 References: A. Hatcher, *Algebraic Topology*, Cambridge University Press (2002), §1.3
 (Prop. 1.30, homotopy lifting; Prop. 1.33, lifting criterion; Prop. 1.34, uniqueness of lifts);
 A. Katok, B. Hasselblatt, *Introduction to the Modern Theory of Dynamical Systems*, Cambridge
-University Press (1995) (lifts and degree of circle maps); M. R. Herman, *Sur la conjugaison
-différentiable des difféomorphismes du cercle à des rotations*, Publ. Math. IHÉS 49 (1979),
+University Press (1995), Lemma 2.4.3 and Definition 2.4.4, pp. 72–73 (lifts and degree of circle
+maps), Propositions 8.2.1–8.2.2, pp. 310–311, and §11.1, pp. 387–388 (lifts of
+homeomorphisms); M. R. Herman, *Sur la conjugaison différentiable des difféomorphismes du cercle
+à des rotations*, Publ. Math. IHÉS 49 (1979),
 Introduction (Remarque importante) and Ch. I, 1.7; R. S. Hamilton, *The inverse function theorem
 of Nash and Moser*, Bull. Amer. Math. Soc. 7 (1982), Part I, Example 4.2.6; H. Glöckner,
 K.-H. Neeb, *Infinite-Dimensional Lie Groups* (arXiv:2602.12362). In Mathlib, the monotone lifts
@@ -32,9 +34,10 @@ the lifts.
   deck transformations, and a lift is determined by its value at one point (Hatcher,
   Prop. 1.34).
 * *Degree.* `φ (x + 1) - φ x` is a continuous integer valued function, hence a constant `d`, the
-  degree of `f` (Katok–Hasselblatt). A homeomorphism has degree `±1`, and it preserves
-  the orientation exactly when `d = 1`, i.e. `φ (x + 1) = φ x + 1`; then `φ = id + u` with `u`
-  `1`-periodic.
+  degree of `f` (Katok–Hasselblatt, Lemma 2.4.3 and Definition 2.4.4). A homeomorphism has
+  degree `±1`, since the degree is multiplicative (Proposition 8.2.2), and it preserves the
+  orientation exactly when `d = 1` (§11.1, p. 388), i.e. `φ (x + 1) = φ x + 1`; then
+  `φ = id + u` with `u` `1`-periodic.
 * *Smoothness.* Since `π` is a local diffeomorphism, `φ` is smooth if and only if `f` is, and
   `φ` is a diffeomorphism of `ℝ` exactly when `f` is a diffeomorphism of `S¹` (the inverse of
   `f` lifts to the inverse of `φ`).
