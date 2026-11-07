@@ -362,6 +362,14 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
     constructions on forms preserve real analyticity (for real analytic maps and vector fields);
   * `AnalyticDeRham`, `AnalyticDeRham.toDeRham`: real analytic de Rham cohomology and its map to
     `H^n_dR`.
+* [`LocallyConvexManifolds/ConnectionForm.lean`](LocallyConvexManifolds/ConnectionForm.lean):
+  connection forms, for symbols in a local trivialization with arbitrary fiber `F`;
+  `End(F)`-valued forms are encoded as families of `F`-valued forms, since `L(F)` has no good
+  topology when `F` is not normable.
+  * `connForm`, `curvLoc`, `curvLoc_eq`: Cartan's structure equation `Ω = −dA + A ∧ A`;
+  * `IsLocalSymbol.dLoc_curvLoc`: the second Bianchi identity `dΩ = [A ∧ Ω]`;
+  * `Connection.connForm_transition`, `Connection.torsionLoc_transition`: gauge law of `A`, and
+    the torsion is a tensor; `Connection.curvature_eq_structure`.
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a

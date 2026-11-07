@@ -242,6 +242,107 @@ We use Lang's sign for the curvature.
   cyclic sum cancel in pairs.
 \end{proof}
 
+\section{Connection forms and the structure equations}
+\label{sec:connection-forms}
+
+Classically, the connection form of a connection on a vector bundle is the $\mathrm{End}(F)$-valued
+$1$-form $A(y)(v) = \Gamma(y)(v, \cdot)$ in a local trivialization, so that $\nabla = \dd - A$, and
+the curvature is $\Omega = -\dd A + A \wedge A$. If the fiber $F$ is not normable, no vector
+topology on $L(F)$ makes the evaluation $L(F) \times F \to F$ continuous, so $A$ is not a
+differential form with values in a locally convex space of operators. We encode
+$\mathrm{End}(F)$-valued forms as families of $F$-valued forms depending linearly on an extra
+argument $\xi \in F$. The local statements are proved for an arbitrary fiber $F$; the tangent
+bundle is the case $F = E$.
+
+\begin{definition}[Connection and curvature forms]
+  \label{def:connection-forms}
+  \lean{LocallyConvex.Manifolds.IsLocalSymbol, LocallyConvex.Manifolds.symbD,
+    LocallyConvex.Manifolds.bundleCurv, LocallyConvex.Manifolds.connForm,
+    LocallyConvex.Manifolds.connWedge, LocallyConvex.Manifolds.curvLoc,
+    LocallyConvex.Manifolds.IsLocalSymbol.isLocalForm_connForm}
+  \leanok
+  \uses{def:local-form}
+  Let $U \subseteq E$ be open and $\Gamma \colon U \times E \times F \to F$ smooth and bilinear in
+  the last two variables. For $\xi \in F$, the \emph{connection form} is the local $1$-form
+  $A^\xi(y)(v) = \Gamma(y)(v, \xi)$, and the \emph{curvature form} is the local $2$-form
+  \[
+    \Omega^\xi(y)(u, v) = \partial_v\Gamma(y)(u, \xi) - \partial_u\Gamma(y)(v, \xi)
+      + \Gamma(y)(u, \Gamma(y)(v, \xi)) - \Gamma(y)(v, \Gamma(y)(u, \xi)).
+  \]
+  We write $(A \wedge A)(u, v)\xi = A(u)A(v)\xi - A(v)A(u)\xi$.
+\end{definition}
+
+\begin{theorem}[Cartan's structure equation]
+  \label{thm:structure-equation}
+  \lean{LocallyConvex.Manifolds.dLoc_connForm, LocallyConvex.Manifolds.curvLoc_eq,
+    LocallyConvex.Manifolds.bundleCurv_eq_localCurv,
+    LocallyConvex.Manifolds.Connection.curvature_eq_structure}
+  \leanok
+  \uses{def:connection-forms, def:local-d, thm:conn-curvature-tensorial}
+  $\Omega^\xi = -\dd A^\xi + (A \wedge A)\xi$. For the tangent bundle, $\Omega$ is the local
+  curvature of Lemma~\ref{lem:conn-local-curv}, so the curvature of a connection on $M$, evaluated
+  on vector fields, is computed in the preferred chart by $-\dd A + A \wedge A$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\dd A^\xi(y)(u, v) = \partial_u\Gamma(y)(v, \xi) - \partial_v\Gamma(y)(u, \xi)$.
+\end{proof}
+
+\begin{theorem}[Second Bianchi identity]
+  \label{thm:second-bianchi}
+  \lean{LocallyConvex.Manifolds.IsLocalSymbol.hasDirDerivAt_comp,
+    LocallyConvex.Manifolds.IsLocalSymbol.dLoc_curvLoc,
+    LocallyConvex.Manifolds.Connection.dLoc_curvLoc}
+  \leanok
+  \uses{thm:structure-equation, thm:local-dd}
+  The covariant exterior derivative of the curvature vanishes, $D\Omega = \dd\Omega - [A \wedge
+  \Omega] = 0$: for $u, v, t \in E$ and $\xi \in F$,
+  \[
+    \dd\Omega(u, v, t)\xi = [A(u), \Omega(v, t)]\xi - [A(v), \Omega(u, t)]\xi
+      + [A(t), \Omega(u, v)]\xi,
+  \]
+  where $[A(a), \Omega(b, c)]\xi = A(a)\Omega(b, c)\xi - \Omega(b, c)A(a)\xi$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By the structure equation and $\dd \circ \dd = 0$, $\dd\Omega^\xi = \dd((A \wedge A)\xi)$, which
+  is computed with the product rule
+  $\partial_c(\Gamma(a, \Gamma(b, \xi))) = \partial_c\Gamma(a, \Gamma(b, \xi)) + \Gamma(a,
+  \partial_c\Gamma(b, \xi))$. The terms with three factors $\Gamma$ on the right cancel by the
+  Jacobi identity for commutators.
+\end{proof}
+
+\begin{proposition}[Gauge transformations; torsion]
+  \label{prop:gauge}
+  \lean{LocallyConvex.Manifolds.Connection.isLocalSymbol,
+    LocallyConvex.Manifolds.Connection.connForm_transition,
+    LocallyConvex.Manifolds.torsionLoc,
+    LocallyConvex.Manifolds.Connection.torsionLoc_transition,
+    LocallyConvex.Manifolds.Connection.isSymmetric_iff_torsionLoc}
+  \leanok
+  \uses{def:connection, def:connection-forms, prop:conn-torsion}
+  Let $\tau = j \circ i^{-1}$ and $g(y) = \dd\tau(y)$. The connection forms of a connection on
+  $M$ satisfy $A_j(\tau y)(g v)(g w) = g\,A_i(y)(v) w + (\partial_v g)(y) w$, so $A$ is not a
+  tensor. The torsion $T(u, v) = A(u)v - A(v)u = \Gamma(u, v) - \Gamma(v, u)$ is a tensor:
+  $T_j(\tau y)(g a, g b) = g\, T_i(y)(a, b)$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  The first statement is the change of charts law of the symbols. For the torsion, the
+  inhomogeneous terms $\dd^2\tau(a, b)$ and $\dd^2\tau(b, a)$ cancel.
+\end{proof}
+
+\begin{remark}
+  For a vector bundle with fiber $F$ the same formalism applies to the symbols in local
+  trivializations, with transition functions $g(y) \in GL(F)$ in place of $\dd\tau(y)$; for
+  non-normable $F$ one can only require $(y, \xi) \mapsto g(y)\xi$ to be smooth, not
+  $y \mapsto g(y)$. General vector bundles and their connections are not yet formalized, nor is
+  the tensorial transformation law of $\Omega$ under gauge transformations.
+\end{remark}
+
 \section{Sprays}
 
 A spray, or second order vector field, is a vector field $\xi$ on $TM$ such that
