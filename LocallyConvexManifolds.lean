@@ -18,6 +18,7 @@ import LocallyConvexManifolds.LieDerivative
 import LocallyConvexManifolds.DeRham
 import LocallyConvexManifolds.Homotopy
 import LocallyConvexManifolds.AnalyticForm
+import LocallyConvexManifolds.Symplectic
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold
 import LocallyConvexManifolds.Connection

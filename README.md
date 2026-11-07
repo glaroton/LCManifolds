@@ -362,6 +362,16 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
     constructions on forms preserve real analyticity (for real analytic maps and vector fields);
   * `AnalyticDeRham`, `AnalyticDeRham.toDeRham`: real analytic de Rham cohomology and its map to
     `H^n_dR`.
+* [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
+  manifolds, with weak and strong nondegeneracy.
+  * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a
+    normed model of a strong symplectic manifold is reflexive;
+  * `IsHamiltonianFor`, `IsSymplecticField`: Hamiltonian fields are unique and symplectic;
+    symplectic fields are Hamiltonian on smoothly contractible manifolds; brackets of symplectic
+    fields are Hamiltonian; conservation of energy;
+  * `poisson`, `poisson_jacobi`: the Poisson bracket and the Jacobi identity;
+  * `IsSymplecticMap`; `canonicalSymplectic`: `ω = dθ` on `H × H` for a real inner product space
+    `H`, strong when `H` is complete.
 
 There is no `sorry`.
 

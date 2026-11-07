@@ -1,0 +1,200 @@
+\chapter{Symplectic manifolds}
+\label{chap:symplectic}
+
+Symplectic forms on manifolds modeled on locally convex spaces. In infinite dimensions
+nondegeneracy splits into a weak and a strong notion, and many symplectic forms of interest are
+only weakly nondegenerate. Hamiltonian vector fields are then unique but need not exist, and the
+Darboux theorem fails \cite{Mar72}. For strong symplectic forms on Banach manifolds Darboux's
+theorem holds \cite{Wei69}, but Moser's proof needs flows of time-dependent vector fields, and
+these need not exist on locally convex manifolds, so it is not formalized here. Real-valued forms
+require models in the lowest universe, since the space of values of a form lives in the universe
+of the model.
+
+\section{Symplectic forms}
+
+\begin{definition}[Symplectic forms]
+  \label{def:symplectic}
+  \lean{LocallyConvex.Manifolds.SymplecticForm, LocallyConvex.Manifolds.SymplecticForm.IsStrong}
+  \leanok
+  \uses{def:diff-form, def:closed-exact}
+  A \emph{symplectic form} on $M$ is a closed $2$-form $\omega \in \Omega^2(M, \R)$ which is
+  \emph{weakly nondegenerate}: if $\omega_x(v, w) = 0$ for all $w \in T_xM$, then $v = 0$. It is
+  \emph{strong} if moreover every continuous linear functional on $T_xM$ is of the form
+  $\omega_x(v, \cdot)$, for every $x \in M$.
+\end{definition}
+
+In other words, $\omega$ is weak if the flat map $\omega^\flat_x \colon T_xM \to T_xM'$,
+$v \mapsto \omega_x(v, \cdot)$, is injective, and strong if it is bijective. We use no topology
+on the dual space.
+
+\begin{theorem}[Strong symplectic normed spaces are reflexive]
+  \label{thm:symplectic-reflexive}
+  \lean{LocallyConvex.Manifolds.surjective_inclusionInDoubleDual_of_skew,
+    LocallyConvex.Manifolds.SymplecticForm.continuous_form,
+    LocallyConvex.Manifolds.SymplecticForm.flatCLM,
+    LocallyConvex.Manifolds.SymplecticForm.IsStrong.surjective_inclusionInDoubleDual}
+  \leanok
+  \uses{def:symplectic}
+  Let $V$ be a normed space and $\omega$ a continuous skew-symmetric bilinear form on $V$ such
+  that $\omega^\flat \colon V \to V'$ is surjective. Then $V$ is reflexive: the canonical map
+  $V \to V''$ is surjective. Consequently, a nonempty manifold modeled on a normed space $E$ which
+  carries a strong symplectic form has a reflexive model.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Let $\Phi \in V''$. The functional $-\Phi \circ \omega^\flat$ is continuous, so it equals
+  $\omega(v, \cdot)$ for some $v \in V$. For $\varphi = \omega(w, \cdot) \in V'$,
+  $\varphi(v) = \omega(w, v) = -\omega(v, w) = \Phi(\omega^\flat w) = \Phi(\varphi)$, and every
+  $\varphi$ is of this form. For the second statement, $\omega_x$ is continuous on $E \times E$
+  because its local representative is, so it is a bounded bilinear form on the normed space $E$.
+  No completeness is used.
+\end{proof}
+
+In particular non-reflexive Banach spaces such as $\ell^1$ or $c_0$ do not model strong
+symplectic manifolds.
+
+\section{Hamiltonian and symplectic vector fields}
+
+\begin{definition}[Hamiltonian and symplectic vector fields]
+  \label{def:hamiltonian}
+  \lean{LocallyConvex.Manifolds.SymplecticForm.IsHamiltonianFor,
+    LocallyConvex.Manifolds.SymplecticForm.IsSymplecticField}
+  \leanok
+  \uses{def:symplectic, def:interior, def:lie-deriv}
+  A smooth vector field $X$ is a \emph{Hamiltonian vector field} of $f \in C^\infty(M, \R)$ if
+  $i_X \omega = \dd f$, and a \emph{symplectic vector field} if $L_X \omega = 0$.
+\end{definition}
+
+\begin{theorem}[Hamiltonian and symplectic fields]
+  \label{thm:hamiltonian-fields}
+  \lean{LocallyConvex.Manifolds.SmoothVectorField.ext_vec,
+    LocallyConvex.Manifolds.SymplecticForm.interior_injective,
+    LocallyConvex.Manifolds.SymplecticForm.IsHamiltonianFor.unique,
+    LocallyConvex.Manifolds.SymplecticForm.isSymplecticField_iff,
+    LocallyConvex.Manifolds.SymplecticForm.IsHamiltonianFor.isSymplecticField,
+    LocallyConvex.Manifolds.SymplecticForm.IsSymplecticField.exists_isHamiltonianFor,
+    LocallyConvex.Manifolds.SymplecticForm.interior_bracket,
+    LocallyConvex.Manifolds.SymplecticForm.IsSymplecticField.bracket,
+    LocallyConvex.Manifolds.SymplecticForm.IsHamiltonianFor.lieDeriv_self}
+  \leanok
+  \uses{def:hamiltonian, thm:cartan-calculus, thm:poincare}
+  Let $\omega$ be a symplectic form on $M$.
+  \begin{enumerate}
+    \item A vector field is determined by $i_X\omega$; in particular Hamiltonian vector fields
+      are unique.
+    \item $X$ is symplectic if and only if $i_X\omega$ is closed. Hamiltonian fields are
+      symplectic.
+    \item If $M$ is smoothly contractible, every symplectic vector field is Hamiltonian.
+    \item If $X$ and $Y$ are symplectic, then $i_{[X, Y]}\omega = \dd(\omega(Y, X))$; so
+      $[X, Y]$ is Hamiltonian.
+    \item (Conservation of energy) If $X$ is the Hamiltonian field of $f$, then $L_X f = 0$.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  (1) is weak nondegeneracy at each point. (2) Since $\omega$ is closed, Cartan's formula gives
+  $L_X \omega = \dd(i_X\omega)$; and $\dd \dd f = 0$. (3) is the Poincaré Lemma applied to the
+  closed $1$-form $i_X\omega$. (4) From $[L_X, i_Y] = i_{[X, Y]}$ and $L_X\omega = 0$ we get
+  $i_{[X, Y]}\omega = L_X i_Y\omega = \dd i_X i_Y \omega + i_X \dd i_Y\omega$, and
+  $\dd i_Y \omega = 0$. (5) $L_X f = i_X \dd f = i_X i_X \omega = 0$.
+\end{proof}
+
+\begin{definition}[Poisson bracket]
+  \label{def:poisson}
+  \lean{LocallyConvex.Manifolds.SymplecticForm.poisson}
+  \leanok
+  \uses{def:hamiltonian}
+  For $f$ with Hamiltonian vector field $X_f$ and any $g \in C^\infty(M, \R)$, the
+  \emph{Poisson bracket} is $\{f, g\} = -L_{X_f} g$.
+\end{definition}
+
+\begin{theorem}[Properties of the Poisson bracket]
+  \label{thm:poisson}
+  \lean{LocallyConvex.Manifolds.SymplecticForm.poisson_eq,
+    LocallyConvex.Manifolds.SymplecticForm.poisson_eq_lieDeriv,
+    LocallyConvex.Manifolds.SymplecticForm.poisson_antisymm,
+    LocallyConvex.Manifolds.SymplecticForm.isHamiltonianFor_bracket,
+    LocallyConvex.Manifolds.SymplecticForm.poisson_jacobi}
+  \leanok
+  \uses{def:poisson, thm:hamiltonian-fields}
+  Let $f, g, h$ have Hamiltonian vector fields $X_f, X_g, X_h$. Then
+  $\{f, g\} = \omega(X_f, X_g) = L_{X_g} f = -\{g, f\}$; the bracket $[X_f, X_g]$ is the
+  Hamiltonian vector field of $-\{f, g\}$; and the Jacobi identity
+  $\{f, \{g, h\}\} - \{g, \{f, h\}\} = \{\{f, g\}, h\}$ holds.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The first identities follow from $i_{X_g}\omega = \dd g$ and the skew-symmetry of $\omega$, and
+  the statement on $[X_f, X_g]$ is part~(4) of Theorem~\ref{thm:hamiltonian-fields}. For the
+  Jacobi identity, $[L_{X_f}, L_{X_g}] = L_{[X_f, X_g]}$ on functions, and
+  $L_{[X_f, X_g]} h = i_{[X_f, X_g]} i_{X_h}\omega = -i_{X_h} i_{[X_f, X_g]}\omega
+  = -L_{X_h} L_{X_f} g$.
+\end{proof}
+
+\section{Symplectic maps}
+
+\begin{definition}[Symplectic maps]
+  \label{def:symplectic-map}
+  \lean{LocallyConvex.Manifolds.IsSymplecticMap}
+  \leanok
+  \uses{def:symplectic, def:diff-form-pullback}
+  A smooth map $\varphi \colon (N, \omega_0) \to (M, \omega)$ is \emph{symplectic} if
+  $\varphi^*\omega = \omega_0$.
+\end{definition}
+
+\begin{proposition}[Symplectic maps]
+  \label{prop:symplectic-maps}
+  \lean{LocallyConvex.Manifolds.isSymplecticMap_id, LocallyConvex.Manifolds.IsSymplecticMap.comp,
+    LocallyConvex.Manifolds.IsSymplecticMap.isHamiltonianFor}
+  \leanok
+  \uses{def:symplectic-map, prop:related-forms}
+  Identities and compositions of symplectic maps are symplectic. If $\varphi$ is symplectic,
+  $X$ and $Y$ are $\varphi$-related and $Y$ is the Hamiltonian field of $f$, then $X$ is the
+  Hamiltonian field of $f \circ \varphi$.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  $\varphi^*(i_Y\omega) = i_X \varphi^*\omega$ and $\varphi^* \dd f = \dd(f \circ \varphi)$.
+\end{proof}
+
+\section{The canonical symplectic form}
+
+\begin{definition}[Canonical symplectic form]
+  \label{def:canonical-symplectic}
+  \lean{LocallyConvex.Manifolds.atlas_self, LocallyConvex.Manifolds.prefChart_self,
+    LocallyConvex.Manifolds.formLocalRep_self, LocallyConvex.Manifolds.liouvilleForm,
+    LocallyConvex.Manifolds.liouvilleForm_d_apply,
+    LocallyConvex.Manifolds.canonicalSymplectic}
+  \leanok
+  \uses{def:symplectic, def:diff-form-d}
+  Let $H$ be a real inner product space, not necessarily complete. The \emph{Liouville form} on
+  $H \times H$ is $\theta_{(x, a)}(y, b) = \langle x, b \rangle$, and the \emph{canonical
+  symplectic form} is
+  $\omega = \dd\theta$, $\omega((y, b), (y', b')) = \langle y, b' \rangle - \langle y', b \rangle$.
+\end{definition}
+
+\begin{proposition}[The canonical symplectic form]
+  \label{prop:canonical-symplectic}
+  \lean{LocallyConvex.Manifolds.canonicalSymplectic_isExact,
+    LocallyConvex.Manifolds.canonicalSymplectic_isStrong}
+  \leanok
+  \uses{def:canonical-symplectic, thm:symplectic-reflexive}
+  The canonical symplectic form is exact and weakly nondegenerate. If $H$ is a Hilbert space, it
+  is strong.
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  If $\omega((y, b), \cdot) = 0$, evaluating at $(0, y)$ and $(b, 0)$ gives $y = b = 0$. If $H$
+  is complete, a functional $\varphi$ on $H \times H$ is
+  $\varphi(y', b') = \langle a_1, y' \rangle + \langle a_2, b' \rangle$ by the Riesz
+  representation theorem, and $\varphi = \omega((a_2, -a_1), \cdot)$.
+\end{proof}
+
+If $H$ is not complete, then $H \times H$ is not reflexive (its bidual is the bidual of the
+completion), so by Theorem~\ref{thm:symplectic-reflexive} it carries no strong symplectic form
+at all; this converse is not formalized.
