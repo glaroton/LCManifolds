@@ -343,6 +343,13 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `isClosed_iff_isLocallyConstant`, `deRhamZeroEquiv`: `H⁰` consists of the locally constant
     functions [GN26, Rem. 3.6.12 (b)];
   * `deRhamMap`, `deRhamMap_id`, `deRhamMap_comp`: functoriality of `H^n_dR`.
+* [`LocallyConvexManifolds/AnalyticForm.lean`](LocallyConvexManifolds/AnalyticForm.lean): real
+  analytic forms on real analytic manifolds [GN26, Rem. 3.6.18].
+  * `DifferentialForm.IsRealAnalytic`, `analyticForms`: the subspace `Ωⁿ_ω(M, F)`;
+  * `IsRealAnalytic.d`, `.compCLM`, `.wedge`, `.pullback`, `.interior`, `.lieDeriv`: the
+    constructions on forms preserve real analyticity (for real analytic maps and vector fields);
+  * `AnalyticDeRham`, `AnalyticDeRham.toDeRham`: real analytic de Rham cohomology and its map to
+    `H^n_dR`.
 
 There is no `sorry`.
 
@@ -356,8 +363,8 @@ Michal–Bastiani calculus of lc-analysis.
 
 ## Planned
 
-1. Real analytic forms [GN26, Rem. 3.6.18]; symplectic, complex and Kähler manifolds; the
-   Newlander–Nirenberg theorem in the real analytic case.
+1. Symplectic, complex and Kähler manifolds; the Newlander–Nirenberg theorem in the real
+   analytic case.
 2. Lie groups modeled on locally convex spaces and their Lie algebras [Nee06, GN26].
 
 ## References
