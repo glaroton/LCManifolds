@@ -346,6 +346,22 @@ bundle is the case $F = E$.
 \section{Vector bundles and their connections}
 \label{sec:vector-bundles}
 
+\begin{definition}[Trivializing covers]
+  \label{def:trivialization-cover}
+  \lean{LocallyConvex.Manifolds.TrivializationCover,
+    LocallyConvex.Manifolds.TrivializationCover.domain,
+    LocallyConvex.Manifolds.TrivializationCover.transDomain,
+    LocallyConvex.Manifolds.TrivializationCover.trans,
+    LocallyConvex.Manifolds.TrivializationCover.smoothMBOn_trans,
+    LocallyConvex.Manifolds.atlasCover}
+  \leanok
+  \uses{def:mb-manifold}
+  A \emph{trivializing cover} of $M$, indexed by a set $\iota$, is a family of open sets
+  $U_i \subseteq M$, each contained in the domain of a chart $\varphi_i$ of the atlas, together
+  with a choice, for every $x \in M$, of an index $i(x)$ with $x \in U_{i(x)}$. The domains of
+  the charts of the atlas form one.
+\end{definition}
+
 \begin{definition}[Vector bundles]
   \label{def:vector-bundle}
   \lean{LocallyConvex.Manifolds.MBVectorBundleCore,
@@ -355,11 +371,12 @@ bundle is the case $F = E$.
     LocallyConvex.Manifolds.MBVectorBundleCore.TotalSpace,
     LocallyConvex.Manifolds.MBVectorBundleCore.bundleChart}
   \leanok
-  \uses{def:mb-manifold, def:tangent-bundle}
-  A \emph{vector bundle} over $M$ with fiber $F$ is given by coordinate changes
-  $g_{ij}(x) \colon F \to F$ between the trivializations over the charts $i$, $j$ of the atlas,
-  linear for $x \in U_i \cap U_j$, satisfying the cocycle conditions, and such that
-  $(y, \xi) \mapsto g_{ij}(i^{-1} y)\xi$ is smooth on $i(U_i \cap U_j) \times F$.
+  \uses{def:trivialization-cover, def:tangent-bundle}
+  A \emph{vector bundle} over $M$ with fiber $F$, trivialized over a trivializing cover
+  $(U_i, \varphi_i)$, is given by coordinate changes $g_{ij}(x) \colon F \to F$ between the
+  trivializations over $U_i$ and $U_j$, linear for $x \in U_i \cap U_j$, satisfying the cocycle
+  conditions, and such that $(y, \xi) \mapsto g_{ij}(\varphi_i^{-1} y)\xi$ is smooth on
+  $\varphi_i(U_i \cap U_j) \times F$.
 \end{definition}
 
 If $F$ is not normable, $L(F)$ carries no vector topology for which the evaluation is continuous,
@@ -385,6 +402,25 @@ condition only up to this difference of topologies on $L(F)$.
   As for the tangent bundle: the transition maps are compositions of transition maps of $M$ with
   the smooth maps $(y, \xi) \mapsto g(y)\xi$.
 \end{proof}
+
+\begin{definition}[Pullback bundles]
+  \label{def:pullback-bundle}
+  \lean{LocallyConvex.Manifolds.TrivializationCover.pullback,
+    LocallyConvex.Manifolds.SmoothMBM.continuous,
+    LocallyConvex.Manifolds.MBVectorBundleCore.pullback,
+    LocallyConvex.Manifolds.MBVectorBundleCore.pullbackMap,
+    LocallyConvex.Manifolds.MBVectorBundleCore.pullbackMap_proj}
+  \leanok
+  \uses{def:vector-bundle, def:contmdiff}
+  Let $f \colon N \to M$ be smooth and $V$ a vector bundle over $M$, trivialized over
+  $(U_i, \varphi_i)$. The \emph{pullback} $f^*V$ is the vector bundle over $N$ trivialized over the
+  sets $k.\mathrm{source} \cap f^{-1}(U_i)$, for $k$ a chart of $N$, with coordinate changes
+  $g_{ij} \circ f$. Its fiber over $x$ is the fiber of $V$ over $f(x)$.
+\end{definition}
+
+The bundle $f^*V$ need not be trivial over the domain of a chart of $N$, since $f$ need not map
+it into a single $U_i$; this is why vector bundles are trivialized over general covers rather
+than over the atlas of the base.
 
 \begin{theorem}[Hom bundles, dual bundles and the cotangent bundle]
   \label{thm:hom-bundle}
@@ -485,7 +521,7 @@ continuous, and these constructions are not available.
     LocallyConvex.Manifolds.MBVectorBundleCore.localRep,
     LocallyConvex.Manifolds.MBVectorBundleCore.bundleChart_mem_atlas,
     LocallyConvex.Manifolds.MBVectorBundleCore.localRep_transition,
-    LocallyConvex.Manifolds.MBVectorBundleCore.localRep_chartAt,
+    LocallyConvex.Manifolds.MBVectorBundleCore.localRep_indexAt,
     LocallyConvex.Manifolds.MBVectorBundleCore.contDiffMBOn_localRep,
     LocallyConvex.Manifolds.BundleConnection.covDeriv,
     LocallyConvex.Manifolds.BundleConnection.isSection_covDeriv,

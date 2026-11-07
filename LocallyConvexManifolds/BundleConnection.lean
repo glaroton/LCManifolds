@@ -44,7 +44,7 @@ noncomputable section
 
 namespace LocallyConvex.Manifolds
 
-universe u v
+universe u v w
 
 section Calculus
 
@@ -312,58 +312,51 @@ variable {E : Type u}
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
   {M : Type v} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {ι : Type w} {𝒰 : TrivializationCover E M ι}
   {F : Type u} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
   [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
 
-/-- A **connection on a vector bundle** `V`: symbols `Γᵢ` in the trivialization over each chart,
-subject to the gauge transformation law
-`Γⱼ(τ y)(dτ(y) a, g(y) ξ) = g(y) Γᵢ(y)(a, ξ) + (∂_a g)(y) ξ`, with `τ = j ∘ i⁻¹` and
-`g(y) = g_{ij}(i⁻¹ y)`. -/
-structure BundleConnection (V : MBVectorBundleCore E M F) where
-  /-- The symbols in the trivialization over the chart `i`. -/
-  Γ : atlas E M → E → E → F → F
-  isLocalSymbol : ∀ i, IsLocalSymbol (Γ i) i.1.target
-  transition : ∀ i j : atlas E M, ∀ y ∈ i.1.target ∩ i.1.symm ⁻¹' j.1.source, ∀ a ξ,
-    Γ j ((j.1 ∘ i.1.symm) y) (dMB (j.1 ∘ i.1.symm) (y, a)) (V.coordChange i j (i.1.symm y) ξ) =
-      V.coordChange i j (i.1.symm y) (Γ i y a ξ) +
-        dMB (fun z ↦ V.coordChange i j (i.1.symm z) ξ) (y, a)
+/-- A **connection on a vector bundle** `V`: symbols `Γᵢ` in the trivialization over each `Uᵢ`
+(in the coordinates of the chart `φᵢ`), subject to the gauge transformation law
+`Γⱼ(τ y)(dτ(y) a, g(y) ξ) = g(y) Γᵢ(y)(a, ξ) + (∂_a g)(y) ξ`, with `τ = φⱼ ∘ φᵢ⁻¹` and
+`g(y) = g_{ij}(φᵢ⁻¹ y)`. -/
+structure BundleConnection (V : MBVectorBundleCore 𝒰 F) where
+  /-- The symbols in the trivialization over `i`. -/
+  Γ : ι → E → E → F → F
+  isLocalSymbol : ∀ i, IsLocalSymbol (Γ i) (𝒰.domain i)
+  transition : ∀ i j, ∀ y ∈ 𝒰.transDomain i j, ∀ a ξ,
+    Γ j (𝒰.trans i j y) (dMB (𝒰.trans i j) (y, a))
+        (V.coordChange i j ((𝒰.chart i).1.symm y) ξ) =
+      V.coordChange i j ((𝒰.chart i).1.symm y) (Γ i y a ξ) +
+        dMB (fun z ↦ V.coordChange i j ((𝒰.chart i).1.symm z) ξ) (y, a)
 
 namespace BundleConnection
 
-variable {V : MBVectorBundleCore E M F} (C : BundleConnection V)
+variable {V : MBVectorBundleCore 𝒰 F} (C : BundleConnection V)
 
-/-- **The curvature of a connection on a vector bundle is a tensor**: with `τ = j ∘ i⁻¹` and
-`g(y) = g_{ij}(i⁻¹ y)`, `Ωⱼ(τ y)(dτ u, dτ v)(g ξ) = g Ωᵢ(y)(u, v) ξ`. -/
-theorem curvLoc_transition (i j : atlas E M) {y : E}
-    (hy : y ∈ i.1.target ∩ i.1.symm ⁻¹' j.1.source) (u v : E) (ξ : F) :
-    bundleCurv (C.Γ j) ((j.1 ∘ i.1.symm) y) (dMB (j.1 ∘ i.1.symm) (y, u))
-        (dMB (j.1 ∘ i.1.symm) (y, v)) (V.coordChange i j (i.1.symm y) ξ) =
-      V.coordChange i j (i.1.symm y) (bundleCurv (C.Γ i) y u v ξ) := by
-  set U := i.1.target ∩ i.1.symm ⁻¹' j.1.source
-  set W := j.1.target ∩ j.1.symm ⁻¹' i.1.source
-  have hτUV : MapsTo (j.1 ∘ i.1.symm) U W := fun z hz ↦
-    ⟨j.1.map_source hz.2, by simp [j.1.left_inv hz.2, i.1.map_target hz.1]⟩
-  have hσVU : MapsTo (i.1 ∘ j.1.symm) W U := fun z hz ↦
-    ⟨i.1.map_source hz.2, by simp [i.1.left_inv hz.2, j.1.map_target hz.1]⟩
-  have hστ : ∀ z ∈ U, (i.1 ∘ j.1.symm) ((j.1 ∘ i.1.symm) z) = z := fun z hz ↦ by
-    simp [j.1.left_inv hz.2, i.1.right_inv hz.1]
-  have hlin : ∀ z ∈ U, i.1.symm z ∈ i.1.source ∩ j.1.source := fun z hz ↦
-    ⟨i.1.map_target hz.1, hz.2⟩
-  exact curvature_gauge (G := fun z ξ ↦ V.coordChange i j (i.1.symm z) ξ)
-    (isOpen_transition_domain i j) (isOpen_transition_domain j i)
-    (smoothMBOn_transition' i j) (smoothMBOn_transition' j i) hτUV hσVU hστ (V.smooth i j)
-    (fun z hz ↦ V.map_add i j _ (hlin z hz)) (fun z hz ↦ V.map_smul i j _ (hlin z hz))
-    ((C.isLocalSymbol i).mono inter_subset_left) ((C.isLocalSymbol j).mono inter_subset_left)
+/-- **The curvature of a connection on a vector bundle is a tensor**: with `τ = φⱼ ∘ φᵢ⁻¹` and
+`g(y) = g_{ij}(φᵢ⁻¹ y)`, `Ωⱼ(τ y)(dτ u, dτ v)(g ξ) = g Ωᵢ(y)(u, v) ξ`. -/
+theorem curvLoc_transition (i j : ι) {y : E} (hy : y ∈ 𝒰.transDomain i j) (u v : E) (ξ : F) :
+    bundleCurv (C.Γ j) (𝒰.trans i j y) (dMB (𝒰.trans i j) (y, u))
+        (dMB (𝒰.trans i j) (y, v)) (V.coordChange i j ((𝒰.chart i).1.symm y) ξ) =
+      V.coordChange i j ((𝒰.chart i).1.symm y) (bundleCurv (C.Γ i) y u v ξ) :=
+  curvature_gauge (G := fun z ξ ↦ V.coordChange i j ((𝒰.chart i).1.symm z) ξ)
+    (𝒰.isOpen_transDomain i j) (𝒰.isOpen_transDomain j i)
+    (𝒰.smoothMBOn_trans i j) (𝒰.smoothMBOn_trans j i) (𝒰.mapsTo_trans i j)
+    (𝒰.mapsTo_trans j i) (fun _ hz ↦ 𝒰.trans_trans hz) (V.smooth i j)
+    (fun _ hz ↦ V.map_add i j _ hz.2) (fun _ hz ↦ V.map_smul i j _ hz.2)
+    ((C.isLocalSymbol i).mono (𝒰.transDomain_subset_domain i j))
+    ((C.isLocalSymbol j).mono (𝒰.transDomain_subset_domain j i))
     (C.transition i j) hy u v ξ
 
 omit [MBManifold E M] in
 /-- **The second Bianchi identity** in every trivialization. -/
-theorem dLoc_curvLoc (i : atlas E M) {y : E} (hy : y ∈ i.1.target) (ξ : F) (u v t : E) :
+theorem dLoc_curvLoc (i : ι) {y : E} (hy : y ∈ 𝒰.domain i) (ξ : F) (u v t : E) :
     dLoc (curvLoc (C.Γ i) ξ) (y, ![u, v, t]) =
       (C.Γ i y u (bundleCurv (C.Γ i) y v t ξ) - bundleCurv (C.Γ i) y v t (C.Γ i y u ξ)) -
         (C.Γ i y v (bundleCurv (C.Γ i) y u t ξ) - bundleCurv (C.Γ i) y u t (C.Γ i y v ξ)) +
           (C.Γ i y t (bundleCurv (C.Γ i) y u v ξ) - bundleCurv (C.Γ i) y u v (C.Γ i y t ξ)) :=
-  (C.isLocalSymbol i).dLoc_curvLoc i.1.open_target hy ξ u v t
+  (C.isLocalSymbol i).dLoc_curvLoc (𝒰.isOpen_domain i) hy ξ u v t
 
 end BundleConnection
 
@@ -374,8 +367,9 @@ variable (C : Connection E M)
 /-- A connection on `M` is a connection on the tangent bundle. -/
 def toBundleConnection : BundleConnection (tangentMBCore E M) where
   Γ := C.Γ
-  isLocalSymbol i := C.isLocalSymbol i
+  isLocalSymbol i := by rw [atlasCover_domain]; exact C.isLocalSymbol i
   transition i j y hy a b := by
+    rw [atlasCover_transDomain] at hy
     have hev : (fun z ↦ tangentCoordChange i j (i.1.symm z) b) =ᶠ[𝓝 y]
         fun z ↦ dMB (j.1 ∘ i.1.symm) (z, b) :=
       eventuallyEq_of_mem (i.1.open_target.mem_nhds hy.1) fun z hz ↦ by
@@ -397,9 +391,10 @@ theorem localCurv_transition (i j : atlas E M) {y : E}
     localCurv (C.Γ j) ((j.1 ∘ i.1.symm) y) (dMB (j.1 ∘ i.1.symm) (y, u))
         (dMB (j.1 ∘ i.1.symm) (y, v)) (dMB (j.1 ∘ i.1.symm) (y, w)) =
       dMB (j.1 ∘ i.1.symm) (y, localCurv (C.Γ i) y u v w) := by
-  have h := C.toBundleConnection.curvLoc_transition i j hy u v w
-  simp only [toBundleConnection, tangentMBCore, tangentCoordChange, i.1.right_inv hy.1,
-    bundleCurv_eq_localCurv] at h
+  have h := C.toBundleConnection.curvLoc_transition i j
+    (by rw [atlasCover_transDomain]; exact hy) u v w
+  simp only [toBundleConnection, tangentMBCore, tangentCoordChange, TrivializationCover.trans,
+    atlasCover, i.1.right_inv hy.1, bundleCurv_eq_localCurv] at h
   exact h
 
 end Connection

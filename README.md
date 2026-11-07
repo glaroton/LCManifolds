@@ -10,10 +10,10 @@ Blueprint: <https://glaroton.github.io/lc-manifolds/blueprint/>
 > standard axioms. It contains manifolds, smooth maps, the tangent bundle, vector fields with the
 > Lie bracket, connections, sprays, geodesics, submanifolds and immersions, connections defined
 > by fields of projectors, Finsler and pseudo-Riemannian metrics with their metric geometry,
-> differential forms with de Rham theory, vector bundles (Hom, dual and cotangent bundles) with
+> differential forms with de Rham theory, vector bundles (pullback, Hom, dual, cotangent) with
 > connections, curvature and bundle metrics, symplectic manifolds, and a collection of examples.
-> Work continues (pullback bundles, complex manifolds). It is the geometric companion of
-> [lc-analysis](https://github.com/glaroton/lc-analysis), which provides the calculus.
+> Work continues (induced connections on pullback and Hom bundles, complex manifolds). It is
+> the geometric companion of [lc-analysis](https://github.com/glaroton/lc-analysis), which provides the calculus.
 
 ## Convention: model spaces need not be complete
 
@@ -379,8 +379,12 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
 * [`LocallyConvexManifolds/VectorBundle.lean`](LocallyConvexManifolds/VectorBundle.lean): vector
   bundles with locally convex fiber `F`, given by coordinate changes `(y, ξ) ↦ g(y) ξ` that are
   jointly smooth (`y ↦ g(y) ∈ GL(F)` is not available when `F` is not normable).
+  * `TrivializationCover`: bundles are trivialized over a cover by open sets `Uᵢ`, each inside
+    the domain of a chart, indexed by an arbitrary type; `atlasCover`: the chart domains;
   * `MBVectorBundleCore`, `MBVectorBundleCore.mbManifold`: the total space is a manifold modeled
-    on `E × F`; `tangentMBCore`: the tangent bundle is a vector bundle.
+    on `E × F`; `tangentMBCore`: the tangent bundle is a vector bundle;
+  * `MBVectorBundleCore.pullback`: the pullback `f*V` along a smooth map, trivialized over the
+    sets `k.source ∩ f⁻¹(Uᵢ)` (it need not be trivial over the chart domains of `N`).
 * [`LocallyConvexManifolds/HomBundle.lean`](LocallyConvexManifolds/HomBundle.lean): `Hom(V₁, V₂)`,
   dual bundles and, for normed models, the cotangent bundle (`homCore`, `dualCore`,
   `cotangentCore`); fibers must be normed (Maissen), and smoothness of the coordinate changes for

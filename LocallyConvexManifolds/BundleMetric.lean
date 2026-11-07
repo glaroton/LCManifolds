@@ -43,7 +43,7 @@ noncomputable section
 
 namespace LocallyConvex.Manifolds
 
-universe u v
+universe u v w
 
 section Local
 
@@ -221,57 +221,58 @@ variable {E : Type u}
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
   {M : Type v} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {ι : Type w} {𝒰 : TrivializationCover E M ι}
   {F : Type u} [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
   [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
 
 /-- A **bundle metric**: in each trivialization a smooth family of symmetric bilinear forms,
 invariant under the coordinate changes, `hⱼ(τ y)(g ξ, g η) = hᵢ(y)(ξ, η)`. -/
-structure BundleMetric (V : MBVectorBundleCore E M F) where
-  /-- The metric in the trivialization over the chart `i`. -/
-  h : atlas E M → E → F → F → ℝ
-  isLocal : ∀ i, IsLocalBundleMetric (h i) i.1.target
-  transition : ∀ i j : atlas E M, ∀ y ∈ i.1.target ∩ i.1.symm ⁻¹' j.1.source, ∀ ξ η,
-    h j ((j.1 ∘ i.1.symm) y) (V.coordChange i j (i.1.symm y) ξ)
-      (V.coordChange i j (i.1.symm y) η) = h i y ξ η
+structure BundleMetric (V : MBVectorBundleCore 𝒰 F) where
+  /-- The metric in the trivialization over `i`. -/
+  h : ι → E → F → F → ℝ
+  isLocal : ∀ i, IsLocalBundleMetric (h i) (𝒰.domain i)
+  transition : ∀ i j, ∀ y ∈ 𝒰.transDomain i j, ∀ ξ η,
+    h j (𝒰.trans i j y) (V.coordChange i j ((𝒰.chart i).1.symm y) ξ)
+      (V.coordChange i j ((𝒰.chart i).1.symm y) η) = h i y ξ η
 
 namespace BundleMetric
 
-variable {V : MBVectorBundleCore E M F} (g : BundleMetric V)
+variable {V : MBVectorBundleCore 𝒰 F} (g : BundleMetric V)
 
 /-- A (weak) Riemannian bundle metric: positive definite on every fiber. -/
-def IsPositive : Prop := ∀ i : atlas E M, ∀ y ∈ i.1.target, ∀ ξ, ξ ≠ 0 → 0 < g.h i y ξ ξ
+def IsPositive : Prop := ∀ i, ∀ y ∈ 𝒰.domain i, ∀ ξ, ξ ≠ 0 → 0 < g.h i y ξ ξ
 
 end BundleMetric
 
 namespace BundleConnection
 
-variable {V : MBVectorBundleCore E M F} (C : BundleConnection V)
+variable {V : MBVectorBundleCore 𝒰 F} (C : BundleConnection V)
 
 /-- A connection is **metric** for a bundle metric if its symbols are compatible with the metric
 in every trivialization. -/
 def IsMetric (g : BundleMetric V) : Prop :=
-  ∀ i : atlas E M, IsLocalCompatible (C.Γ i) (g.h i) i.1.target
+  ∀ i, IsLocalCompatible (C.Γ i) (g.h i) (𝒰.domain i)
 
 omit [MBManifold E M] in
 /-- **The curvature of a metric connection is skew-adjoint** in every trivialization. -/
-theorem IsMetric.curvLoc_skew {g : BundleMetric V} (hC : C.IsMetric g) (i : atlas E M) {y : E}
-    (hy : y ∈ i.1.target) (u v : E) (ξ η : F) :
+theorem IsMetric.curvLoc_skew {g : BundleMetric V} (hC : C.IsMetric g) (i : ι) {y : E}
+    (hy : y ∈ 𝒰.domain i) (u v : E) (ξ η : F) :
     g.h i y (bundleCurv (C.Γ i) y u v ξ) η + g.h i y ξ (bundleCurv (C.Γ i) y u v η) = 0 :=
-  (g.isLocal i).bundleCurv_skew i.1.open_target (C.isLocalSymbol i) (hC i) hy u v ξ η
+  (g.isLocal i).bundleCurv_skew (𝒰.isOpen_domain i) (C.isLocalSymbol i) (hC i) hy u v ξ η
 
 /-- **The curvature of a metric connection is skew-adjoint**: for `C²` fields and sections,
-`h(R(X, Y) s, t) + h(s, R(X, Y) t) = 0`, in the preferred chart at `x`. -/
+`h(R(X, Y) s, t) + h(s, R(X, Y) t) = 0`, in the chosen trivialization at `x`. -/
 theorem IsMetric.curvature_skew {g : BundleMetric V} (hC : C.IsMetric g)
     {X Y : M → TangentBundle E M} {s t : M → V.TotalSpace} (hXv : IsVectorField X)
     (hYv : IsVectorField Y) (hsv : V.IsSection s) (htv : V.IsSection t)
     (hX : ContMDiffMB E (E × E) 2 X) (hY : ContMDiffMB E (E × E) 2 Y)
     (hs : ContMDiffMB E (E × F) 2 s) (ht : ContMDiffMB E (E × F) 2 t) (x : M) :
-    g.h ⟨chartAt E x, chart_mem_atlas E x⟩ (chartAt E x x) (C.curvature X Y s x) (t x).2 +
-      g.h ⟨chartAt E x, chart_mem_atlas E x⟩ (chartAt E x x) (s x).2 (C.curvature X Y t x) =
+    g.h (𝒰.indexAt x) ((𝒰.chart (𝒰.indexAt x)).1 x) (C.curvature X Y s x) (t x).2 +
+      g.h (𝒰.indexAt x) ((𝒰.chart (𝒰.indexAt x)).1 x) (s x).2 (C.curvature X Y t x) =
       0 := by
   rw [C.curvature_eq hXv hYv hsv hX hY hs, C.curvature_eq hXv hYv htv hX hY ht,
-    ← V.localRep_chartAt hsv, ← V.localRep_chartAt htv]
-  exact hC.curvLoc_skew _ _ ((chartAt E x).map_source (mem_chart_source E x)) _ _ _ _
+    ← V.localRep_indexAt hsv, ← V.localRep_indexAt htv]
+  exact hC.curvLoc_skew _ _ (𝒰.chart_mem_domain (𝒰.mem_baseSet_at x)) _ _ _ _
 
 end BundleConnection
 
