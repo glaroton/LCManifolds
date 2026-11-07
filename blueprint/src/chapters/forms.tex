@@ -574,6 +574,113 @@ spaces.
   (exact); functoriality comes from Proposition~\ref{prop:pullback-functorial}.
 \end{proof}
 
+\section{The Poincaré Lemma}
+
+Homotopies are smooth maps $H \colon \R \times M \to N$, with $H_t = H(t, \cdot)$; on $\R \times M$
+we use the product charts $\id_{\R} \times \varphi$. Glöckner and Neeb use $[0, 1] \times M$, a
+manifold with boundary; a homotopy on $[0, 1] \times M$ can be precomposed with a smooth map
+$\R \to [0, 1]$ which is $0$ near $(-\infty, 0]$ and $1$ near $[1, \infty)$.
+
+\begin{definition}[Fiber integral]
+  \label{def:fiber-integral}
+  \lean{LocallyConvex.Manifolds.fibLoc, LocallyConvex.Manifolds.IsLocalForm.isLocalForm_fibLoc,
+    LocallyConvex.Manifolds.DifferentialForm.fibInt,
+    LocallyConvex.Manifolds.DifferentialForm.localRep_fibInt}
+  \leanok
+  \uses{def:diff-form}
+  Let $F$ be Mackey complete. For $\omega \in \Omega^{k+1}(\R \times M, F)$, the fiber integral
+  $I(\omega) \in \Omega^k(M, F)$ is
+  \[
+    I(\omega)_x(v_1, \dots, v_k) = \int_0^1 \omega_{(t, x)}\bigl((1, 0), (0, v_1), \dots,
+    (0, v_k)\bigr)\, dt
+  \]
+  (weak integral; in a chart, the integrand is a smooth curve, whose weak integral exists because
+  $F$ is Mackey complete). In the chart $\varphi$, the local representative of $I(\omega)$ is the
+  same integral of the local representative of $\omega$ in the chart $\id \times \varphi$, so
+  $I(\omega)$ is smooth by the smoothness of parameter-dependent integrals.
+\end{definition}
+
+\begin{theorem}[Homotopy formula {\cite[(3.40)]{GN26}}]
+  \label{thm:homotopy-formula}
+  \lean{LocallyConvex.Manifolds.IsLocalForm.dMB_fibLoc,
+    LocallyConvex.Manifolds.IsLocalForm.dLoc_fibLoc_add,
+    LocallyConvex.Manifolds.IsLocalForm.fibLoc_dLoc_zero,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_sliceIncl_apply,
+    LocallyConvex.Manifolds.DifferentialForm.d_fibInt_add,
+    LocallyConvex.Manifolds.DifferentialForm.fibInt_d_zero}
+  \leanok
+  \uses{def:fiber-integral, thm:diff-form-d, def:diff-form-pullback}
+  With $i_t(x) = (t, x)$, $\dd I(\omega) + I(\dd\omega) = i_1^*\omega - i_0^*\omega$ for
+  $\omega \in \Omega^{k+1}(\R \times M, F)$, and $I(\dd f) = i_1^* f - i_0^* f$ for functions $f$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Glöckner and Neeb use Cartan's formula. We compute in a chart. Differentiating under the
+  integral sign (which requires $\Ck{2}$ integrands in Mackey complete spaces),
+  $\dd I(\omega)(v_0, \dots, v_k) = \sum_j (-1)^j \int_0^1 \partial_{(0, v_j)}
+  \omega_{(t,x)}((1,0), (0, v_0), \dots, \widehat{(0, v_j)}, \dots)\, dt$. In the formula (3.33)
+  for $(\dd\omega)_{(t,x)}((1, 0), (0, v_0), \dots)$, the terms with $j \geq 1$ are the same with
+  the opposite sign, and the remaining term is $\partial_t \omega_{(t,x)}((0, v_0), \dots)$. By the
+  fundamental theorem of calculus, its integral is $\omega_{(1, x)}(\dots) - \omega_{(0,
+  x)}(\dots) = (i_1^*\omega - i_0^*\omega)_x(v)$.
+\end{proof}
+
+\begin{theorem}[Homotopy Lemma {\cite[Lemma~3.6.25]{GN26}}]
+  \label{thm:homotopy-lemma}
+  \lean{LocallyConvex.Manifolds.DifferentialForm.pullback_sub_pullback_eq_d_fibInt,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_eq_pullback_of_isClosed_zero,
+    LocallyConvex.Manifolds.deRhamMap_homotopy}
+  \leanok
+  \uses{thm:homotopy-formula, prop:de-rham-functorial, prop:pullback-functorial}
+  Let $H \colon \R \times M \to N$ be smooth and $F$ Mackey complete. For a closed $\alpha \in
+  \Omega^{k+1}(N, F)$, $H_1^*\alpha - H_0^*\alpha = \dd I(H^*\alpha)$, and $H_1^* f = H_0^* f$ for
+  closed functions $f$. Hence $H_0^* = H_1^* \colon H^n_{dR}(N, F) \to H^n_{dR}(M, F)$ for all $n$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply the homotopy formula to $\omega = H^*\alpha$, for which $\dd\omega = H^*\dd\alpha = 0$, and
+  use $i_t^* H^* = (H \circ i_t)^* = H_t^*$.
+\end{proof}
+
+\begin{theorem}[Poincaré Lemma {\cite[Definition~3.6.27, Theorem~3.6.28]{GN26}}]
+  \label{thm:poincare}
+  \lean{LocallyConvex.Manifolds.SmoothlyContractible,
+    LocallyConvex.Manifolds.DifferentialForm.pullback_const_eq_zero,
+    LocallyConvex.Manifolds.DifferentialForm.IsClosed.isExact_of_smoothlyContractible,
+    LocallyConvex.Manifolds.deRham_subsingleton_of_smoothlyContractible}
+  \leanok
+  \uses{thm:homotopy-lemma}
+  Let $M$ be smoothly contractible: there are $p \in M$ and a smooth $H \colon \R \times M \to M$
+  with $H(0, x) = x$ and $H(1, x) = p$. Then every closed form of positive degree on $M$ with
+  values in a Mackey complete space is exact, i.e.\ $H^n_{dR}(M, F) = 0$ for $n \geq 1$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $H_0 = \id_M$ and $H_1$ is constant, so $H_1^*\alpha = 0$ for $\deg \alpha \geq 1$. By the
+  Homotopy Lemma, $-\alpha = \dd I(H^*\alpha)$.
+\end{proof}
+
+\begin{corollary}[{\cite[Corollary~3.6.29]{GN26}}]
+  \label{cor:poincare-star}
+  \lean{LocallyConvex.Manifolds.mbGroupoid, LocallyConvex.Manifolds.smoothlyContractible_of_starConvex,
+    LocallyConvex.Manifolds.DifferentialForm.IsClosed.isExact_of_starConvex}
+  \leanok
+  \uses{thm:poincare}
+  Let $U \subseteq E$ be open and star-shaped with respect to $p \in U$. Every closed form of
+  positive degree on $U$ with values in a Mackey complete space is exact.
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  Open subsets of manifolds are manifolds, because restrictions of smooth diffeomorphisms to open
+  sets are smooth diffeomorphisms. With $c(t) = (1 - t)^2/((1 - t)^2 + t^2)$, which is smooth with
+  values in $[0, 1]$, $c(0) = 1$ and $c(1) = 0$, the map $H(t, x) = p + c(t)(x - p)$ contracts $U$
+  to $p$.
+\end{proof}
+
 \section{Real analytic forms}
 
 \begin{definition}[Real analytic forms]
@@ -649,9 +756,10 @@ spaces.
   \begin{itemize}
     \item The flow description of $L_X$ \cite[Remark~3.6.17]{GN26}: vector fields on
       locally convex manifolds need not have flows.
-    \item The finite-dimensional material (Lemma~3.6.20, orientations, integration of forms and
-      Stokes' Theorem~3.6.23), and the Homotopy Lemma~3.6.25 with the Poincaré Lemma~3.6.28: these
-      need manifolds with boundary, smooth partitions of unity, and parametric integrals with
-      values in Mackey complete spaces.
+    \item The finite-dimensional material (Definition~3.6.19 to Remark~3.6.24: forms on subsets of
+      $\R^n$, orientations, integration of forms and Stokes' Theorem).
+    \item Corollary~3.6.26 ($p_M^* \colon H^k_{dR}(M, E) \cong H^k_{dR}(M \times F, E)$). It
+      follows from the Homotopy Lemma (Theorem~\ref{thm:homotopy-lemma}) applied to $(t, m, x)
+      \mapsto (m, c(t) x)$, but is not formalized yet.
   \end{itemize}
 \end{remark}

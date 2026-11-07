@@ -24,7 +24,7 @@ noncomputable section
 
 namespace LocallyConvex.Manifolds
 
-universe u
+universe u v
 
 section ModelProd
 
@@ -51,7 +51,9 @@ instance [T2Space A] [T2Space B] : T2Space (ModelProd A B) :=
 
 end ModelProd
 
-variable {E F : Type u}
+section MixedUniverses
+
+variable {E : Type u} {F : Type v}
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
   [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
@@ -79,12 +81,25 @@ theorem prod_mem_mbGroupoid {g : OpenPartialHomeomorph E E} {h : OpenPartialHome
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
   {N : Type*} [TopologicalSpace N] [ChartedSpace F N] [MBManifold F N]
 
-/-- The product of two manifolds is a manifold. -/
+/-- The product of two manifolds is a manifold. The model spaces may live in different universes
+(e.g. `ℝ × M` for `M` modeled on `E : Type u`). -/
 instance Prod.mbManifold : MBManifold (ModelProd E F) (M × N) where
   compatible := by
     rintro _ _ ⟨e, he, f, hf, rfl⟩ ⟨e', he', f', hf', rfl⟩
     rw [OpenPartialHomeomorph.prod_symm_trans_prod]
     exact prod_mem_mbGroupoid (HasGroupoid.compatible he he') (HasGroupoid.compatible hf hf')
+
+end MixedUniverses
+
+section SameUniverse
+
+variable {E F : Type u}
+  [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
+  [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  [AddCommGroup F] [Module ℝ F] [TopologicalSpace F] [IsTopologicalAddGroup F]
+  [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F]
+  {M : Type*} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {N : Type*} [TopologicalSpace N] [ChartedSpace F N] [MBManifold F N]
 
 omit [MBManifold E M] [MBManifold F N] in
 /-- The first projection `M × N → M` is smooth. -/
@@ -136,5 +151,7 @@ theorem ContMDiffMBOn.prodMk {G : Type u} [AddCommGroup G] [Module ℝ G] [Topol
     (isOpen_chartDomain hU hg.1 (chartAt G x) (chartAt F (g x)))
   exact (((hf.2 x hx).mono inter_subset_left).prodMk hopen
     ((hg.2 x hx).mono inter_subset_right)).mono hD
+
+end SameUniverse
 
 end LocallyConvex.Manifolds

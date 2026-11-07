@@ -346,6 +346,15 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `isClosed_iff_isLocallyConstant`, `deRhamZeroEquiv`: `H⁰` consists of the locally constant
     functions [GN26, Rem. 3.6.12 (b)];
   * `deRhamMap`, `deRhamMap_id`, `deRhamMap_comp`: functoriality of `H^n_dR`.
+* [`LocallyConvexManifolds/Homotopy.lean`](LocallyConvexManifolds/Homotopy.lean): the homotopy
+  formula and the Poincaré Lemma [GN26, Lemma 3.6.25, Thm. 3.6.28, Cor. 3.6.29], for forms with
+  values in Mackey complete spaces; homotopies are smooth maps on `ℝ × M`.
+  * `DifferentialForm.fibInt`, `d_fibInt_add`: the fiber integral and
+    `d I(ω) + I(dω) = i₁*ω − i₀*ω` [GN26, (3.40)];
+  * `deRhamMap_homotopy`: homotopic maps induce the same maps in de Rham cohomology;
+  * `IsClosed.isExact_of_smoothlyContractible`, `IsClosed.isExact_of_starConvex`: closed forms of
+    positive degree on smoothly contractible manifolds, e.g. open star-shaped subsets of `E`, are
+    exact.
 * [`LocallyConvexManifolds/AnalyticForm.lean`](LocallyConvexManifolds/AnalyticForm.lean): real
   analytic forms on real analytic manifolds [GN26, Rem. 3.6.18].
   * `DifferentialForm.IsRealAnalytic`, `analyticForms`: the subspace `Ωⁿ_ω(M, F)`;

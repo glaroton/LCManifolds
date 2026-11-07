@@ -16,6 +16,7 @@ import LocallyConvexManifolds.Wedge
 import LocallyConvexManifolds.WedgeLeibniz
 import LocallyConvexManifolds.LieDerivative
 import LocallyConvexManifolds.DeRham
+import LocallyConvexManifolds.Homotopy
 import LocallyConvexManifolds.AnalyticForm
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold

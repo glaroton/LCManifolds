@@ -97,6 +97,12 @@ def mbGroupoid : StructureGroupoid E where
       exact ContDiffMBOn.congr_of_isOpen e.symm.open_source
         (fun x hx ↦ (hs.eqOn (hs.source_eq ▸ hx)).symm) (he.2 k)
 
+/-- Restrictions of smooth diffeomorphisms to open sets are smooth diffeomorphisms. Hence open
+subsets of manifolds (Mathlib's `TopologicalSpace.Opens` charted space) are manifolds. -/
+instance : ClosedUnderRestriction (mbGroupoid E) where
+  closedUnderRestriction he _ _ :=
+    ⟨fun k ↦ (he.1 k).mono fun _ hx ↦ hx.1, fun k ↦ (he.2 k).mono fun _ hx ↦ hx.1⟩
+
 /-- A smooth manifold modeled on the locally convex space `E` (Definition I.3.1). -/
 abbrev MBManifold (M : Type*) [TopologicalSpace M] [ChartedSpace E M] : Prop :=
   HasGroupoid M (mbGroupoid E)
