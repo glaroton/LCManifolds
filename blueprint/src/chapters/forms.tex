@@ -363,6 +363,49 @@ spaces.
   f(x)\,\omega_x(v) = f(x)\,\omega_x(v)$, and there are $p!$ of them.
 \end{proof}
 
+\begin{theorem}[Leibniz rule]
+  \label{thm:wedge-leibniz}
+  \lean{LocallyConvex.Manifolds.altF_comp_perm, LocallyConvex.Manifolds.altF_sum_perm,
+    LocallyConvex.Manifolds.alternatizeUncurryFin_eq_altF,
+    LocallyConvex.Manifolds.alternatizeUncurryFin_wedge_left,
+    LocallyConvex.Manifolds.alternatizeUncurryFin_wedge_right,
+    LocallyConvex.Manifolds.IsLocalForm.dLoc_wedgeLoc,
+    LocallyConvex.Manifolds.DifferentialForm.d_wedge_apply,
+    LocallyConvex.Manifolds.DifferentialForm.d_wedge}
+  \leanok
+  \uses{def:wedge, thm:diff-form-d}
+  For $\omega \in \Omega^p(M, E_1)$ and $\eta \in \Omega^q(M, E_2)$,
+  \[
+    \dd(\omega \wedge_\beta \eta) = \dd\omega \wedge_\beta \eta + (-1)^p\, \omega \wedge_\beta
+    \dd\eta.
+  \]
+  (The degree $(p + 1) + q$ of $\dd\omega \wedge_\beta \eta$ is identified with $(p + q) + 1$.)
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The rule is local. By the product rule for $\beta$, the derivative of $z \mapsto
+  \omega(z) \wedge_\beta \eta(z)$ at $y$ in the direction $u$ is $L(u) \wedge_\beta \eta(y) +
+  \omega(y) \wedge_\beta L'(u)$, where $L(u)$, $L'(u)$ are the partial derivatives of the local
+  representatives. By (3.33), it remains to prove two identities between alternating maps,
+  \[
+    \sum_i (-1)^i \bigl(L(v_i) \wedge B\bigr)(\dots \hat v_i \dots) = (\mathrm{Alt}L)
+    \wedge B, \qquad \sum_i (-1)^i \bigl(A \wedge L'(v_i)\bigr)(\dots \hat v_i \dots) =
+    (-1)^p A \wedge (\mathrm{Alt} L'),
+  \]
+  where $(\mathrm{Alt}L)(v_0, \dots, v_p) = \sum_i (-1)^i L(v_i)(\dots \hat v_i \dots)$. Write
+  $\mathrm{alt}f(v) = \sum_\sigma \operatorname{sgn}(\sigma) f(v \circ \sigma)$ for any function $f$
+  of $k$ vectors. Then $\mathrm{alt} f(v \circ \sigma) = \operatorname{sgn}(\sigma)\,
+  \mathrm{alt}f(v)$, $\mathrm{alt} A = k!\, A$ for alternating $A$, and alternating a partial
+  alternation $\sum_\tau \operatorname{sgn}(\tau) g(w \circ \tilde\tau)$ over a subgroup of
+  order $a!$ gives $a!\, \mathrm{alt}g$. The wedge product is $(p!\,q!)^{-1}\,\mathrm{alt}$ of
+  $w \mapsto \beta(f(w_1, \dots, w_p), g(w_{p+1}, \dots))$, and $\mathrm{Alt} L = (n!)^{-1}
+  \mathrm{alt}\bigl(w \mapsto L(w_0)(w_1, \dots, w_n)\bigr)$, because its $i$-th term is a
+  reindexing by the cycle $(0\,1 \cdots i)$, of sign $(-1)^i$. With these rules both sides of each
+  identity become $(p!\,q!)^{-1}$ times the alternation of the same function, up to reindexing; in
+  the second identity the reindexing is the cycle $(0\,1 \cdots p)$, which gives the sign $(-1)^p$.
+\end{proof}
+
 \section{Insertion and the Lie derivative}
 \label{sec:lie-derivative}
 

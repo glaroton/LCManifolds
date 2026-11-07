@@ -328,6 +328,9 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
     `pullback_wedge`: `φ*(ω ∧ η) = φ*ω ∧ φ*η` [GN26, (3.28)];
   * `smulFun`: products `f ω` with smooth real functions, and `wedge_ofFunction`
     [GN26, Rem. 3.6.5].
+* [`LocallyConvexManifolds/WedgeLeibniz.lean`](LocallyConvexManifolds/WedgeLeibniz.lean): the
+  Leibniz rule `d(ω ∧ η) = dω ∧ η + (-1)ᵖ ω ∧ dη` (`DifferentialForm.d_wedge`), reduced in charts
+  to two identities between alternating maps, proved with the unnormalized alternation `altF`.
 * [`LocallyConvexManifolds/LieDerivative.lean`](LocallyConvexManifolds/LieDerivative.lean):
   insertion of vector fields and the Lie derivative [GN26, §3.6].
   * `SmoothVectorField`, `DifferentialForm.interior`: `i_X ω` [GN26, Def. 3.6.15];

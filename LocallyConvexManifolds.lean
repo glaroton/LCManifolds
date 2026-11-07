@@ -13,6 +13,7 @@ import LocallyConvexManifolds.Derivation
 import LocallyConvexManifolds.LocalForm
 import LocallyConvexManifolds.DifferentialForm
 import LocallyConvexManifolds.Wedge
+import LocallyConvexManifolds.WedgeLeibniz
 import LocallyConvexManifolds.LieDerivative
 import LocallyConvexManifolds.DeRham
 import LocallyConvexManifolds.AnalyticForm
