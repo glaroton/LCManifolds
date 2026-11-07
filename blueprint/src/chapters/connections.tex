@@ -593,6 +593,55 @@ For a weak metric a metric connection need not exist; the statements below assum
   $h(\Gamma(a, \xi), \Gamma(b, \eta)) + h(\Gamma(b, \xi), \Gamma(a, \eta))$ cancel by symmetry.
 \end{proof}
 
+\begin{theorem}[Pullback connections]
+  \label{thm:pullback-connection}
+  \lean{LocallyConvex.Manifolds.TrivializationCover.pullbackRep,
+    LocallyConvex.Manifolds.TrivializationCover.smoothMBOn_pullbackRep,
+    LocallyConvex.Manifolds.TrivializationCover.pullbackRep_trans,
+    LocallyConvex.Manifolds.BundleConnection.pullbackSymbol,
+    LocallyConvex.Manifolds.BundleConnection.isLocalSymbol_pullbackSymbol,
+    LocallyConvex.Manifolds.BundleConnection.pullback}
+  \leanok
+  \uses{def:pullback-bundle, def:bundle-connection}
+  Let $f \colon N \to M$ be smooth and $\nabla$ a connection on $V$. In the trivialization of
+  $f^*V$ over $k.\mathrm{source} \cap f^{-1}(U_i)$, let $F = \varphi_i \circ f \circ k^{-1}$. The
+  symbols $\Gamma_i(F y)(\dd F(y) a, \xi)$ define a connection $f^*\nabla$ on $f^*V$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The local representatives intertwine the coordinate changes, $F_q \circ \tau' = \tau \circ F_p$,
+  so by the chain rule the gauge law of $f^*\nabla$ is the gauge law of $\nabla$ at $F_p(y)$, in
+  the direction $\dd F_p(y) a$.
+\end{proof}
+
+\begin{theorem}[Connections on Hom bundles]
+  \label{thm:hom-connection}
+  \lean{LocallyConvex.Manifolds.IsLocalSymbol.continuous_right,
+    LocallyConvex.Manifolds.BundleConnection.homSymbolCLM,
+    LocallyConvex.Manifolds.BundleConnection.homSymbol,
+    LocallyConvex.Manifolds.BundleConnection.homSymbol_apply,
+    LocallyConvex.Manifolds.BundleConnection.isLocalSymbol_homSymbol,
+    LocallyConvex.Manifolds.BundleConnection.hom_transition,
+    LocallyConvex.Manifolds.BundleConnection.hom}
+  \leanok
+  \uses{thm:hom-bundle, def:bundle-connection}
+  Let $\nabla^1$, $\nabla^2$ be connections on vector bundles $V_1$, $V_2$ with normed fibers.
+  The symbols $\Gamma^{\mathrm{Hom}}(y)(a, A)\xi = \Gamma_2(y)(a, A\xi) - A\,\Gamma_1(y)(a, \xi)$
+  define a connection on $\mathrm{Hom}(V_1, V_2)$, the local form of
+  $(\nabla_a A)\xi = \nabla^2_a(A\xi) - A(\nabla^1_a \xi)$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The map $y \mapsto \Gamma^{\mathrm{Hom}}(y)$ is smooth for the operator norm because
+  $((y, a, A), \xi) \mapsto \Gamma^{\mathrm{Hom}}(y)(a, A)\xi$ is smooth (\cite{LCA}, theorem on
+  operator-valued maps). For the gauge law, write the coordinate changes as
+  $A \mapsto g_2 A g_1^{-1}$; differentiating $g_1(g_1^{-1}\xi) = \xi$ gives
+  $\partial(g_1^{-1}) = -g_1^{-1}(\partial g_1)g_1^{-1}$, and the gauge laws of $\nabla^1$ and
+  $\nabla^2$ give that of $\Gamma^{\mathrm{Hom}}$.
+\end{proof}
+
 \section{Sprays}
 
 A spray, or second order vector field, is a vector field $\xi$ on $TM$ such that

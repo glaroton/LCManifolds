@@ -11,9 +11,10 @@ Blueprint: <https://glaroton.github.io/lc-manifolds/blueprint/>
 > Lie bracket, connections, sprays, geodesics, submanifolds and immersions, connections defined
 > by fields of projectors, Finsler and pseudo-Riemannian metrics with their metric geometry,
 > differential forms with de Rham theory, vector bundles (pullback, Hom, dual, cotangent) with
-> connections, curvature and bundle metrics, symplectic manifolds, and a collection of examples.
-> Work continues (induced connections on pullback and Hom bundles, complex manifolds). It is
-> the geometric companion of [lc-analysis](https://github.com/glaroton/lc-analysis), which provides the calculus.
+> connections (including induced connections on pullback and Hom bundles), curvature and bundle
+> metrics, symplectic manifolds, and a collection of examples.
+> Work continues (complex and Kähler manifolds). It is the geometric companion of
+> [lc-analysis](https://github.com/glaroton/lc-analysis), which provides the calculus.
 
 ## Convention: model spaces need not be complete
 
@@ -403,6 +404,13 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   metrics (no positivity required) and metric connections.
   * `localCompat_sections`: `X h(s, t) = h(∇_X s, t) + h(s, ∇_X t)`;
   * `IsMetric.curvature_skew`: the curvature of a metric connection is skew-adjoint.
+* [`LocallyConvexManifolds/BundleInduced.lean`](LocallyConvexManifolds/BundleInduced.lean):
+  induced connections.
+  * `BundleConnection.pullback`: the pullback connection `f*∇` on `f*V`, with symbols
+    `Γᵢ(F y)(dF(y) a, ξ)` for the local representative `F` of `f`;
+  * `BundleConnection.hom`: the connection on `Hom(V₁, V₂)` (normed fibers), with symbols
+    `Γ₂(a, A ·) − A Γ₁(a, ·)`; smooth for the operator norm by `contDiffMBOn_of_unc_clm`, and its
+    gauge law uses `∂(g⁻¹) = −g⁻¹ (∂g) g⁻¹` (`hom_transition`).
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a
