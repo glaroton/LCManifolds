@@ -19,8 +19,8 @@ Lang's sign for the curvature). The local theory below is written for an arbitra
 
 **An infinite-dimensional subtlety.** If `F` is not normable, no vector topology on the space
 `L(F)` of continuous linear endomorphisms makes the evaluation `L(F) × F → F` continuous
-(Maissen), so `A` cannot be an honest differential form with values in a locally convex space of
-operators. We therefore encode an `End(F)`-valued form as a family of `F`-valued forms depending
+(Maissen, Math. Ann. 151 (1963), Satz 1), so `A` cannot be an honest differential form with
+values in a locally convex space of operators. We therefore encode an `End(F)`-valued form as a family of `F`-valued forms depending
 linearly on an extra argument: for `ξ ∈ F`, `connForm Γ ξ` is the `F`-valued local `1`-form
 `(y, v) ↦ Γ(y)(v, ξ)`, and `curvLoc Γ ξ` is the `F`-valued local `2`-form
 `(y, u, v) ↦ R(y)(u, v) ξ`. All the identities below are identities between `F`-valued local forms,

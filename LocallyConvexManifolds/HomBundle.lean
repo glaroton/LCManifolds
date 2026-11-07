@@ -18,7 +18,8 @@ coordinate changes `A ↦ g₂(x) ∘ A ∘ g₁(x)⁻¹` (`homCore`). The dual 
 
 **The infinite-dimensional subtleties.**
 * If a fiber is not normable, `L(F₁, F₂)` carries no vector topology for which the evaluation
-  is continuous (Maissen), so `Hom(V₁, V₂)` and `V'` are not available in this generality.
+  is continuous (Maissen, Math. Ann. 151 (1963), Satz 1 and the remark after it), so
+  `Hom(V₁, V₂)` and `V'` are not available in this generality.
   Lempert (J. Amer. Math. Soc. 11 (1998), §2, p. 488) notes the same restriction: `Hom(V₁, V₂)`
   is a vector bundle only when the fibers of `V₁` are normable.
 * Even for normed fibers, the smoothness of the coordinate changes of `Hom(V₁, V₂)` is not

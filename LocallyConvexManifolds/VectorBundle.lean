@@ -26,8 +26,9 @@ trivialized over the charts of the atlas (`tangentMBCore`).
 **An infinite-dimensional subtlety.** In finite dimensions (and for Banach spaces, with the norm
 topology on `L(F)`) one asks the transition functions `x ↦ g_{ij}(x)` to be smooth maps into
 `GL(F)`. If `F` is not normable, no vector topology on `L(F)` makes the evaluation
-`L(F) × F → F` continuous, so this requirement is not available; joint smoothness of
-`(y, ξ) ↦ g(y) ξ` is the substitute, and it is exactly what the tangent bundle satisfies
+`L(F) × F → F` continuous (Maissen, Math. Ann. 151 (1963), Satz 1), so this requirement is not
+available; joint smoothness of `(y, ξ) ↦ g(y) ξ` is the substitute, and it is exactly what the
+tangent bundle satisfies
 (`tangentMBCore`): its coordinate changes are `(y, w) ↦ dτ(y) w`.
 
 The total space is a topological fiber bundle with fiber `F`
