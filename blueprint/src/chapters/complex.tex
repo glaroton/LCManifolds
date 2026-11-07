@@ -1,63 +1,88 @@
-\chapter{Complex and Kähler manifolds}
+\chapter{Nijenhuis operators, complex and Kähler manifolds}
 \label{chap:complex}
 
 Complex analytic manifolds are introduced in Chapter~\ref{chap:analytic}. This chapter studies
-almost complex structures, their integrability, and Kähler structures. As for metrics and forms,
-fields of endomorphisms of the tangent spaces are stored in the coordinates of the preferred
-chart at each point, and their smoothness is that of their local representatives.
+fields of endomorphisms of the tangent bundle, their Nijenhuis torsion, almost complex structures
+and Kähler structures. As for metrics and forms, fields of endomorphisms are stored in the
+coordinates of the preferred chart at each point, and their smoothness is that of their local
+representatives. We follow the conventions of \cite{GLT}.
 
-\begin{definition}[Almost complex structures]
-  \label{def:almost-complex}
+\begin{definition}[Fields of endomorphisms]
+  \label{def:end-field}
   \lean{LocallyConvex.Manifolds.jLocalRep,
-    LocallyConvex.Manifolds.AlmostComplexStructure,
-    LocallyConvex.Manifolds.AlmostComplexStructure.loc,
-    LocallyConvex.Manifolds.AlmostComplexStructure.loc_eq,
-    LocallyConvex.Manifolds.AlmostComplexStructure.loc_add,
-    LocallyConvex.Manifolds.AlmostComplexStructure.loc_smul,
-    LocallyConvex.Manifolds.AlmostComplexStructure.loc_sq,
-    LocallyConvex.Manifolds.AlmostComplexStructure.smoothMBOn_loc}
+    LocallyConvex.Manifolds.EndomorphismField,
+    LocallyConvex.Manifolds.EndomorphismField.loc,
+    LocallyConvex.Manifolds.EndomorphismField.loc_eq,
+    LocallyConvex.Manifolds.EndomorphismField.loc_add,
+    LocallyConvex.Manifolds.EndomorphismField.loc_smul,
+    LocallyConvex.Manifolds.EndomorphismField.loc_pref,
+    LocallyConvex.Manifolds.EndomorphismField.smoothMBOn_loc,
+    LocallyConvex.Manifolds.EndomorphismField.applyField,
+    LocallyConvex.Manifolds.EndomorphismField.isVectorField_applyField,
+    LocallyConvex.Manifolds.EndomorphismField.localRep_applyField}
   \leanok
   \uses{def:mb-manifold, def:tangent-bundle}
-  An \emph{almost complex structure} on $M$ is a field of real linear maps $J_x$ of the tangent
-  spaces with $J_x^2 = -1$, whose local representatives $(y, v) \mapsto J_i(y) v$ are smooth.
+  A \emph{smooth field of endomorphisms} $N$ of $TM$ is a field of real linear maps $N_x$ of the
+  tangent spaces whose local representatives $(y, v) \mapsto N_i(y) v$ are smooth. It acts on
+  vector fields, $(NX)(x) = N_x X(x)$, and the local representative of $NX$ is $N_i X_i$.
 \end{definition}
 
-\begin{definition}[The Nijenhuis tensor]
+\begin{definition}[The Nijenhuis torsion]
   \label{def:nijenhuis}
   \lean{LocallyConvex.Manifolds.endD, LocallyConvex.Manifolds.nijenhuisLoc,
     LocallyConvex.Manifolds.endApply,
-    LocallyConvex.Manifolds.AlmostComplexStructure.IsIntegrable}
+    LocallyConvex.Manifolds.EndomorphismField.nijenhuisAt}
   \leanok
-  \uses{def:almost-complex}
-  In a chart, the \emph{Nijenhuis tensor} of $J$ is
-  $N(u, v) = (\partial_{Ju} J) v - (\partial_{Jv} J) u - J\big((\partial_u J) v -
-  (\partial_v J) u\big)$. The almost complex structure is \emph{integrable} if $N$ vanishes in
-  every chart.
+  \uses{def:end-field}
+  The \emph{Nijenhuis torsion} of $N$ is
+  $\Omega_N(X, Y) = N[NX, Y] + N[X, NY] - [NX, NY] - N^2[X, Y]$ \cite[Definition 3.1]{GLT}. In
+  a chart it is
+  $\Omega_N(u, v) = N\big((\partial_u N) v - (\partial_v N) u\big) + (\partial_{Nv} N) u -
+  (\partial_{Nu} N) v$.
 \end{definition}
 
-\begin{theorem}[The Nijenhuis tensor and brackets]
+\begin{theorem}[The Nijenhuis torsion is a tensor]
   \label{thm:nijenhuis-bracket}
-  \lean{LocallyConvex.Manifolds.localBracket_nijenhuis}
+  \lean{LocallyConvex.Manifolds.localBracket_nijenhuis,
+    LocallyConvex.Manifolds.localBracket_congr,
+    LocallyConvex.Manifolds.EndomorphismField.lieBracket_nijenhuis}
   \leanok
   \uses{def:nijenhuis, lem:man-local-bracket}
   For $C^1$ local vector fields $X$, $Y$,
-  $[JX, JY] - J[JX, Y] - J[X, JY] - [X, Y] = N(X, Y)$.
+  $N[NX, Y] + N[X, NY] - [NX, NY] - N^2[X, Y] = \Omega_N(X, Y)$, with $\Omega_N$ given by the
+  local formula of Definition~\ref{def:nijenhuis}. In particular, for $C^1$ vector fields on $M$,
+  the torsion at $x$ only depends on $X(x)$ and $Y(x)$ \cite[Theorem 3.2]{GLT}.
 \end{theorem}
 
 \begin{proof}
   \leanok
-  Expand the brackets with the product rule $\dd(JX)(w) = (\partial_w J) X + J\,\dd X(w)$ and use
-  $J^2 = -1$: all the derivatives of $X$ and $Y$ cancel.
+  Expand the brackets with the product rule $\dd(NX)(w) = (\partial_w N) X + N\,\dd X(w)$: all
+  the derivatives of $X$ and $Y$ cancel. For vector fields on $M$, compute in the preferred chart
+  at $x$, where the local representative of $NX$ is $N_i X_i$.
 \end{proof}
+
+\begin{definition}[Almost complex structures]
+  \label{def:almost-complex}
+  \lean{LocallyConvex.Manifolds.AlmostComplexStructure,
+    LocallyConvex.Manifolds.AlmostComplexStructure.loc_sq,
+    LocallyConvex.Manifolds.AlmostComplexStructure.IsIntegrable,
+    LocallyConvex.Manifolds.AlmostComplexStructure.IsIntegrable.lieBracket}
+  \leanok
+  \uses{def:end-field, thm:nijenhuis-bracket}
+  An \emph{almost complex structure} is a smooth field of endomorphisms $J$ with $J^2 = -1$. It
+  is \emph{integrable} if its Nijenhuis torsion vanishes in every chart; then
+  $J[JX, Y] + J[X, JY] - [JX, JY] + [X, Y] = 0$ for $C^1$ vector fields.
+\end{definition}
 
 \begin{theorem}[The almost complex structure of a complex manifold]
   \label{thm:canonical-J}
   \lean{LocallyConvex.Manifolds.tangentCoordChange_complex_smul,
-    LocallyConvex.Manifolds.mulI, LocallyConvex.Manifolds.canonicalJ,
+    LocallyConvex.Manifolds.mulI, LocallyConvex.Manifolds.mulI_apply,
+    LocallyConvex.Manifolds.mulI_mulI, LocallyConvex.Manifolds.canonicalJ,
     LocallyConvex.Manifolds.canonicalJ_loc,
     LocallyConvex.Manifolds.canonicalJ_isIntegrable}
   \leanok
-  \uses{def:almost-complex, def:nijenhuis}
+  \uses{def:almost-complex}
   On a complex analytic manifold, multiplication by $i$ in the charts is a well defined almost
   complex structure, and it is integrable.
 \end{theorem}
@@ -67,13 +92,15 @@ chart at each point, and their smoothness is that of their local representatives
   The transition maps are complex analytic, so their derivatives are complex linear
   (\cite{LCA}, \texttt{complexAnalyticOn\_iff\_holomorphicOn}); hence the local representatives
   of $J$ are multiplication by $i$ in every chart. Being constant, they have vanishing Nijenhuis
-  tensor.
+  torsion.
 \end{proof}
 
-The converse, the Newlander--Nirenberg theorem, is not formalized. It fails in infinite
-dimensions: there are loop spaces, modeled on Fréchet spaces, with integrable almost complex
-structures that are not locally biholomorphic to locally convex spaces; for Banach and Hilbert
-models the question is raised as open in \cite[\S2, pp.~489--490]{Lem98}.
+The converse, the Newlander--Nirenberg theorem, is not formalized. In infinite dimensions it holds
+for real analytic almost complex structures on real analytic Banach manifolds
+\cite[Theorem 7, p.~64]{Bel05}, but it fails for smooth structures on some Banach manifolds
+\cite[Theorem 3.1]{Pat99}; for Fréchet manifolds, Lempert points out loop spaces with integrable
+almost complex structures that are not locally biholomorphic to locally convex spaces
+\cite[\S2, pp.~489--490]{Lem98}.
 
 \begin{definition}[Hermitian structures and the fundamental form]
   \label{def:hermitian}
@@ -103,3 +130,16 @@ models the question is raised as open in \cite[\S2, pp.~489--490]{Lem98}.
   If $\omega(v, \cdot) = g(Jv, \cdot) = 0$, then $Jv = 0$ by weak nondegeneracy of $g$, so
   $v = -J^2 v = 0$. Integrability is not used.
 \end{proof}
+
+\begin{example}[The flat Kähler structure]
+  \label{ex:flat-kaehler}
+  \lean{LocallyConvex.Manifolds.reInner, LocallyConvex.Manifolds.reInner_apply,
+    LocallyConvex.Manifolds.continuous_reInner, LocallyConvex.Manifolds.flatMetric,
+    LocallyConvex.Manifolds.flatHermitian, LocallyConvex.Manifolds.flatHermitian_isClosed,
+    LocallyConvex.Manifolds.flatKaehler, LocallyConvex.Manifolds.flatKaehler_form_apply}
+  \leanok
+  \uses{thm:kaehler-symplectic, thm:canonical-J}
+  A complex inner product space $E$, not necessarily complete, carries the Kähler structure
+  $J = i$, $g = \operatorname{Re}\langle \cdot, \cdot \rangle$, with fundamental form
+  $\omega(u, v) = \operatorname{Im}\langle u, v \rangle$.
+\end{example}

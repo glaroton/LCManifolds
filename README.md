@@ -420,16 +420,21 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `TrivializationCover.inf`: the common refinement `Uᵢ ∩ Vₖ` of two covers; `homCoreInf`,
     `BundleConnection.homInf`: Hom bundles and their connections for bundles trivialized over
     different covers.
-* [`LocallyConvexManifolds/Complex.lean`](LocallyConvexManifolds/Complex.lean): almost complex
-  structures, complex manifolds and Kähler structures.
-  * `AlmostComplexStructure`: `Jₓ² = −1` with smooth local representatives; `nijenhuisLoc`,
-    `localBracket_nijenhuis`: `[JX, JY] − J[JX, Y] − J[X, JY] − [X, Y] = N(X, Y)`;
-  * `canonicalJ`, `canonicalJ_isIntegrable`: multiplication by `i` on a complex analytic
-    manifold, well defined because the tangent maps are complex linear, and integrable;
+* [`LocallyConvexManifolds/Complex.lean`](LocallyConvexManifolds/Complex.lean): Nijenhuis
+  operators, almost complex structures, complex manifolds and Kähler structures.
+  * `EndomorphismField`, `nijenhuisLoc`, `localBracket_nijenhuis`,
+    `EndomorphismField.lieBracket_nijenhuis`: the Nijenhuis torsion
+    `Ω_N(X, Y) = N[NX, Y] + N[X, NY] − [NX, NY] − N²[X, Y]` is a tensor, with the local formula
+    of Goliński–Larotonda–Tumpach (Rend. Lincei Mat. Appl., Theorem 3.2);
+  * `AlmostComplexStructure`, `canonicalJ`, `canonicalJ_isIntegrable`: on a complex analytic
+    manifold, multiplication by `i` is well defined (the tangent maps are complex linear) and
+    integrable;
   * `HermitianStructure.fundamentalForm`, `KaehlerStructure.symplecticForm`: `ω(u, v) = g(J u, v)`
-    is a (weak) symplectic form for a (possibly indefinite) Kähler structure. The converse of
-    integrability (Newlander–Nirenberg) fails in infinite dimensions (Lempert 1998) and is not
-    formalized.
+    is a (weak) symplectic form for a (possibly indefinite) Kähler structure; `flatKaehler`: the
+    flat Kähler structure of a complex inner product space, `ω(u, v) = Im ⟨u, v⟩`;
+  * Newlander–Nirenberg is not formalized: it holds for real analytic structures on Banach
+    manifolds (Beltiță 2005), and fails for smooth ones on some Banach manifolds (Patyi) and on
+    some Fréchet manifolds (Lempert 1998).
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a

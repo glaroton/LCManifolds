@@ -9,18 +9,21 @@ import LocallyConvexManifolds.Metric.Bilinear
 import LocallyConvexManifolds.Symplectic
 
 /-!
-# Almost complex structures, complex manifolds and Kähler structures
+# Nijenhuis operators, almost complex structures, complex manifolds and Kähler structures
 
-* **Almost complex structures** (`AlmostComplexStructure`): a field `Jₓ` of real linear maps of
-  the tangent spaces with `Jₓ² = −1`, with smooth local representatives
-  `(y, v) ↦ J_i(y) v` (`jLocalRep`), stored, as metrics and forms, in the coordinates of the
-  preferred chart at each point.
-* **The Nijenhuis tensor** in local coordinates (`nijenhuisLoc`):
-  `N(u, v) = (∂_{Ju} J) v − (∂_{Jv} J) u − J((∂_u J) v − (∂_v J) u)`. For local vector fields
-  `[JX, JY] − J[JX, Y] − J[X, JY] − [X, Y] = N(X, Y)` (`localBracket_nijenhuis`): all the
-  derivatives of `X` and `Y` cancel. `J` is **integrable** if `N` vanishes in every chart.
-* **Complex manifolds**: on a complex analytic manifold (`ComplexAnalyticManifold`, in
-  `LocallyConvexManifolds.Analytic`) multiplication by `i` in the charts is an almost complex
+* **Fields of endomorphisms** (`EndomorphismField`): a field `Nₓ` of real linear maps of the
+  tangent spaces with smooth local representatives `(y, v) ↦ N_i(y) v` (`jLocalRep`), stored, as
+  metrics and forms, in the coordinates of the preferred chart at each point.
+* **The Nijenhuis torsion**, with the convention of Goliński–Larotonda–Tumpach [GLT, Definition
+  3.1]: `Ω_N(X, Y) = N[NX, Y] + N[X, NY] − [NX, NY] − N²[X, Y]`. In local coordinates
+  (`nijenhuisLoc`) it is
+  `Ω_N(u, v) = N((∂_u N) v − (∂_v N) u) + (∂_{Nv} N) u − (∂_{Nu} N) v`
+  (`localBracket_nijenhuis`, [GLT, Theorem 3.2]): all the derivatives of the fields cancel.
+  Globally, `EndomorphismField.lieBracket_nijenhuis`: the torsion of two vector fields at `x`
+  only depends on their values at `x`.
+* **Almost complex structures** (`AlmostComplexStructure`): `Jₓ² = −1`. `J` is **integrable**
+  if its Nijenhuis torsion vanishes. On a complex analytic manifold (`ComplexAnalyticManifold`,
+  in `LocallyConvexManifolds.Analytic`) multiplication by `i` in the charts is an almost complex
   structure (`canonicalJ`), because the derivatives of the transition maps are complex linear;
   it is integrable (`canonicalJ_isIntegrable`), since its local representatives are constant.
 * **Kähler structures** (`KaehlerStructure`): an integrable `J` and a `J`-invariant, weakly
@@ -32,13 +35,20 @@ import LocallyConvexManifolds.Symplectic
 * `g` is only required to be weakly nondegenerate (`g(v, ·) = 0 ⇒ v = 0`), and it is not
   required to be positive: pseudo-Kähler metrics are included. Accordingly, `ω` is in general
   only a *weak* symplectic form.
-* We do not formalize the converse of the integrability of complex structures. In finite
-  dimensions it is the Newlander–Nirenberg theorem: an integrable almost complex structure comes
-  from holomorphic charts. In infinite dimensions it fails: Lempert [Lem98, §2, pp. 489–490]
-  points out loop spaces, modeled on Fréchet spaces, that carry integrable almost complex
-  structures but are not locally biholomorphic to locally convex spaces, and he raises the case
-  of Banach and Hilbert models as an open question there.
+* We do not formalize the converse of the integrability of complex structures, which in finite
+  dimensions is the Newlander–Nirenberg theorem. In infinite dimensions:
+  - it holds for real analytic almost complex structures on real analytic Banach manifolds
+    (Beltiță [Bel05, Theorem 7]);
+  - it fails for smooth structures on some Banach manifolds (Patyi [Pat99, Theorem 3.1]);
+  - it fails on some Fréchet manifolds: Lempert [Lem98, §2, pp. 489–490] points out loop spaces
+    with integrable almost complex structures that are not locally biholomorphic to locally
+    convex spaces.
 
+[GLT]: T. Goliński, G. Larotonda, A. B. Tumpach, *Nijenhuis operators on Banach homogeneous
+spaces*, Rend. Lincei Mat. Appl. (online first), doi:10.4171/RLM/1057; arXiv:2410.13557.
+[Bel05]: D. Beltiță, *Integrability of analytic almost complex structures on Banach manifolds*,
+Ann. Global Anal. Geom. 28 (2005), 59–73.
+[Pat99]: I. Patyi, *On the ∂̄-equation in a Banach space*, arXiv:math/9911045.
 [Lem98]: L. Lempert, *The Dolbeault complex in infinite dimensions I*, J. Amer. Math. Soc. 11
 (1998), 485–520.
 
@@ -55,7 +65,7 @@ namespace LocallyConvex.Manifolds
 
 universe u v
 
-/-! ### The Nijenhuis tensor in local coordinates -/
+/-! ### The Nijenhuis torsion in local coordinates -/
 
 section Local
 
@@ -63,45 +73,51 @@ variable {E : Type u}
   [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
 
-/-- The derivative of a field of endomorphisms in the base point: `(∂_w J)(y) ξ`. -/
-def endD (J : E → E → E) (y w ξ : E) : E :=
-  dMB (fun z ↦ J z ξ) (y, w)
+/-- The derivative of a field of endomorphisms in the base point: `(∂_w N)(y) ξ`. -/
+def endD (N : E → E → E) (y w ξ : E) : E :=
+  dMB (fun z ↦ N z ξ) (y, w)
 
-/-- **The Nijenhuis tensor** of a field of endomorphisms in local coordinates:
-`N(y)(u, v) = (∂_{Ju} J) v − (∂_{Jv} J) u − J((∂_u J) v − (∂_v J) u)`. -/
-def nijenhuisLoc (J : E → E → E) (y u v : E) : E :=
-  endD J y (J y u) v - endD J y (J y v) u - J y (endD J y u v - endD J y v u)
+/-- **The Nijenhuis torsion** of a field of endomorphisms in local coordinates, with the
+convention of [GLT, Theorem 3.2]:
+`Ω_N(y)(u, v) = N((∂_u N) v − (∂_v N) u) + (∂_{Nv} N) u − (∂_{Nu} N) v`. -/
+def nijenhuisLoc (N : E → E → E) (y u v : E) : E :=
+  N y (endD N y u v - endD N y v u) + endD N y (N y v) u - endD N y (N y u) v
 
-/-- The field `z ↦ J(z) X(z)`. -/
-def endApply (J : E → E → E) (X : E → E) (z : E) : E :=
-  J z (X z)
+/-- The field `z ↦ N(z) X(z)`. -/
+def endApply (N : E → E → E) (X : E → E) (z : E) : E :=
+  N z (X z)
 
-/-- **The Nijenhuis tensor and brackets**: for a field `J` of endomorphisms with `J² = −1` on an
-open set `U` and `C¹` local fields `X`, `Y`,
-`[JX, JY] − J[JX, Y] − J[X, JY] − [X, Y] = N(X, Y)`. All the derivatives of `X` and `Y` cancel,
-so the left side is tensorial. -/
-theorem localBracket_nijenhuis {J : E → E → E} {U : Set E} (hU : IsOpen U)
-    (hJ : ContDiffMBOn 1 (fun p : E × E ↦ J p.1 p.2) (U ×ˢ univ))
-    (hadd : ∀ y ∈ U, ∀ ξ η, J y (ξ + η) = J y ξ + J y η)
-    (hsmul : ∀ y ∈ U, ∀ (c : ℝ) ξ, J y (c • ξ) = c • J y ξ)
-    (hsq : ∀ y ∈ U, ∀ ξ, J y (J y ξ) = -ξ) {X Y : E → E} (hX : ContDiffMBOn 1 X U)
-    (hY : ContDiffMBOn 1 Y U) {y : E} (hy : y ∈ U) :
-    localBracket (endApply J X) (endApply J Y) y - J y (localBracket (endApply J X) Y y) -
-        J y (localBracket X (endApply J Y) y) - localBracket X Y y =
-      nijenhuisLoc J y (X y) (Y y) := by
-  -- the product rule for `JX` and `JY`
+/-- **The Nijenhuis torsion and brackets** [GLT, Theorem 3.2]: for a smooth field `N` of
+endomorphisms on an open set `U` and `C¹` local fields `X`, `Y`,
+`N[NX, Y] + N[X, NY] − [NX, NY] − N²[X, Y] = Ω_N(X, Y)`. All the derivatives of `X` and `Y`
+cancel, so the left side is tensorial. -/
+theorem localBracket_nijenhuis {N : E → E → E} {U : Set E} (hU : IsOpen U)
+    (hN : ContDiffMBOn 1 (fun p : E × E ↦ N p.1 p.2) (U ×ˢ univ))
+    (hadd : ∀ y ∈ U, ∀ ξ η, N y (ξ + η) = N y ξ + N y η)
+    (hsmul : ∀ y ∈ U, ∀ (c : ℝ) ξ, N y (c • ξ) = c • N y ξ) {X Y : E → E}
+    (hX : ContDiffMBOn 1 X U) (hY : ContDiffMBOn 1 Y U) {y : E} (hy : y ∈ U) :
+    N y (localBracket (endApply N X) Y y) + N y (localBracket X (endApply N Y) y) -
+        localBracket (endApply N X) (endApply N Y) y - N y (N y (localBracket X Y y)) =
+      nijenhuisLoc N y (X y) (Y y) := by
+  -- the product rule for `NX` and `NY`
   have hd : ∀ {A : E → E}, ContDiffMBOn 1 A U → ∀ w,
-      dMB (endApply J A) (y, w) = endD J y w (A y) + J y (dMB A (y, w)) := fun hA w ↦
-    dMB_fiber_comp hU hU subset_rfl hJ hadd hsmul hA hy w
-  set L : E →ₗ[ℝ] E := ⟨⟨J y, hadd y hy⟩, hsmul y hy⟩
-  have hL : ∀ ξ, J y ξ = L ξ := fun _ ↦ rfl
-  have hLL : ∀ ξ, L (L ξ) = -ξ := hsq y hy
-  simp only [localBracket, hd hX, hd hY, endApply, nijenhuisLoc, hL, map_sub, map_add, hLL]
+      dMB (endApply N A) (y, w) = endD N y w (A y) + N y (dMB A (y, w)) := fun hA w ↦
+    dMB_fiber_comp hU hU subset_rfl hN hadd hsmul hA hy w
+  set L : E →ₗ[ℝ] E := ⟨⟨N y, hadd y hy⟩, hsmul y hy⟩
+  have hL : ∀ ξ, N y ξ = L ξ := fun _ ↦ rfl
+  simp only [localBracket, hd hX, hd hY, endApply, nijenhuisLoc, hL, map_sub, map_add]
   abel
+
+omit [LocallyConvexSpace ℝ E] [T2Space E] in
+/-- Local brackets only depend on the germs of the fields. -/
+theorem localBracket_congr {A A' B B' : E → E} {y : E} (hA : A =ᶠ[𝓝 y] A')
+    (hB : B =ᶠ[𝓝 y] B') : localBracket A B y = localBracket A' B' y := by
+  rw [localBracket, localBracket, dMB_congr_of_eventuallyEq hB, dMB_congr_of_eventuallyEq hA,
+    hA.eq_of_nhds, hB.eq_of_nhds]
 
 end Local
 
-/-! ### Almost complex structures -/
+/-! ### Fields of endomorphisms and almost complex structures -/
 
 section Almost
 
@@ -110,69 +126,166 @@ variable {E : Type u}
   [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
   {M : Type v} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
 
-/-- The local representative of a field `J` of endomorphisms of the tangent spaces in the chart
-`i`: `(y, v) ↦ J_i(y) v`, with `x = i⁻¹ y` and `v` read in the chart `i`. -/
-def jLocalRep (J : M → E → E) (i : atlas E M) (p : E × E) : E :=
+/-- The local representative of a field `N` of endomorphisms of the tangent spaces in the chart
+`i`: `(y, v) ↦ N_i(y) v`, with `x = i⁻¹ y` and `v` read in the chart `i`. -/
+def jLocalRep (N : M → E → E) (i : atlas E M) (p : E × E) : E :=
   tangentCoordChange (prefChart (i.1.symm p.1)) i (i.1.symm p.1)
-    (J (i.1.symm p.1) (tangentCoordChange i (prefChart (i.1.symm p.1)) (i.1.symm p.1) p.2))
+    (N (i.1.symm p.1) (tangentCoordChange i (prefChart (i.1.symm p.1)) (i.1.symm p.1) p.2))
 
 variable (E M) in
-/-- An **almost complex structure**: a field of real linear maps `Jₓ` of the tangent spaces
-with `Jₓ² = −1`, whose local representatives are smooth. -/
-structure AlmostComplexStructure where
-  /-- The map `Jₓ` on `T_x M`, in the coordinates of the preferred chart at `x`. -/
+/-- A **smooth field of endomorphisms** of the tangent bundle: real linear maps `Nₓ` of the
+tangent spaces whose local representatives are smooth. -/
+structure EndomorphismField where
+  /-- The map `Nₓ` on `T_x M`, in the coordinates of the preferred chart at `x`. -/
   toFun : M → E →ₗ[ℝ] E
-  sq' : ∀ x v, toFun x (toFun x v) = -v
   smooth' : ∀ i : atlas E M, SmoothMBOn (jLocalRep (fun x ↦ toFun x) i) (i.1.target ×ˢ univ)
 
-namespace AlmostComplexStructure
+namespace EndomorphismField
 
-variable (J : AlmostComplexStructure E M)
+variable (N : EndomorphismField E M)
 
-/-- The local representative `J_i : (y, v) ↦ J_i(y) v` in the chart `i`. -/
+/-- The local representative `N_i : (y, v) ↦ N_i(y) v` in the chart `i`. -/
 def loc (i : atlas E M) (y v : E) : E :=
-  jLocalRep (fun x ↦ J.toFun x) i (y, v)
+  jLocalRep (fun x ↦ N.toFun x) i (y, v)
 
 theorem loc_eq (i : atlas E M) {y : E} (hy : y ∈ i.1.target) :
-    ∃ T S : E →ₗ[ℝ] E, (∀ v, J.loc i y v = S (J.toFun (i.1.symm y) (T v))) ∧
+    ∃ T S : E →ₗ[ℝ] E, (∀ v, N.loc i y v = S (N.toFun (i.1.symm y) (T v))) ∧
       (∀ v, T (S v) = v) ∧ (∀ v, S (T v) = v) ∧
-      ∀ v, tangentCoordChange i (prefChart (i.1.symm y)) (i.1.symm y) v = T v := by
+      (∀ v, tangentCoordChange i (prefChart (i.1.symm y)) (i.1.symm y) v = T v) ∧
+      ∀ v, tangentCoordChange (prefChart (i.1.symm y)) i (i.1.symm y) v = S v := by
   set x := i.1.symm y
   have hx : x ∈ i.1.source := i.1.map_target hy
   have hxp : x ∈ (prefChart (E := E) x).1.source := mem_chart_source E x
   obtain ⟨T, hT⟩ := exists_linear_tangentCoordChange i (prefChart x) ⟨hx, hxp⟩
   obtain ⟨S, hS⟩ := exists_linear_tangentCoordChange (prefChart x) i ⟨hxp, hx⟩
-  refine ⟨T, S, fun v ↦ by simp only [loc, jLocalRep, hT, hS, x], fun v ↦ ?_, fun v ↦ ?_, hT⟩
+  refine ⟨T, S, fun v ↦ by simp only [loc, jLocalRep, hT, hS, x], fun v ↦ ?_, fun v ↦ ?_, hT,
+    hS⟩
   · rw [← hS, ← hT, tangentCoordChange_comp _ _ _ ⟨⟨hxp, hx⟩, hxp⟩,
       tangentCoordChange_self _ hxp]
   · rw [← hS, ← hT, tangentCoordChange_comp _ _ _ ⟨⟨hx, hxp⟩, hx⟩,
       tangentCoordChange_self _ hx]
 
 theorem loc_add (i : atlas E M) {y : E} (hy : y ∈ i.1.target) (ξ η : E) :
-    J.loc i y (ξ + η) = J.loc i y ξ + J.loc i y η := by
-  obtain ⟨T, S, h, -, -, -⟩ := J.loc_eq i hy
+    N.loc i y (ξ + η) = N.loc i y ξ + N.loc i y η := by
+  obtain ⟨T, S, h, -, -, -, -⟩ := N.loc_eq i hy
   simp only [h, map_add]
 
 theorem loc_smul (i : atlas E M) {y : E} (hy : y ∈ i.1.target) (c : ℝ) (ξ : E) :
-    J.loc i y (c • ξ) = c • J.loc i y ξ := by
-  obtain ⟨T, S, h, -, -, -⟩ := J.loc_eq i hy
+    N.loc i y (c • ξ) = c • N.loc i y ξ := by
+  obtain ⟨T, S, h, -, -, -, -⟩ := N.loc_eq i hy
   simp only [h, map_smul]
 
-theorem loc_sq (i : atlas E M) {y : E} (hy : y ∈ i.1.target) (ξ : E) :
-    J.loc i y (J.loc i y ξ) = -ξ := by
-  obtain ⟨T, S, h, hTS, hST, -⟩ := J.loc_eq i hy
-  rw [h, h, hTS, J.sq', map_neg, hST]
+omit [LocallyConvexSpace ℝ E] [MBManifold E M] in
+/-- In the preferred chart at `x`, the local representative at `x` is `Nₓ` itself. -/
+theorem loc_pref (x : M) (v : E) : N.loc (prefChart x) (chartAt E x x) v = N.toFun x v := by
+  have hx : (chartAt E x).symm (chartAt E x x) = x := (chartAt E x).left_inv (mem_chart_source E x)
+  simp only [loc, jLocalRep, hx]
+  rw [tangentCoordChange_self _ (mem_chart_source E x),
+    tangentCoordChange_self _ (mem_chart_source E x)]
 
 omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
   [MBManifold E M] in
 /-- The local representatives are smooth. -/
 theorem smoothMBOn_loc (i : atlas E M) :
-    SmoothMBOn (fun p : E × E ↦ J.loc i p.1 p.2) (i.1.target ×ˢ univ) :=
-  J.smooth' i
+    SmoothMBOn (fun p : E × E ↦ N.loc i p.1 p.2) (i.1.target ×ˢ univ) :=
+  N.smooth' i
 
-/-- `J` is **integrable** if its Nijenhuis tensor vanishes in every chart. -/
+/-- The Nijenhuis torsion `Ω_N` at `x`, on vectors of `T_x M`, computed in the preferred chart. -/
+def nijenhuisAt (x : M) (u v : E) : E :=
+  nijenhuisLoc (N.loc (prefChart x)) (chartAt E x x) u v
+
+/-- The field `x ↦ Nₓ X(x)`. -/
+def applyField (X : M → TangentBundle E M) (x : M) : TangentBundle E M :=
+  ⟨x, N.toFun x (X x).2⟩
+
+theorem isVectorField_applyField (X : M → TangentBundle E M) : IsVectorField (N.applyField X) :=
+  fun _ ↦ rfl
+
+/-- The local representative of `NX` is `N_i X_i`. -/
+theorem localRep_applyField {X : M → TangentBundle E M} (hXv : IsVectorField X) (i : atlas E M)
+    {y : E} (hy : y ∈ i.1.target) :
+    localRep i (N.applyField X) y = N.loc i y (localRep i X y) := by
+  obtain ⟨T, S, h, hTS, -, -, hS⟩ := N.loc_eq i hy
+  have e1 : localRep i X y =
+      tangentCoordChange (prefChart (i.1.symm y)) i (i.1.symm y) (X (i.1.symm y)).2 := by
+    unfold localRep
+    rw [tangentChart_apply]
+    have hp : (X (i.1.symm y)).proj = i.1.symm y := hXv _
+    generalize X (i.1.symm y) = p at hp ⊢
+    obtain ⟨xp, w⟩ := p
+    change xp = i.1.symm y at hp
+    subst hp
+    rfl
+  have e2 : localRep i (N.applyField X) y =
+      tangentCoordChange (prefChart (i.1.symm y)) i (i.1.symm y)
+        (N.toFun (i.1.symm y) (X (i.1.symm y)).2) :=
+    rfl
+  have e1' : localRep i X y = S (X (i.1.symm y)).2 := e1.trans (hS _)
+  rw [e2, e1', h, hTS (X (i.1.symm y)).2]
+  exact hS _
+
+/-- **The Nijenhuis torsion is a tensor** [GLT, Theorem 3.2]: for `C¹` vector fields,
+`N[NX, Y] + N[X, NY] − [NX, NY] − N²[X, Y]` at `x` is `Ω_N(X(x), Y(x))`. -/
+theorem lieBracket_nijenhuis {X Y : M → TangentBundle E M} (hXv : IsVectorField X)
+    (hYv : IsVectorField Y) (hX : ContMDiffMB E (E × E) 1 X) (hY : ContMDiffMB E (E × E) 1 Y)
+    (x : M) :
+    N.toFun x (show E from (lieBracket (N.applyField X) Y x).2) +
+        N.toFun x (show E from (lieBracket X (N.applyField Y) x).2) -
+        (show E from (lieBracket (N.applyField X) (N.applyField Y) x).2) -
+        N.toFun x (N.toFun x (show E from (lieBracket X Y x).2)) =
+      N.nijenhuisAt x (X x).2 (Y x).2 := by
+  have hy0 : chartAt E x x ∈ (prefChart (E := E) x).1.target :=
+    (chartAt E x).map_source (mem_chart_source E x)
+  have hev : ∀ {A : M → TangentBundle E M}, IsVectorField A →
+      localRep (prefChart x) (N.applyField A) =ᶠ[𝓝 (chartAt E x x)]
+        endApply (N.loc (prefChart x)) (localRep (prefChart x) A) := fun hAv ↦
+    eventuallyEq_of_mem ((prefChart (E := E) x).1.open_target.mem_nhds hy0) fun z hz ↦
+      N.localRep_applyField hAv _ hz
+  have hbr : ∀ A B : M → TangentBundle E M, (show E from (lieBracket A B x).2) =
+      localBracket (localRep (prefChart x) A) (localRep (prefChart x) B) (chartAt E x x) :=
+    fun _ _ ↦ rfl
+  simp only [hbr, ← N.loc_pref x]
+  rw [localBracket_congr (hev hXv) EventuallyEq.rfl, localBracket_congr EventuallyEq.rfl (hev hYv),
+    localBracket_congr (hev hXv) (hev hYv)]
+  have h := localBracket_nijenhuis (prefChart (E := E) x).1.open_target (N.smoothMBOn_loc _ 1)
+    (fun _ hz ↦ N.loc_add _ hz) (fun _ hz ↦ N.loc_smul _ hz) (contDiffMBOn_localRep hXv hX _)
+    (contDiffMBOn_localRep hYv hY _) hy0
+  rw [localRep_chartAt hXv x, localRep_chartAt hYv x] at h
+  exact h
+
+end EndomorphismField
+
+variable (E M) in
+/-- An **almost complex structure**: a smooth field of endomorphisms with `Jₓ² = −1`. -/
+structure AlmostComplexStructure extends EndomorphismField E M where
+  sq' : ∀ x v, toFun x (toFun x v) = -v
+
+namespace AlmostComplexStructure
+
+variable (J : AlmostComplexStructure E M)
+
+theorem loc_sq (i : atlas E M) {y : E} (hy : y ∈ i.1.target) (ξ : E) :
+    J.loc i y (J.loc i y ξ) = -ξ := by
+  obtain ⟨T, S, h, hTS, hST, -, -⟩ := J.loc_eq i hy
+  rw [h, h, hTS, J.sq', map_neg, hST]
+
+/-- `J` is **integrable** if its Nijenhuis torsion vanishes in every chart. -/
 def IsIntegrable : Prop :=
   ∀ (i : atlas E M), ∀ y ∈ i.1.target, ∀ u v, nijenhuisLoc (J.loc i) y u v = 0
+
+/-- For an integrable almost complex structure,
+`J[JX, Y] + J[X, JY] − [JX, JY] + [X, Y] = 0` for all `C¹` vector fields. -/
+theorem IsIntegrable.lieBracket {J : AlmostComplexStructure E M} (hJ : J.IsIntegrable)
+    {X Y : M → TangentBundle E M} (hXv : IsVectorField X) (hYv : IsVectorField Y)
+    (hX : ContMDiffMB E (E × E) 1 X) (hY : ContMDiffMB E (E × E) 1 Y) (x : M) :
+    J.toFun x (show E from (lieBracket (J.applyField X) Y x).2) +
+        J.toFun x (show E from (lieBracket X (J.applyField Y) x).2) -
+        (show E from (lieBracket (J.applyField X) (J.applyField Y) x).2) +
+        (show E from (lieBracket X Y x).2) = 0 := by
+  have h := J.lieBracket_nijenhuis hXv hYv hX hY x
+  rw [J.sq', sub_neg_eq_add] at h
+  rw [h]
+  exact hJ _ _ ((chartAt E x).map_source (mem_chart_source E x)) _ _
 
 end AlmostComplexStructure
 
@@ -260,7 +373,7 @@ theorem canonicalJ_isIntegrable : (canonicalJ E M).IsIntegrable := by
     have hc0 : HasDirDerivAt (fun _ : E ↦ mulI E ξ) y w 0 :=
       tendsto_nhds_of_eventually_eq (Eventually.of_forall fun t ↦ by simp)
     rw [endD, dMB_congr_of_eventuallyEq hev, hc0.dMB_eq]
-  simp only [nijenhuisLoc, hD, sub_self, canonicalJ_loc i hy, map_zero]
+  simp only [nijenhuisLoc, hD, sub_self, canonicalJ_loc i hy, map_zero, add_zero]
 
 end ComplexManifold
 
@@ -341,7 +454,7 @@ def fundamentalForm : DifferentialForm E M ℝ 2 where
       (i.1.open_target.prod isOpen_univ) (h.g.smooth' i k)
       (hfst.prodMk hUU (hJ.prodMk hUU (hv 1))) fun p hp ↦ ⟨hp.1, mem_univ _⟩
     refine ContDiffMBOn.congr_of_isOpen hUU (fun p hp ↦ ?_) hg
-    obtain ⟨T, S, hloc, hTS, -, hT⟩ := h.J.loc_eq i hp.1
+    obtain ⟨T, S, hloc, hTS, -, hT, -⟩ := h.J.loc_eq i hp.1
     change h.g.toFun (i.1.symm p.1)
         (tangentCoordChange i (prefChart (i.1.symm p.1)) (i.1.symm p.1) (h.J.loc i p.1 (p.2 0)))
         (tangentCoordChange i (prefChart (i.1.symm p.1)) (i.1.symm p.1) (p.2 1)) =
@@ -376,5 +489,94 @@ def KaehlerStructure.symplecticForm (K : KaehlerStructure E M) : SymplecticForm 
     rw [← neg_neg v, ← K.J.sq' x v, hJv, map_zero, neg_zero]
 
 end Kaehler
+
+/-! ### Example: the flat Kähler structure of a complex inner product space -/
+
+section Flat
+
+variable {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+
+variable (E) in
+/-- The real part of the inner product, `g(v, w) = Re ⟨v, w⟩`, as a real bilinear form. -/
+def reInner : LinearMap.BilinForm ℝ E :=
+  LinearMap.mk₂ ℝ (fun v w ↦ (inner ℂ v w).re)
+    (fun v v' w ↦ by simp) (fun c v w ↦ by simp) (fun v w w' ↦ by simp)
+    (fun c v w ↦ by simp)
+
+theorem reInner_apply (v w : E) : reInner E v w = (inner ℂ v w).re :=
+  rfl
+
+theorem continuous_reInner : Continuous fun p : E × E ↦ reInner E p.1 p.2 :=
+  Complex.continuous_re.comp (continuous_fst.inner continuous_snd)
+
+variable (E) in
+/-- The flat metric `Re ⟨·, ·⟩` on the model space. -/
+def flatMetric : SymmBilinField E E where
+  toFun _ := reInner E
+  symm' _ v w := by
+    simp only [reInner_apply]
+    rw [← inner_conj_symm, Complex.conj_re]
+  smooth' i k := by
+    have hU : IsOpen (i.1.target ×ˢ (univ : Set (E × E))) := i.1.open_target.prod isOpen_univ
+    refine ContDiffMBOn.congr_of_isOpen hU (fun q _ ↦ ?_)
+      (ContDiffMBOn.bilin (reInner E) continuous_reInner hU
+        (((ContinuousLinearMap.fst ℝ E E).comp (ContinuousLinearMap.snd ℝ E (E × E))).contDiffMBOn
+          k _)
+        (((ContinuousLinearMap.snd ℝ E E).comp (ContinuousLinearMap.snd ℝ E (E × E))).contDiffMBOn
+          k _))
+    have hi : i.1.symm q.1 ∈ i.1.source := by rw [atlas_self i]; trivial
+    simp only [bilinLocalRep, prefAtlas]
+    change reInner E q.2.1 q.2.2 = reInner E
+      (tangentCoordChange i (prefChart (E := E) (i.1.symm q.1)) (i.1.symm q.1) q.2.1)
+      (tangentCoordChange i (prefChart (E := E) (i.1.symm q.1)) (i.1.symm q.1) q.2.2)
+    rw [prefChart_self i, tangentCoordChange_self i hi, tangentCoordChange_self i hi]
+
+variable (E) in
+/-- The flat Hermitian structure `(J, g) = (i, Re ⟨·, ·⟩)` on the model space. -/
+def flatHermitian : HermitianStructure E E where
+  J := canonicalJ E E
+  g := flatMetric E
+  compat _ v w := by
+    change (inner ℂ ((Complex.I : ℂ) • v) ((Complex.I : ℂ) • w)).re = (inner ℂ v w).re
+    rw [inner_smul_left, inner_smul_right, ← mul_assoc, Complex.conj_I, neg_mul, Complex.I_mul_I,
+      neg_neg, one_mul]
+
+/-- The fundamental form of the flat Hermitian structure is closed: its local representative
+does not depend on the base point. -/
+theorem flatHermitian_isClosed : (flatHermitian E).fundamentalForm.IsClosed := by
+  intro x w
+  have hloc : ∀ (z : E) (u : Fin 2 → E), (flatHermitian E).fundamentalForm.localRep
+      (prefChart x) (z, u) = (inner ℂ ((Complex.I : ℂ) • u 0) (u 1)).re := fun z u ↦ by
+    rw [DifferentialForm.localRep, formLocalRep_self]
+    rfl
+  change dLoc ((flatHermitian E).fundamentalForm.localRep (prefChart x)) (chartAt E x x, w) = 0
+  refine Finset.sum_eq_zero fun k _ ↦ ?_
+  have hc0 : HasDirDerivAt
+      (fun z : E ↦ (flatHermitian E).fundamentalForm.localRep (prefChart x) (z, k.removeNth w))
+      (chartAt E x x) (w k) 0 :=
+    tendsto_nhds_of_eventually_eq (Eventually.of_forall fun t ↦ by simp [hloc])
+  rw [hc0.dMB_eq, smul_zero]
+
+variable (E) in
+/-- **The flat Kähler structure** of a complex inner product space: `J = i`,
+`g = Re ⟨·, ·⟩`, and fundamental form `ω(u, v) = Im ⟨u, v⟩` (`flatKaehler_form_apply`). No
+completeness is needed. -/
+def flatKaehler : KaehlerStructure E E where
+  toHermitianStructure := flatHermitian E
+  integrable := canonicalJ_isIntegrable
+  nondegenerate _ v hv := by
+    have h := hv v
+    change (inner ℂ v v).re = 0 at h
+    have h' : ‖v‖ ^ 2 = 0 := by rw [← inner_self_eq_norm_sq (𝕜 := ℂ)]; exact h
+    rwa [sq_eq_zero_iff, norm_eq_zero] at h'
+  closed := flatHermitian_isClosed
+
+/-- The fundamental form of the flat Kähler structure is `ω(u, v) = Im ⟨u, v⟩`. -/
+theorem flatKaehler_form_apply (x u v : E) :
+    (flatKaehler E).symplecticForm.form x ![u, v] = (inner ℂ u v).im := by
+  change (inner ℂ ((Complex.I : ℂ) • u) v).re = (inner ℂ u v).im
+  rw [inner_smul_left, Complex.conj_I, neg_mul, Complex.neg_re, Complex.I_mul_re, neg_neg]
+
+end Flat
 
 end LocallyConvex.Manifolds
