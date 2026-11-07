@@ -21,6 +21,7 @@ import LocallyConvexManifolds.AnalyticForm
 import LocallyConvexManifolds.Symplectic
 import LocallyConvexManifolds.ConnectionForm
 import LocallyConvexManifolds.VectorBundle
+import LocallyConvexManifolds.HomBundle
 import LocallyConvexManifolds.BundleConnection
 import LocallyConvexManifolds.BundleSection
 import LocallyConvexManifolds.BundleMetric

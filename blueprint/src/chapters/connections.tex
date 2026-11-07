@@ -386,6 +386,36 @@ condition only up to this difference of topologies on $L(F)$.
   the smooth maps $(y, \xi) \mapsto g(y)\xi$.
 \end{proof}
 
+\begin{theorem}[Hom bundles, dual bundles and the cotangent bundle]
+  \label{thm:hom-bundle}
+  \lean{LocallyConvex.Manifolds.MBVectorBundleCore.continuous_coordChange,
+    LocallyConvex.Manifolds.MBVectorBundleCore.coordCLM,
+    LocallyConvex.Manifolds.MBVectorBundleCore.coordCLM_apply,
+    LocallyConvex.Manifolds.MBVectorBundleCore.smoothMBOn_coordCLM,
+    LocallyConvex.Manifolds.MBVectorBundleCore.smoothMBOn_coordCLM_symm,
+    LocallyConvex.Manifolds.homCore, LocallyConvex.Manifolds.homCore_coordChange_apply,
+    LocallyConvex.Manifolds.trivialCore, LocallyConvex.Manifolds.dualCore,
+    LocallyConvex.Manifolds.cotangentCore}
+  \leanok
+  \uses{def:vector-bundle, thm:vector-bundle-manifold}
+  Let $V_1$, $V_2$ be vector bundles over $M$ with normed fibers $F_1$, $F_2$. There is a vector
+  bundle $\mathrm{Hom}(V_1, V_2)$ with fiber $\Lin(F_1, F_2)$ (operator norm) and coordinate
+  changes $A \mapsto g_2(x) \circ A \circ g_1(x)^{-1}$. In particular there is a dual bundle
+  $V' = \mathrm{Hom}(V, \R)$, and if $E$ is normed, a cotangent bundle $T^*M = (TM)'$, with
+  no completeness or reflexivity assumption.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The cocycle conditions are those of $V_1$ and $V_2$. For smoothness, the maps
+  $y \mapsto g_{ij}(y)$ are smooth for the operator norm, because $(y, \xi) \mapsto g_{ij}(y)\xi$
+  is smooth (\cite{LCA}, theorem on operator-valued maps, \texttt{contDiffMBOn\_of\_unc\_clm}),
+  and composition of operators is continuous and bilinear.
+\end{proof}
+
+If a fiber is not normable, $L(F_1, F_2)$ carries no vector topology for which the evaluation is
+continuous, and these constructions are not available.
+
 \begin{definition}[Connections on vector bundles]
   \label{def:bundle-connection}
   \lean{LocallyConvex.Manifolds.BundleConnection,

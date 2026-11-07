@@ -375,6 +375,10 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   jointly smooth (`y ↦ g(y) ∈ GL(F)` is not available when `F` is not normable).
   * `MBVectorBundleCore`, `MBVectorBundleCore.mbManifold`: the total space is a manifold modeled
     on `E × F`; `tangentMBCore`: the tangent bundle is a vector bundle.
+* [`LocallyConvexManifolds/HomBundle.lean`](LocallyConvexManifolds/HomBundle.lean): `Hom(V₁, V₂)`,
+  dual bundles and, for normed models, the cotangent bundle (`homCore`, `dualCore`,
+  `cotangentCore`); fibers must be normed (Maissen), and smoothness of the coordinate changes for
+  the operator norm comes from lc-analysis (`contDiffMBOn_of_unc_clm`).
 * [`LocallyConvexManifolds/BundleConnection.lean`](LocallyConvexManifolds/BundleConnection.lean):
   connections on vector bundles.
   * `BundleConnection`: symbols with the gauge transformation law; `localCovDerivB_transition`,
