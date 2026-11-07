@@ -49,7 +49,9 @@ is an isomorphism: this is stated by H. Cartan, *Variétés analytiques réelles
 analytiques complexes*, Bull. Soc. Math. France 85 (1957), §7, consequence (4), p. 89, as a
 consequence of his Theorem 3 (Theorem B for coherent analytic sheaves on analytic subsets of
 `ℝ^n`); Cartan omits the proof and refers to his earlier seminar and colloquium notes. Every
-second countable real analytic manifold is of this kind by Grauert's embedding theorem (1958).
+second countable real analytic manifold is of this kind: it admits a real analytic, regular and
+proper embedding into some `ℝ^k` (H. Grauert, *On Levi's problem and the imbedding of
+real-analytic manifolds*, Ann. of Math. 68 (1958), Theorem 3, p. 470).
 The proof (complexifications, sheaf cohomology on Stein manifolds) has no counterpart for general
 locally convex models.
 
