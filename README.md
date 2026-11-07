@@ -381,6 +381,14 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
     `IsLocalSymbol.localCovDerivB_curv`: covariant derivative of sections and curvature formula;
   * `curvature_gauge`, `BundleConnection.curvLoc_transition`: the curvature is a tensor (no bump
     functions needed); `Connection.toBundleConnection`, `Connection.localCurv_transition`.
+* [`LocallyConvexManifolds/BundleSection.lean`](LocallyConvexManifolds/BundleSection.lean):
+  sections of vector bundles and the global covariant derivative.
+  * `BundleConnection.covDeriv`, `localRep_covDeriv`: `∇_X s`, the same local formula in every
+    trivialization; `BundleConnection.curvature_eq`: `R(X, Y) s` is the curvature form.
+* [`LocallyConvexManifolds/BundleMetric.lean`](LocallyConvexManifolds/BundleMetric.lean): bundle
+  metrics (no positivity required) and metric connections.
+  * `localCompat_sections`: `X h(s, t) = h(∇_X s, t) + h(s, ∇_X t)`;
+  * `IsMetric.curvature_skew`: the curvature of a metric connection is skew-adjoint.
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a

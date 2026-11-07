@@ -449,6 +449,84 @@ condition only up to this difference of topologies on $L(F)$.
   bump functions, which need not exist on locally convex manifolds.
 \end{proof}
 
+\begin{definition}[Sections and the covariant derivative]
+  \label{def:bundle-sections}
+  \lean{LocallyConvex.Manifolds.MBVectorBundleCore.IsSection,
+    LocallyConvex.Manifolds.MBVectorBundleCore.localRep,
+    LocallyConvex.Manifolds.MBVectorBundleCore.bundleChart_mem_atlas,
+    LocallyConvex.Manifolds.MBVectorBundleCore.localRep_transition,
+    LocallyConvex.Manifolds.MBVectorBundleCore.localRep_chartAt,
+    LocallyConvex.Manifolds.MBVectorBundleCore.contDiffMBOn_localRep,
+    LocallyConvex.Manifolds.BundleConnection.covDeriv,
+    LocallyConvex.Manifolds.BundleConnection.isSection_covDeriv,
+    LocallyConvex.Manifolds.BundleConnection.covDeriv_snd,
+    LocallyConvex.Manifolds.localCovDerivB_congr_right}
+  \leanok
+  \uses{def:bundle-connection, def:vector-field}
+  A section $s$ of a vector bundle has local representatives $s_i$ with
+  $s_j(\tau y) = g(y) s_i(y)$; those of a $C^k$ section are $C^k$. For a connection, the
+  covariant derivative $\nabla_X s$ of a section along a vector field is defined in the
+  preferred chart at each point by $\dd s_i \cdot X_i - \Gamma_i(X_i, s_i)$.
+\end{definition}
+
+\begin{theorem}[The global covariant derivative and curvature]
+  \label{thm:bundle-cov-deriv-global}
+  \lean{LocallyConvex.Manifolds.BundleConnection.localRep_covDeriv,
+    LocallyConvex.Manifolds.BundleConnection.curvature,
+    LocallyConvex.Manifolds.BundleConnection.curvature_eq}
+  \leanok
+  \uses{def:bundle-sections, lem:bundle-cov-deriv}
+  For a $C^1$ section, $\nabla_X s$ is given by $\dd s_j \cdot X_j - \Gamma_j(X_j, s_j)$ in
+  every trivialization. For $C^2$ fields and sections, the curvature
+  $R(X, Y)s = \nabla_X\nabla_Y s - \nabla_Y\nabla_X s - \nabla_{[X, Y]} s$ at $x$ is the
+  curvature form of the preferred chart evaluated at the values of $X$, $Y$, $s$ at $x$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The first statement is Lemma~\ref{lem:bundle-cov-deriv} between the preferred chart and the
+  chart $j$; the second is the local curvature formula, as for Theorem~\ref{thm:conn-curvature-tensorial}.
+\end{proof}
+
+\begin{definition}[Bundle metrics and metric connections]
+  \label{def:bundle-metric}
+  \lean{LocallyConvex.Manifolds.IsLocalBundleMetric, LocallyConvex.Manifolds.metricD,
+    LocallyConvex.Manifolds.IsLocalCompatible, LocallyConvex.Manifolds.BundleMetric,
+    LocallyConvex.Manifolds.BundleMetric.IsPositive,
+    LocallyConvex.Manifolds.BundleConnection.IsMetric}
+  \leanok
+  \uses{def:bundle-connection}
+  A \emph{bundle metric} is a smooth family $h_i(y)$ of symmetric bilinear forms on $F$ in each
+  trivialization, with $h_j(\tau y)(g\xi, g\eta) = h_i(y)(\xi, \eta)$; positivity is not
+  required. A connection is \emph{metric} if
+  $\partial_a h(\xi, \eta) = -h(\Gamma(a, \xi), \eta) - h(\xi, \Gamma(a, \eta))$ in every
+  trivialization.
+\end{definition}
+
+For a weak metric a metric connection need not exist; the statements below assume one.
+
+\begin{theorem}[Metric connections]
+  \label{thm:metric-connections}
+  \lean{LocallyConvex.Manifolds.IsLocalBundleMetric.dMB_apply,
+    LocallyConvex.Manifolds.IsLocalBundleMetric.localCompat_sections,
+    LocallyConvex.Manifolds.IsLocalBundleMetric.bundleCurv_skew,
+    LocallyConvex.Manifolds.BundleConnection.IsMetric.curvLoc_skew,
+    LocallyConvex.Manifolds.BundleConnection.IsMetric.curvature_skew}
+  \leanok
+  \uses{def:bundle-metric, thm:bundle-cov-deriv-global}
+  For a metric connection, $X h(s, t) = h(\nabla_X s, t) + h(s, \nabla_X t)$ for $C^1$
+  sections, and the curvature is skew-adjoint:
+  $h(R(X, Y)s, t) + h(s, R(X, Y)t) = 0$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The first statement is the product rule for $h$. For the second, differentiate the
+  compatibility condition in a second direction; the symmetry of the second derivatives of
+  $y \mapsto h(y)(\xi, \eta)$ gives the identity, after the terms
+  $h(\Gamma(a, \xi), \Gamma(b, \eta)) + h(\Gamma(b, \xi), \Gamma(a, \eta))$ cancel by symmetry.
+\end{proof}
+
 \section{Sprays}
 
 A spray, or second order vector field, is a vector field $\xi$ on $TM$ such that
