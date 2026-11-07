@@ -44,9 +44,13 @@ real analyticity:
 The analytic de Rham cohomology is defined with real analytic primitives: a real analytic form is
 *analytically exact* if it is `dη` for a real analytic `η`. Whether a closed real analytic form
 which is exact (as a smooth form) has a real analytic primitive, i.e. whether `toDeRham` is
-injective, is a question we do not address. For paracompact finite-dimensional `M` the map is an
-isomorphism, a consequence of H. Cartan's Theorem B for real analytic manifolds (1957), whose
-proof (complexifications, sheaf cohomology on Stein manifolds) has no counterpart for general
+injective, is a question we do not address. For a real analytic submanifold `V` of `ℝ^n` the map
+is an isomorphism: this is stated by H. Cartan, *Variétés analytiques réelles et variétés
+analytiques complexes*, Bull. Soc. Math. France 85 (1957), §7, consequence (4), p. 89, as a
+consequence of his Theorem 3 (Theorem B for coherent analytic sheaves on analytic subsets of
+`ℝ^n`); Cartan omits the proof and refers to his earlier seminar and colloquium notes. Every
+second countable real analytic manifold is of this kind by Grauert's embedding theorem (1958).
+The proof (complexifications, sheaf cohomology on Stein manifolds) has no counterpart for general
 locally convex models.
 
 No completeness of `E` or `F` is assumed.
