@@ -410,7 +410,16 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
     `Γᵢ(F y)(dF(y) a, ξ)` for the local representative `F` of `f`;
   * `BundleConnection.hom`: the connection on `Hom(V₁, V₂)` (normed fibers), with symbols
     `Γ₂(a, A ·) − A Γ₁(a, ·)`; smooth for the operator norm by `contDiffMBOn_of_unc_clm`, and its
-    gauge law uses `∂(g⁻¹) = −g⁻¹ (∂g) g⁻¹` (`hom_transition`).
+    gauge law uses `∂(g⁻¹) = −g⁻¹ (∂g) g⁻¹` (`hom_transition`);
+  * `BundleConnection.trivial`, `BundleConnection.dual`: the trivial connection on `M × F` and the
+    dual connection on `V'`, `Γ'(a, α) ξ = −α(Γ(a, ξ))` (`dual_Γ_apply`).
+* [`LocallyConvexManifolds/BundleRefinement.lean`](LocallyConvexManifolds/BundleRefinement.lean):
+  refinements of trivializing covers.
+  * `TrivializationCover.Refines`, `MBVectorBundleCore.refine`, `BundleConnection.refine`: a
+    bundle and a connection written in the trivializations of a refinement;
+  * `TrivializationCover.inf`: the common refinement `Uᵢ ∩ Vₖ` of two covers; `homCoreInf`,
+    `BundleConnection.homInf`: Hom bundles and their connections for bundles trivialized over
+    different covers.
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a

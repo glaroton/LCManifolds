@@ -26,6 +26,7 @@ import LocallyConvexManifolds.BundleConnection
 import LocallyConvexManifolds.BundleSection
 import LocallyConvexManifolds.BundleMetric
 import LocallyConvexManifolds.BundleInduced
+import LocallyConvexManifolds.BundleRefinement
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold
 import LocallyConvexManifolds.Connection

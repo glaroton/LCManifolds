@@ -502,4 +502,49 @@ end BundleConnection
 
 end Hom
 
+/-! ### The trivial connection and the dual connection -/
+
+section Trivial
+
+variable (𝒰) in
+/-- The **trivial connection** `∇_a ξ = dξ(a)` on the trivial bundle `M × F`: all its symbols
+vanish. -/
+def BundleConnection.trivial (F : Type u) [AddCommGroup F] [Module ℝ F] [TopologicalSpace F]
+    [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F] [T2Space F] :
+    BundleConnection (trivialCore 𝒰 F) where
+  Γ _ _ _ _ := 0
+  isLocalSymbol _ := ⟨fun k ↦ contDiffMBOn_const k 0 _, fun _ _ _ _ ↦ (add_zero 0).symm,
+    fun _ c _ _ ↦ (smul_zero c).symm, fun _ _ _ _ ↦ (add_zero 0).symm,
+    fun _ c _ _ ↦ (smul_zero c).symm⟩
+  transition i j y hy a ξ := by
+    have hc0 : HasDirDerivAt (fun _ : E ↦ ξ) y a 0 :=
+      tendsto_nhds_of_eventually_eq (Eventually.of_forall fun t ↦ by simp)
+    change (0 : F) = 0 + dMB (fun _ : E ↦ ξ) (y, a)
+    rw [hc0.dMB_eq, add_zero]
+
+end Trivial
+
+section Dual
+
+variable {E : Type} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] [IsTopologicalAddGroup E]
+  [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E] [T2Space E]
+  {M : Type v} [TopologicalSpace M] [ChartedSpace E M] [MBManifold E M]
+  {𝒰 : TrivializationCover E M ι} {F : Type} [NormedAddCommGroup F] [NormedSpace ℝ F]
+  {V : MBVectorBundleCore 𝒰 F}
+
+/-- **The dual connection** on `V' = Hom(V, ℝ)`: the connection on `Hom(V, M × ℝ)` induced by a
+connection on `V` and the trivial connection, `(∇_a α) ξ = d(α ξ)(a) − α(∇_a ξ)`. -/
+def BundleConnection.dual (C : BundleConnection V) : BundleConnection (dualCore V) :=
+  C.hom (BundleConnection.trivial 𝒰 ℝ)
+
+/-- The symbols of the dual connection: `Γ'(y)(a, α) ξ = −α(Γ(y)(a, ξ))`. -/
+theorem BundleConnection.dual_Γ_apply (C : BundleConnection V) (i : ι) {y : E}
+    (hy : y ∈ 𝒰.domain i) (a : E) (α : F →L[ℝ] ℝ) (ξ : F) :
+    C.dual.Γ i y a α ξ = -α (C.Γ i y a ξ) := by
+  change C.homSymbol (BundleConnection.trivial 𝒰 ℝ) i y a α ξ = _
+  rw [C.homSymbol_apply _ i hy]
+  exact zero_sub _
+
+end Dual
+
 end LocallyConvex.Manifolds

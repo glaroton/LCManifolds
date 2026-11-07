@@ -642,6 +642,59 @@ For a weak metric a metric connection need not exist; the statements below assum
   $\nabla^2$ give that of $\Gamma^{\mathrm{Hom}}$.
 \end{proof}
 
+\begin{corollary}[The dual connection]
+  \label{cor:dual-connection}
+  \lean{LocallyConvex.Manifolds.BundleConnection.trivial,
+    LocallyConvex.Manifolds.BundleConnection.dual,
+    LocallyConvex.Manifolds.BundleConnection.dual_Γ_apply}
+  \leanok
+  \uses{thm:hom-connection}
+  A connection on a bundle $V$ with normed fiber induces a connection on the dual bundle $V'$,
+  with symbols $\Gamma'(y)(a, \alpha)\xi = -\alpha(\Gamma(y)(a, \xi))$.
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  Apply Theorem~\ref{thm:hom-connection} to $V$ and the trivial bundle $M \times \R$ with the
+  trivial connection, whose symbols vanish.
+\end{proof}
+
+\begin{definition}[Refinements]
+  \label{def:cover-refinement}
+  \lean{LocallyConvex.Manifolds.TrivializationCover.Refines,
+    LocallyConvex.Manifolds.TrivializationCover.refineRep,
+    LocallyConvex.Manifolds.MBVectorBundleCore.refine,
+    LocallyConvex.Manifolds.TrivializationCover.inf,
+    LocallyConvex.Manifolds.TrivializationCover.infLeft,
+    LocallyConvex.Manifolds.TrivializationCover.infRight}
+  \leanok
+  \uses{def:vector-bundle}
+  A trivializing cover $(W_w)$ \emph{refines} $(V_k)$ along a map of indices $r$ if
+  $W_w \subseteq V_{r(w)}$. A vector bundle trivialized over $(V_k)$ is trivialized over the
+  refinement, with coordinate changes $g_{r(w) r(w')}$. Two covers $(U_i)$, $(V_k)$ have the
+  common refinement $(U_i \cap V_k)$.
+\end{definition}
+
+\begin{theorem}[Connections on refinements; Hom bundles over different covers]
+  \label{thm:refine-connection}
+  \lean{LocallyConvex.Manifolds.BundleConnection.refineSymbol,
+    LocallyConvex.Manifolds.BundleConnection.isLocalSymbol_refineSymbol,
+    LocallyConvex.Manifolds.BundleConnection.refine,
+    LocallyConvex.Manifolds.homCoreInf, LocallyConvex.Manifolds.BundleConnection.homInf}
+  \leanok
+  \uses{def:cover-refinement, thm:hom-connection}
+  A connection on $V$ is written in the trivializations of a refinement with the symbols
+  $\Gamma_{r(w)}(F y)(\dd F(y) a, \xi)$, where $F = \varphi_{r(w)} \circ \varphi_w^{-1}$. In
+  particular, $\mathrm{Hom}(V_1, V_2)$ and its induced connection are defined for bundles
+  trivialized over different covers, over their common refinement.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  As for pullback connections (Theorem~\ref{thm:pullback-connection}), with the change of charts
+  $F$ in place of the local representative of $f$.
+\end{proof}
+
 \section{Sprays}
 
 A spray, or second order vector field, is a vector field $\xi$ on $TM$ such that
