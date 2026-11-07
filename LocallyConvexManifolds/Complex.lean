@@ -36,10 +36,10 @@ import LocallyConvexManifolds.Symplectic
   required to be positive: pseudo-Kähler metrics are included. Accordingly, `ω` is in general
   only a *weak* symplectic form.
 * We do not formalize the converse of the integrability of complex structures, which in finite
-  dimensions is the Newlander–Nirenberg theorem. In infinite dimensions:
+  dimensions is the Newlander–Nirenberg theorem (Ann. of Math. 65 (1957), 391–404). In infinite dimensions:
   - it holds for real analytic almost complex structures on real analytic Banach manifolds
     (Beltiță [Bel05, Theorem 7]);
-  - it fails for smooth structures on some Banach manifolds (Patyi [Pat99, Theorem 3.1]);
+  - it fails for smooth structures on some Banach manifolds (Patyi [Pat99, Theorem 3.1, p. 401]);
   - it fails on some Fréchet manifolds: Lempert [Lem98, §2, pp. 489–490] points out loop spaces
     with integrable almost complex structures that are not locally biholomorphic to locally
     convex spaces.
@@ -48,7 +48,8 @@ import LocallyConvexManifolds.Symplectic
 spaces*, Rend. Lincei Mat. Appl. (online first), doi:10.4171/RLM/1057; arXiv:2410.13557.
 [Bel05]: D. Beltiță, *Integrability of analytic almost complex structures on Banach manifolds*,
 Ann. Global Anal. Geom. 28 (2005), 59–73.
-[Pat99]: I. Patyi, *On the ∂̄-equation in a Banach space*, arXiv:math/9911045.
+[Pat99]: I. Patyi, *On the ∂̄-equation in a Banach space*, Bull. Soc. Math. France 128 (2000),
+391–406.
 [Lem98]: L. Lempert, *The Dolbeault complex in infinite dimensions I*, J. Amer. Math. Soc. 11
 (1998), 485–520.
 

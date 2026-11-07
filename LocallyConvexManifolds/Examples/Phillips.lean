@@ -8,8 +8,9 @@ import LocallyConvexManifolds.Examples.Subspace
 /-!
 # Counterexample: `c₀ ⊆ ℓ^∞` is embedded but not split (Phillips' lemma)
 
-References: R. S. Phillips, *On linear transformations*, Trans. Amer. Math. Soc. 48 (1940);
-R. Whitley, *Projecting m onto c₀*, Amer. Math. Monthly 73 (1966).
+References: R. S. Phillips, *On linear transformations*, Trans. Amer. Math. Soc. 48 (1940), 7.5,
+pp. 539–540 (stated there for the space `c` of convergent sequences, which contains `c₀` with
+codimension one); R. Whitley, *Projecting m onto c₀*, Amer. Math. Monthly 73 (1966).
 
 We realize `ℓ^∞` as the Banach space `ℕ →ᵇ ℝ` of bounded sequences and `c₀` as the closed
 subspace of sequences tending to `0` (`LocallyConvex.Manifolds.Phillips.c0`).
