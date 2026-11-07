@@ -43,9 +43,12 @@ are not normable) are only weakly nondegenerate.
 * the canonical symplectic form `ω = dθ` on `H × H` for a real inner product space `H`
   (`canonicalSymplectic`), weak in general and strong when `H` is complete.
 
-The Darboux theorem is not formalized: its proof (Moser's trick) needs flows of time-dependent
-vector fields, which need not exist on locally convex manifolds, and the theorem fails for weak
-symplectic forms even on Hilbert spaces. Real-valued forms require models in `Type`, since the
+The Darboux theorem is not formalized. For strong symplectic forms on Banach manifolds it was
+proved by A. Weinstein (*Symplectic structures on Banach manifolds*, Bull. Amer. Math. Soc. 75
+(1969), §1, Theorem) with Moser's trick, which needs flows of time-dependent vector fields; these
+need not exist on locally convex manifolds. For weak symplectic forms the theorem fails even on
+Hilbert spaces (J. Marsden, *Darboux's theorem fails for weak symplectic forms*, Proc. Amer. Math.
+Soc. 32 (1972), Proposition, p. 591). Real-valued forms require models in `Type`, since the
 value space of a form lives in the universe of the model.
 -/
 
@@ -466,7 +469,8 @@ theorem liouvilleForm_d_apply (x u w : H × H) :
 
 /-- **The canonical symplectic form** `ω = dθ` on `H × H`, for any real inner product space `H`
 (no completeness): `ω((y, b), (y', b')) = ⟨y, b'⟩ - ⟨y', b⟩`. It is exact, hence closed, and
-weakly nondegenerate. -/
+weakly nondegenerate. It is the skew form `Ḡ` induced by the symmetric form
+`G = ⟨·, ·⟩` in Marsden (Proc. Amer. Math. Soc. 32 (1972), p. 590). -/
 def canonicalSymplectic : SymplecticForm (H × H) (H × H) where
   form := (liouvilleForm (H := H)).d
   isClosed x v := by rw [d_d_eq_zero]; rfl

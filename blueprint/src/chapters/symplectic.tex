@@ -4,8 +4,8 @@
 Symplectic forms on manifolds modeled on locally convex spaces. In infinite dimensions
 nondegeneracy splits into a weak and a strong notion, and many symplectic forms of interest are
 only weakly nondegenerate. Hamiltonian vector fields are then unique but need not exist, and the
-Darboux theorem fails \cite{Mar72}. For strong symplectic forms on Banach manifolds Darboux's
-theorem holds \cite{Wei69}, but Moser's proof needs flows of time-dependent vector fields, and
+Darboux theorem fails \cite[Proposition, p.~591]{Mar72}. For strong symplectic forms on Banach
+manifolds Darboux's theorem holds \cite[\S1, Theorem]{Wei69}, but Moser's proof needs flows of time-dependent vector fields, and
 these need not exist on locally convex manifolds, so it is not formalized here. Real-valued forms
 require models in the lowest universe, since the space of values of a form lives in the universe
 of the model.
@@ -52,7 +52,9 @@ on the dual space.
 \end{proof}
 
 In particular non-reflexive Banach spaces such as $\ell^1$ or $c_0$ do not model strong
-symplectic manifolds.
+symplectic manifolds. Marsden observes the converse phenomenon for cotangent bundles: the
+canonical form of $T^*M$ is strong if the model of $M$ is reflexive, and only weak otherwise
+\cite[p.~590]{Mar72}.
 
 \section{Hamiltonian and symplectic vector fields}
 
@@ -175,6 +177,8 @@ symplectic manifolds.
   $H \times H$ is $\theta_{(x, a)}(y, b) = \langle x, b \rangle$, and the \emph{canonical
   symplectic form} is
   $\omega = \dd\theta$, $\omega((y, b), (y', b')) = \langle y, b' \rangle - \langle y', b \rangle$.
+  This is the skew form induced by the symmetric form $\langle \cdot, \cdot \rangle$
+  in \cite[p.~590]{Mar72}.
 \end{definition}
 
 \begin{proposition}[The canonical symplectic form]
