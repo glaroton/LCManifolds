@@ -339,9 +339,115 @@ bundle is the case $F = E$.
   For a vector bundle with fiber $F$ the same formalism applies to the symbols in local
   trivializations, with transition functions $g(y) \in GL(F)$ in place of $\dd\tau(y)$; for
   non-normable $F$ one can only require $(y, \xi) \mapsto g(y)\xi$ to be smooth, not
-  $y \mapsto g(y)$. General vector bundles and their connections are not yet formalized, nor is
-  the tensorial transformation law of $\Omega$ under gauge transformations.
+  $y \mapsto g(y)$. Vector bundles, their connections and the tensorial transformation law of
+  $\Omega$ are treated in Section~\ref{sec:vector-bundles}.
 \end{remark}
+
+\section{Vector bundles and their connections}
+\label{sec:vector-bundles}
+
+\begin{definition}[Vector bundles]
+  \label{def:vector-bundle}
+  \lean{LocallyConvex.Manifolds.MBVectorBundleCore,
+    LocallyConvex.Manifolds.MBVectorBundleCore.coordChangeLinear,
+    LocallyConvex.Manifolds.MBVectorBundleCore.continuousOn_coordChange,
+    LocallyConvex.Manifolds.MBVectorBundleCore.toFiberBundleCore,
+    LocallyConvex.Manifolds.MBVectorBundleCore.TotalSpace,
+    LocallyConvex.Manifolds.MBVectorBundleCore.bundleChart}
+  \leanok
+  \uses{def:mb-manifold, def:tangent-bundle}
+  A \emph{vector bundle} over $M$ with fiber $F$ is given by coordinate changes
+  $g_{ij}(x) \colon F \to F$ between the trivializations over the charts $i$, $j$ of the atlas,
+  linear for $x \in U_i \cap U_j$, satisfying the cocycle conditions, and such that
+  $(y, \xi) \mapsto g_{ij}(i^{-1} y)\xi$ is smooth on $i(U_i \cap U_j) \times F$.
+\end{definition}
+
+If $F$ is not normable, $L(F)$ carries no vector topology for which the evaluation is continuous,
+so one cannot ask $y \mapsto g_{ij}(y)$ to be a smooth map into $GL(F)$; joint smoothness of
+$(y, \xi) \mapsto g_{ij}(y)\xi$ is the substitute. For Banach spaces it is the classical
+condition only up to this difference of topologies on $L(F)$.
+
+\begin{theorem}[The total space is a manifold]
+  \label{thm:vector-bundle-manifold}
+  \lean{LocallyConvex.Manifolds.MBVectorBundleCore.smoothMBOn_bundleChart_transition,
+    LocallyConvex.Manifolds.MBVectorBundleCore.bundleChart_transition_mem,
+    LocallyConvex.Manifolds.MBVectorBundleCore.mbManifold,
+    LocallyConvex.Manifolds.tangentMBCore}
+  \leanok
+  \uses{def:vector-bundle}
+  The total space of a vector bundle with fiber $F$ is a manifold modeled on $E \times F$, with
+  transition maps $(y, \xi) \mapsto (\tau y, g(y)\xi)$. The tangent bundle is a vector bundle,
+  with coordinate changes $(y, w) \mapsto \dd\tau(y) w$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  As for the tangent bundle: the transition maps are compositions of transition maps of $M$ with
+  the smooth maps $(y, \xi) \mapsto g(y)\xi$.
+\end{proof}
+
+\begin{definition}[Connections on vector bundles]
+  \label{def:bundle-connection}
+  \lean{LocallyConvex.Manifolds.BundleConnection,
+    LocallyConvex.Manifolds.localCovDerivB}
+  \leanok
+  \uses{def:vector-bundle, def:connection-forms}
+  A \emph{connection} on a vector bundle is given by symbols $\Gamma_i(y)(a, \xi) \in F$ in the
+  trivialization over each chart, smooth and bilinear, subject to the gauge transformation law
+  \[
+    \Gamma_j(\tau y)(\dd\tau(y) a, g(y)\xi) = g(y)\Gamma_i(y)(a, \xi) + (\partial_a g)(y)\xi,
+  \]
+  where $\tau = j \circ i^{-1}$ and $g(y) = g_{ij}(i^{-1} y)$. In a trivialization, the covariant
+  derivative of a section is $\nabla_X s = \dd s \cdot X - \Gamma(X, s)$.
+\end{definition}
+
+\begin{lemma}[Calculus of the covariant derivative]
+  \label{lem:bundle-cov-deriv}
+  \lean{LocallyConvex.Manifolds.dMB_fiber_comp,
+    LocallyConvex.Manifolds.localCovDerivB_transition,
+    LocallyConvex.Manifolds.IsLocalSymbol.dMB_apply,
+    LocallyConvex.Manifolds.IsLocalSymbol.localCovDerivB_curv,
+    LocallyConvex.Manifolds.IsLocalSymbol.contDiffMBOn_localCovDerivB,
+    LocallyConvex.Manifolds.IsLocalSymbol.mono}
+  \leanok
+  \uses{def:bundle-connection, lem:conn-local-curv}
+  Under the gauge transformation law, the covariant derivative transforms covariantly:
+  if $X_j(\tau y) = \dd\tau(y) X_i(y)$ and $s_j \circ \tau = g \cdot s_i$, then
+  $\nabla_{X_j} s_j(\tau y) = g(y) \nabla_{X_i} s_i(y)$. For $C^2$ fields and sections,
+  $\nabla_X\nabla_Y s - \nabla_Y\nabla_X s - \nabla_{[X, Y]} s = \Omega(X, Y) s$ pointwise.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Product rules for $y \mapsto g(y)s(y)$ and $y \mapsto \Gamma(y)(A y, B y)$; in the curvature
+  formula the terms with derivatives of the fields and the section cancel, using the symmetry of
+  second derivatives of $s$, as in Lemma~\ref{lem:conn-local-curv}.
+\end{proof}
+
+\begin{theorem}[The curvature is a tensor]
+  \label{thm:curvature-gauge}
+  \lean{LocallyConvex.Manifolds.curvature_gauge,
+    LocallyConvex.Manifolds.BundleConnection.curvLoc_transition,
+    LocallyConvex.Manifolds.BundleConnection.dLoc_curvLoc,
+    LocallyConvex.Manifolds.Connection.toBundleConnection,
+    LocallyConvex.Manifolds.Connection.localCurv_transition}
+  \leanok
+  \uses{lem:bundle-cov-deriv, thm:second-bianchi, def:connection}
+  The curvature forms of a connection on a vector bundle satisfy
+  $\Omega_j(\tau y)(\dd\tau\, u, \dd\tau\, v)(g\xi) = g\,\Omega_i(y)(u, v)\xi$, and the second
+  Bianchi identity holds in every trivialization. A connection on $M$ is a connection on the
+  tangent bundle; in particular its curvature is a tensor.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply the curvature formula of Lemma~\ref{lem:bundle-cov-deriv} to the constant fields $u$,
+  $v$ and the constant section $\xi$ in the chart $i$, and to their images
+  $\dd\tau(\sigma z)u$, $\dd\tau(\sigma z)v$, $g(\sigma z)\xi$ in the chart $j$, where
+  $\sigma = \tau^{-1}$. Covariant derivatives and brackets transform covariantly, so the
+  left-hand sides correspond under $g(y)$. The argument uses neither partitions of unity nor
+  bump functions, which need not exist on locally convex manifolds.
+\end{proof}
 
 \section{Sprays}
 

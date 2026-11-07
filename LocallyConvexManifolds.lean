@@ -20,6 +20,8 @@ import LocallyConvexManifolds.Homotopy
 import LocallyConvexManifolds.AnalyticForm
 import LocallyConvexManifolds.Symplectic
 import LocallyConvexManifolds.ConnectionForm
+import LocallyConvexManifolds.VectorBundle
+import LocallyConvexManifolds.BundleConnection
 import LocallyConvexManifolds.Product
 import LocallyConvexManifolds.Submanifold
 import LocallyConvexManifolds.Connection

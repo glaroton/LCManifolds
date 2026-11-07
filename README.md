@@ -370,6 +370,17 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `IsLocalSymbol.dLoc_curvLoc`: the second Bianchi identity `dΩ = [A ∧ Ω]`;
   * `Connection.connForm_transition`, `Connection.torsionLoc_transition`: gauge law of `A`, and
     the torsion is a tensor; `Connection.curvature_eq_structure`.
+* [`LocallyConvexManifolds/VectorBundle.lean`](LocallyConvexManifolds/VectorBundle.lean): vector
+  bundles with locally convex fiber `F`, given by coordinate changes `(y, ξ) ↦ g(y) ξ` that are
+  jointly smooth (`y ↦ g(y) ∈ GL(F)` is not available when `F` is not normable).
+  * `MBVectorBundleCore`, `MBVectorBundleCore.mbManifold`: the total space is a manifold modeled
+    on `E × F`; `tangentMBCore`: the tangent bundle is a vector bundle.
+* [`LocallyConvexManifolds/BundleConnection.lean`](LocallyConvexManifolds/BundleConnection.lean):
+  connections on vector bundles.
+  * `BundleConnection`: symbols with the gauge transformation law; `localCovDerivB_transition`,
+    `IsLocalSymbol.localCovDerivB_curv`: covariant derivative of sections and curvature formula;
+  * `curvature_gauge`, `BundleConnection.curvLoc_transition`: the curvature is a tensor (no bump
+    functions needed); `Connection.toBundleConnection`, `Connection.localCurv_transition`.
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a
