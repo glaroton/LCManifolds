@@ -12,8 +12,8 @@ Blueprint: <https://glaroton.github.io/lc-manifolds/blueprint/>
 > by fields of projectors, Finsler and pseudo-Riemannian metrics with their metric geometry,
 > differential forms with de Rham theory, vector bundles (pullback, Hom, dual, cotangent) with
 > connections (including induced connections on pullback and Hom bundles), curvature and bundle
-> metrics, symplectic manifolds, and a collection of examples.
-> Work continues (complex and Kähler manifolds). It is the geometric companion of
+> metrics, symplectic, complex and Kähler manifolds, and a collection of examples.
+> Work continues. It is the geometric companion of
 > [lc-analysis](https://github.com/glaroton/lc-analysis), which provides the calculus.
 
 ## Convention: model spaces need not be complete
@@ -420,6 +420,16 @@ give a Lie group modeled on an incomplete normed algebra with no exponential fun
   * `TrivializationCover.inf`: the common refinement `Uᵢ ∩ Vₖ` of two covers; `homCoreInf`,
     `BundleConnection.homInf`: Hom bundles and their connections for bundles trivialized over
     different covers.
+* [`LocallyConvexManifolds/Complex.lean`](LocallyConvexManifolds/Complex.lean): almost complex
+  structures, complex manifolds and Kähler structures.
+  * `AlmostComplexStructure`: `Jₓ² = −1` with smooth local representatives; `nijenhuisLoc`,
+    `localBracket_nijenhuis`: `[JX, JY] − J[JX, Y] − J[X, JY] − [X, Y] = N(X, Y)`;
+  * `canonicalJ`, `canonicalJ_isIntegrable`: multiplication by `i` on a complex analytic
+    manifold, well defined because the tangent maps are complex linear, and integrable;
+  * `HermitianStructure.fundamentalForm`, `KaehlerStructure.symplecticForm`: `ω(u, v) = g(J u, v)`
+    is a (weak) symplectic form for a (possibly indefinite) Kähler structure. The converse of
+    integrability (Newlander–Nirenberg) fails in infinite dimensions (Lempert 1998) and is not
+    formalized.
 * [`LocallyConvexManifolds/Symplectic.lean`](LocallyConvexManifolds/Symplectic.lean): symplectic
   manifolds, with weak and strong nondegeneracy.
   * `SymplecticForm`, `SymplecticForm.IsStrong`; `IsStrong.surjective_inclusionInDoubleDual`: a
